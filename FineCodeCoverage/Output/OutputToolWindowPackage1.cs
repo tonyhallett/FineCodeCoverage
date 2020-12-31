@@ -27,6 +27,7 @@ namespace FineCodeCoverage.Output
     internal sealed partial class PackageIds
     {
         public const int OutputToolWindowCommandId = 0x0100;
+        public const int ProjectVsTestIntegration = 0x0111;
         public const int bmpPic1 = 0x0001;
     }
 }

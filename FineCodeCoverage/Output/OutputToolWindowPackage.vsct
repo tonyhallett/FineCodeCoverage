@@ -49,7 +49,14 @@
           <ButtonText>Fine Code Coverage</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidOutputToolWindowPackageCmdSet" id="ProjectVsTestIntegration" priority="0x0100" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+        <Strings>
+          <ButtonText>FCC Project VsTest Intergration</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
+
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
     <Bitmaps>
@@ -69,6 +76,7 @@
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidOutputToolWindowPackageCmdSet" value="{bedda1f3-0d8f-4f8d-a818-0b5523ee662d}">
       <IDSymbol name="OutputToolWindowCommandId" value="0x0100" />
+      <IDSymbol name="ProjectVsTestIntegration" value="0x0111" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{297e101c-4afa-47b1-b382-087cfb4618b0}" >

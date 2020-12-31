@@ -20,11 +20,11 @@ namespace FineCodeCoverage.Engine
 {
 	internal static class FCCEngine
 	{
-		public static string HtmlFilePath { get; private set; }
+		public static string HtmlFilePath { get;  set; }
 		public static string AppDataFolder { get; private set; }
 		public static CoverageReport CoverageReport { get; private set; }
 		public static string[] ProjectExtensions { get; } = new string[] { ".csproj", ".vbproj" };
-		public static List<CoverageLine> CoverageLines { get; private set; } = new List<CoverageLine>();
+		public static List<CoverageLine> CoverageLines { get; set; } = new List<CoverageLine>();
 		public static ConcurrentDictionary<string, string> ProjectFoldersCache { get; } = new ConcurrentDictionary<string, string>();
 		
 		public static void Initialize()

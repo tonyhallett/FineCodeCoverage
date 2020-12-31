@@ -32,6 +32,15 @@ namespace FineCodeCoverage.Impl
 		private readonly IServiceProvider _serviceProvider;
 		public static event UpdateMarginTagsDelegate UpdateMarginTags;
 		public static event UpdateOutputWindowDelegate UpdateOutputWindow;
+
+		public static void OnUpdateMarginTags(object sender,UpdateMarginTagsEventArgs args)
+        {
+			UpdateMarginTags?.Invoke(sender, args);
+        }
+		public static void OnUpdateOutputWindow(object sender, UpdateOutputWindowEventArgs args)
+        {
+			UpdateOutputWindow?.Invoke(sender, args);
+		}
 		public Uri ExecutorUri => new Uri($"executor://{Vsix.Code}.Executor/v1");
 		public IEnumerable<ITestContainer> TestContainers => Enumerable.Empty<ITestContainer>();
 		public delegate void UpdateMarginTagsDelegate(object sender, UpdateMarginTagsEventArgs e);
