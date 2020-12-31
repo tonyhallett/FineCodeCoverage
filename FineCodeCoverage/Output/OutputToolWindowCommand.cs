@@ -166,25 +166,21 @@ namespace FineCodeCoverage.Output
 
 				var now = DateTime.Now;
 
-				var collections = selectedProjectDirectories.Select(projectDirectory =>
-				{
-					// get deadlock with redirection here
-					return Task.Run(delegate {
-						var processStartInfo = new ProcessStartInfo
-						{
-							FileName = "dotnet",
-							CreateNoWindow = true,
-							UseShellExecute = false,
-							WindowStyle = ProcessWindowStyle.Hidden,
-							WorkingDirectory = projectDirectory,
-							Arguments = $"test --results-directory:\"{solutionResults}\" --collect:\"XPlat Code Coverage\"",
-						};
-						var process = System.Diagnostics.Process.Start(processStartInfo);
-						process.WaitForExit();
-						return process;
-					});
-				});
-				Task.WaitAll(collections.ToArray());
+				foreach(var selectedProjectDirectory in selectedProjectDirectories)
+                {
+					var processStartInfo = new ProcessStartInfo
+					{
+						FileName = "dotnet",
+						CreateNoWindow = true,
+						UseShellExecute = false,
+						WindowStyle = ProcessWindowStyle.Hidden,
+						WorkingDirectory = selectedProjectDirectory,
+						Arguments = $"test --results-directory:\"{solutionResults}\" --collect:\"XPlat Code Coverage\"",
+					};
+					var process = System.Diagnostics.Process.Start(processStartInfo);
+					process.WaitForExit();
+				}
+				
 				ReportGeneratorUtil.RunReportGenerator(coberturaFiles, true, out var unifiedHtmlFile, out var unifiedXmlFile, true);
                 var CoverageReport = CoberturaUtil.ProcessCoberturaXmlFile(unifiedXmlFile, out var coverageLines);
                 FCCEngine.CoverageLines = coverageLines;
