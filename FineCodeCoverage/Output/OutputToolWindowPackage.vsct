@@ -52,7 +52,7 @@
       <Button guid="guidOutputToolWindowPackageCmdSet" id="ProjectVsTestIntegration" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Strings>
-          <ButtonText>FCC Project VsTest Intergration</ButtonText>
+          <ButtonText>FCC Project VsTest Integration</ButtonText>
         </Strings>
       </Button>
     </Buttons>
