@@ -175,7 +175,7 @@ namespace FineCodeCoverage.Output
 						UseShellExecute = false,
 						WindowStyle = ProcessWindowStyle.Hidden,
 						WorkingDirectory = selectedProjectDirectory,
-						Arguments = $"test --results-directory:\"{solutionResults}\" --collect:\"XPlat Code Coverage\"",
+						Arguments = $"test --results-directory:\"{solutionResults}\" --collect:\"XPlat Code Coverage\"  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.IncludeTestAssembly=true",
 					};
 					var process = System.Diagnostics.Process.Start(processStartInfo);
 					process.WaitForExit();
