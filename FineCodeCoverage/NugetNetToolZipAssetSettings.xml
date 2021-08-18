@@ -19,7 +19,7 @@
   <NugetNetToolPackageVersionZipAsset>
     <ZipPrefix>reportGenerator</ZipPrefix>
     <NetToolName>dotnet-reportgenerator-globaltool</NetToolName>
-    <ProjectFile>ReportGeneratorPlugins.csproj</ProjectFile>
+    <ProjectFile>../ReportGeneratorPlugins/ReportGeneratorPlugins.csproj</ProjectFile>
     <PackageReference>ReportGenerator.Core</PackageReference>
   </NugetNetToolPackageVersionZipAsset>
 </AssetSettings>
