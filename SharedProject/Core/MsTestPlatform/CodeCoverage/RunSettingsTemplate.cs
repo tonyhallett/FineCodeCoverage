@@ -42,8 +42,8 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
         public string MsDataCollectorElement { get; }
 
         private const string fccMarkerElementName = "FCCGenerated";
-        private string msDataCollectorConfigurationElement;
-        private string msDataCollectorCodeCoverageElement;
+        private readonly string msDataCollectorConfigurationElement;
+        private readonly string msDataCollectorCodeCoverageElement;
         
         private readonly List<(string elementName, string value)> recommendedYouDoNotChangeElementsNetCore = new List<(string elementName, string value)>
         {

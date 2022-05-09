@@ -31,26 +31,18 @@ namespace FineCodeCoverage.Output
         internal const string payPal = "https://paypal.me/FortuneNgwenya";
         
         internal const string marketPlaceRateAndReview = "https://marketplace.visualstudio.com/items?itemName=FortuneNgwenya.FineCodeCoverage&ssr=false#review-details";
-        private readonly ISourceFileOpener sourceFileOpener;
         private readonly IProcess process;
         private readonly IEventAggregator eventAggregator;
-        internal System.Threading.Tasks.Task openFileTask;
         public event EventHandler ClearFCCWindowLogsEvent;
         public event EventHandler ShowFCCOutputPaneEvent;
 
         [ImportingConstructor]
-        internal ScriptManager(ISourceFileOpener sourceFileOpener, IProcess process, IEventAggregator eventAggregator)
+        internal ScriptManager(IProcess process, IEventAggregator eventAggregator)
         {
-            this.sourceFileOpener = sourceFileOpener;
             this.process = process;
             this.eventAggregator = eventAggregator;
         }
         
-        public void OpenFile(string assemblyName, string qualifiedClassName, int file, int line)
-        {
-            openFileTask = sourceFileOpener.OpenFileAsync(assemblyName, qualifiedClassName, file, line);
-        }
-
         public void ReadReadMe()
         {
             process.Start(FCCGithub.Readme);

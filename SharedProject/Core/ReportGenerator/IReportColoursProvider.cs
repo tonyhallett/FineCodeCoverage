@@ -6,7 +6,10 @@ namespace FineCodeCoverage.Engine.ReportGenerator
 {
     internal interface IReportColoursProvider
     {
-        event EventHandler<IReportColours> ColoursChanged;
-        IReportColours GetColours();
+        //event EventHandler<IReportColours> ColoursChanged;
+        //IReportColours GetColours();
+
+        event EventHandler<List<CategoryColour>> ColoursChanged;
+        List<CategoryColour> GetColours();
     }
 }

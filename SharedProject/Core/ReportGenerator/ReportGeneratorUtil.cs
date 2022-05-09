@@ -18,15 +18,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReportGeneratorPlugins;
 using System.Threading;
+using Palmmedia.ReportGenerator.Core.Reporting;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
+using Palmmedia.ReportGenerator.Core.CodeAnalysis;
+using Palmmedia.ReportGenerator.Core;
 
 namespace FineCodeCoverage.Engine.ReportGenerator
 {
 	interface IReportGeneratorUtil
     {
         void Initialize(string appDataFolder, CancellationToken cancellationToken);
-		string ProcessUnifiedHtml(string htmlForProcessing,string reportOutputFolder);
-		Task<ReportGeneratorResult> GenerateAsync(IEnumerable<string> coverOutputFiles,string reportOutputFolder,CancellationToken cancellationToken);
-        string BlankReport(bool withHistory);
+		Task<string> GenerateAsync(IEnumerable<string> coverOutputFiles,string reportOutputFolder,CancellationToken cancellationToken);
         void LogCoverageProcess(string message);
 		void EndOfCoverageRun();
     }
@@ -37,17 +39,38 @@ namespace FineCodeCoverage.Engine.ReportGenerator
 		public string UnifiedXmlFile { get; set; }
 	}
 
+	public class CapturingBuilder : IReportBuilder
+	{
+		public string ReportType => CapturingReportType;
+
+		public const string CapturingReportType = "CapturingReport";
+
+		public IReportContext ReportContext { get; set; }
+
+        public void CreateClassReport(Class @class, IEnumerable<FileAnalysis> fileAnalyses)
+        {
+            
+        }
+
+        public void CreateSummaryReport(SummaryResult summaryResult)
+        {
+			SummaryResult = summaryResult;
+			RiskHotspotAnalysisResult = ReportContext.RiskHotspotAnalysisResult;
+		}
+
+		public static SummaryResult SummaryResult { get; set; }
+		public static RiskHotspotAnalysisResult RiskHotspotAnalysisResult { get; set; }
+	}
+
 	[Export(typeof(IReportGeneratorUtil))]
 	internal partial class ReportGeneratorUtil : 
-		IReportGeneratorUtil, 
-		IListener<EnvironmentFontDetailsChangedMessage>, IListener<DpiChangedMessage>, IListener<ReadyForReportMessage>
+		IReportGeneratorUtil
 	{
 		private readonly IAssemblyUtil assemblyUtil;
 		private readonly IProcessUtil processUtil;
 		private readonly ILogger logger;
 		private readonly IToolFolder toolFolder;
 		private readonly IToolZipProvider toolZipProvider;
-        private readonly IReportColoursProvider reportColoursProvider;
         private readonly IFileUtil fileUtil;
 		private readonly IAppOptionsProvider appOptionsProvider;
 		private readonly IResourceProvider resourceProvider;
@@ -67,29 +90,12 @@ namespace FineCodeCoverage.Engine.ReportGenerator
 		private readonly Base64ReportImage downInactiveBase64ReportImage = new Base64ReportImage(".icon-down-dir", "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMTc5MiIgaGVpZ2h0PSIxNzkyIiB2aWV3Qm94PSIwIDAgMTc5MiAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xNDA4IDcwNHEwIDI2LTE5IDQ1bC00NDggNDQ4cS0xOSAxOS00NSAxOXQtNDUtMTlsLTQ0OC00NDhxLTE5LTE5LTE5LTQ1dDE5LTQ1IDQ1LTE5aDg5NnEyNiAwIDQ1IDE5dDE5IDQ1eiIvPjwvc3ZnPg==");
 		private readonly Base64ReportImage upActiveBase64ReportImage = new Base64ReportImage(".icon-up-dir_active", "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgd2lkdGg9IjE3OTIiIGhlaWdodD0iMTc5MiIgdmlld0JveD0iMCAwIDE3OTIgMTc5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjMDA3OEQ0IiBkPSJNMTQwOCAxMjE2cTAgMjYtMTkgNDV0LTQ1IDE5aC04OTZxLTI2IDAtNDUtMTl0LTE5LTQ1IDE5LTQ1bDQ0OC00NDhxMTktMTkgNDUtMTl0NDUgMTlsNDQ4IDQ0OHExOSAxOSAxOSA0NXoiLz48L3N2Zz4=");
         private readonly IScriptManager scriptManager;
-		private DpiScale dpiScale;
-		private FontDetails environmentFontDetails;
-		private string previousFontSizeName;
-		private string unprocessedReport;
-		private string previousReportOutputFolder;
-        private IReportColours reportColours;
-		private JsThemeStyling jsReportColours;
-		private IReportColours ReportColours
-        {
-			get => reportColours;
-            set
-            {
-				reportColours = value;
-				jsReportColours = reportColours.Convert();
-            }
-        }
+		
 		private readonly bool showBranchCoverage = true;
 		private readonly List<string> logs = new List<string>();
 
 		public string ReportGeneratorExePath { get; private set; }
 
-		private string FontSize => $"{environmentFontDetails.Size * dpiScale.DpiScaleX}px";
-		private string FontName => environmentFontDetails.Family.Source;
 
 		[ImportingConstructor]
 		public ReportGeneratorUtil(
@@ -100,7 +106,6 @@ namespace FineCodeCoverage.Engine.ReportGenerator
 			IToolZipProvider toolZipProvider,
 			IFileUtil fileUtil,
 			IAppOptionsProvider appOptionsProvider,
-			IReportColoursProvider reportColoursProvider,
 			IScriptManager scriptManager,
 			IResourceProvider resourceProvider,
 			IShowFCCOutputPane showFCCOutputPane,
@@ -114,13 +119,10 @@ namespace FineCodeCoverage.Engine.ReportGenerator
 			this.logger = logger;
 			this.toolFolder = toolFolder;
 			this.toolZipProvider = toolZipProvider;
-			this.reportColoursProvider = reportColoursProvider;
-            this.reportColoursProvider.ColoursChanged += ReportColoursProvider_ColoursChanged;
 			this.scriptManager = scriptManager;
             this.resourceProvider = resourceProvider;
             this.showFCCOutputPane = showFCCOutputPane;
             this.eventAggregator = eventAggregator;
-			this.eventAggregator.AddListener(this);
             scriptManager.ClearFCCWindowLogsEvent += ScriptManager_ClearFCCWindowLogsEvent;
             scriptManager.ShowFCCOutputPaneEvent += ScriptManager_ShowFCCOutputPaneEvent;
         }
@@ -135,170 +137,152 @@ namespace FineCodeCoverage.Engine.ReportGenerator
 			logs.Clear();
         }
 
-        public void Initialize(string appDataFolder, CancellationToken cancellationToken)
+		public void Initialize(string appDataFolder, CancellationToken cancellationToken)
 		{
 			var zipDestination = toolFolder.EnsureUnzipped(appDataFolder, zipDirectoryName, toolZipProvider.ProvideZip(zipPrefix), cancellationToken);
 			ReportGeneratorExePath = Directory.GetFiles(zipDestination, "reportGenerator.exe", SearchOption.AllDirectories).FirstOrDefault()
 								  ?? Directory.GetFiles(zipDestination, "*reportGenerator*.exe", SearchOption.AllDirectories).FirstOrDefault();
 		}
 
-		public async Task<ReportGeneratorResult> GenerateAsync(IEnumerable<string> coverOutputFiles, string reportOutputFolder, CancellationToken cancellationToken)
-		{
-			var title = "ReportGenerator Run";
-
-			var unifiedHtmlFile = Path.Combine(reportOutputFolder, "index.html");
-			var unifiedXmlFile = Path.Combine(reportOutputFolder, "Cobertura.xml");
-		
-			var reportGeneratorSettings = new List<string>();
-
-			reportGeneratorSettings.Add($@"""-targetdir:{reportOutputFolder}""");
-
-			async Task run(string outputReportType, string inputReports)
+		private bool RunReport(IEnumerable<string> coverOutputFiles, string reportOutputFolder, RiskHotspotsAnalysisThresholds RiskHotspotsAnalysisThresholds)
+        {
+			var settings = new Settings
 			{
-				var reportTypeSettings = reportGeneratorSettings.ToArray().ToList();
 
-				if (outputReportType.Equals("Cobertura", StringComparison.OrdinalIgnoreCase))
-				{
-					reportTypeSettings.Add($@"""-reports:{inputReports}""");
-					reportTypeSettings.Add($@"""-reporttypes:Cobertura""");
+			};
 
-				}
-				else if (outputReportType.Equals("HtmlInline_AzurePipelines", StringComparison.OrdinalIgnoreCase))
-				{
-					reportTypeSettings.Add($@"""-reports:{inputReports}""");
-					reportTypeSettings.Add($@"""-plugins:{typeof(FccLightReportBuilder).Assembly.Location}""");
-					reportTypeSettings.Add($@"""-reporttypes:{FccLightReportBuilder.REPORT_TYPE}""");
-					var (cyclomaticThreshold, crapScoreThreshold, nPathThreshold) = HotspotThresholds();
+			IEnumerable<string> sourceDirectories = Enumerable.Empty<string>();
+			IEnumerable<string> assemblyFilters = Enumerable.Empty<string>();
+			IEnumerable<string> classFilters = Enumerable.Empty<string>();
+			IEnumerable<string> fileFilters = Enumerable.Empty<string>();
 
-					reportTypeSettings.Add($@"""riskHotspotsAnalysisThresholds:metricThresholdForCyclomaticComplexity={cyclomaticThreshold}""");
-					reportTypeSettings.Add($@"""riskHotspotsAnalysisThresholds:metricThresholdForCrapScore={crapScoreThreshold}""");
-					reportTypeSettings.Add($@"""riskHotspotsAnalysisThresholds:metricThresholdForNPathComplexity={nPathThreshold}""");
+			var myPluginAssemblyLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			ReportConfiguration reportConfiguration = new ReportConfiguration(
+				coverOutputFiles,
+				reportOutputFolder,
+				sourceDirectories,
+				null,//can be null
+				new List<string> { CapturingBuilder.CapturingReportType, "Cobertura" },
+				new List<string> { myPluginAssemblyLocation },
+				assemblyFilters,
+				classFilters,
+				fileFilters,
+				null, // can be null 
+				""
+			);
+			return new Generator().GenerateReport(reportConfiguration, settings, RiskHotspotsAnalysisThresholds);
 
-				}
-				else
-				{
-					throw new Exception($"Unknown reporttype '{outputReportType}'");
-				}
-
-				logger.Log($"{title} Arguments [reporttype:{outputReportType}] {Environment.NewLine}{string.Join($"{Environment.NewLine}", reportTypeSettings)}");
-				
-				var result = await processUtil
-					.ExecuteAsync(new ExecuteRequest
-					{
-						FilePath = ReportGeneratorExePath,
-						Arguments = string.Join(" ", reportTypeSettings),
-						WorkingDirectory = reportOutputFolder
-					},cancellationToken);
-
-
-				if (result.ExitCode != 0)
-				{
-					logger.Log($"{title} [reporttype:{outputReportType}] Error", result.Output, $"ExitCode : {result.ExitCode}");
-
-					throw new Exception(result.Output);
-				}
-
-				logger.Log($"{title} [reporttype:{outputReportType}]", result.Output);
-
-			}
-
-			var reportGeneratorResult = new ReportGeneratorResult { UnifiedHtml = null, UnifiedXmlFile = unifiedXmlFile };
-
-			var startTime = DateTime.Now;
-			LogCoverageProcess("Generating cobertura report");
-			await run("Cobertura", string.Join(";", coverOutputFiles));
-			var duration = DateTime.Now - startTime;
-
-			var coberturaDurationMesage = $"Cobertura report generation duration - {duration}";
-			LogCoverageProcess(coberturaDurationMesage); // result output includes duration for normal log
-
-			startTime = DateTime.Now;
-			LogCoverageProcess("Generating html report");
-			await run("HtmlInline_AzurePipelines", unifiedXmlFile);
-			duration = DateTime.Now - startTime;
-			cancellationToken.ThrowIfCancellationRequested();
-			var htmlReportDurationMessage = $"Html report generation duration - {duration}";
-			LogCoverageProcess(htmlReportDurationMessage); // result output includes duration for normal log
-			reportGeneratorResult.UnifiedHtml = fileUtil.ReadAllText(unifiedHtmlFile);
-
-			return reportGeneratorResult;
 		}
 
-		private void SetInitialTheme(HtmlAgilityPack.HtmlDocument document)
+		private void RaiseNewReport(RiskHotspotsAnalysisThresholds riskHotspotsAnalysisThresholds, string reportFilePath)
+        {
+			eventAggregator.SendMessage(
+				new NewReportMessage
+				{
+					SummaryResult = CapturingBuilder.SummaryResult,
+					RiskHotspotAnalysisResult = CapturingBuilder.RiskHotspotAnalysisResult,
+					RiskHotspotsAnalysisThresholds = riskHotspotsAnalysisThresholds,
+					ReportFilePath = reportFilePath
+				}
+			);
+		}
+
+		
+
+		public Task<string> GenerateAsync(IEnumerable<string> coverOutputFiles, string reportOutputFolder, CancellationToken cancellationToken)
 		{
-			var backgroundColor = jsReportColours.BackgroundColour;
-			var fontColour = jsReportColours.FontColour;
-			var overviewTableBorderColor = jsReportColours.TableBorderColour;
+			// todo need to write out based upon the one one with logging and vs colouring
+			var unifiedHtmlFile = Path.Combine(reportOutputFolder, "index.html");
+			var unifiedXmlFile = Path.Combine(reportOutputFolder, "Cobertura.xml");
 
-			var style = document.DocumentNode.Descendants("style").First();
+			var riskHotspotsAnalysisThresholds = HotspotThresholds();
+			bool reportSuccess = false;
+			try
+			{
+				reportSuccess = RunReport(coverOutputFiles, reportOutputFolder, riskHotspotsAnalysisThresholds);
+			}catch (Exception ex)
+            {
+				//..... throw ?
+				// before would have received logged output from processUtil ?
+            }
+            if (!reportSuccess)
+            {
+				throw new Exception("todo");
+            }
 
-			var parser = new StylesheetParser();
-			var stylesheet = parser.Parse(style.InnerHtml);
-			var styleRules = stylesheet.StyleRules;
+			RaiseNewReport(riskHotspotsAnalysisThresholds,unifiedHtmlFile);
 
-			var lightRedForCyclomatic = styleRules.First(r => r.SelectorText == ".lightred");
-			lightRedForCyclomatic.Style.BackgroundColor = null;
-			/*
-                Other option
-                lightRedForCyclomatic.Style.BackgroundColor = "rgba(255,255,255,0.3)";
+			return Task.FromResult(unifiedXmlFile);
 
-                or 
-                be *dynamic* and be lighten / darken %age of the background color
-            */
-			var grayRule = styleRules.First(r => r.SelectorText == ".gray");
-			grayRule.Style.BackgroundColor = jsReportColours.GrayCoverageColour;
+			//async Task run(string outputReportType, string inputReports)
+			//{
+			//	var reportTypeSettings = reportGeneratorSettings.ToArray().ToList();
 
-			var htmlRule = styleRules.First(r => r.Selector.Text == "html");
-			var htmlStyle = htmlRule.Style;
-			htmlStyle.BackgroundColor = backgroundColor;
+			//	if (outputReportType.Equals("Cobertura", StringComparison.OrdinalIgnoreCase))
+			//	{
+			//		reportTypeSettings.Add($@"""-reports:{inputReports}""");
+			//		reportTypeSettings.Add($@"""-reporttypes:Cobertura""");
 
-			var containerRule = styleRules.First(r => r.SelectorText == ".container");
-			containerRule.Style.BackgroundColor = backgroundColor;
+			//	}
+			//	else if (outputReportType.Equals("HtmlInline_AzurePipelines", StringComparison.OrdinalIgnoreCase))
+			//	{
+			//		reportTypeSettings.Add($@"""-reports:{inputReports}""");
+			//		reportTypeSettings.Add($@"""-plugins:{typeof(FccLightReportBuilder).Assembly.Location}""");
+			//		reportTypeSettings.Add($@"""-reporttypes:{FccLightReportBuilder.REPORT_TYPE}""");
+			//		var (cyclomaticThreshold, crapScoreThreshold, nPathThreshold) = HotspotThresholds();
 
-			var overviewTableBorder = $"1px solid {overviewTableBorderColor}";
-			var overviewThRule = styleRules.First(r => r.SelectorText == ".overview th");
-			overviewThRule.Style.BackgroundColor = backgroundColor;
-			overviewThRule.Style.Border = overviewTableBorder;
+			//		reportTypeSettings.Add($@"""riskHotspotsAnalysisThresholds:metricThresholdForCyclomaticComplexity={cyclomaticThreshold}""");
+			//		reportTypeSettings.Add($@"""riskHotspotsAnalysisThresholds:metricThresholdForCrapScore={crapScoreThreshold}""");
+			//		reportTypeSettings.Add($@"""riskHotspotsAnalysisThresholds:metricThresholdForNPathComplexity={nPathThreshold}""");
 
-			var overviewTdRule = styleRules.First(r => r.SelectorText == ".overview td");
-			overviewTdRule.Style.Border = overviewTableBorder;
+			//	}
+			//	else
+			//	{
+			//		throw new Exception($"Unknown reporttype '{outputReportType}'");
+			//	}
 
-			var overviewRule = styleRules.First(r => r.SelectorText == ".overview");
-			overviewRule.Style.Border = overviewTableBorder;
+			//	logger.Log($"{title} Arguments [reporttype:{outputReportType}] {Environment.NewLine}{string.Join($"{Environment.NewLine}", reportTypeSettings)}");
 
-			var overviewHeaderLinks = styleRules.First(r => r.SelectorText == ".overview th a");
-			overviewHeaderLinks.Style.Color = jsReportColours.CoverageTableHeaderFontColour;
+			//	var result = await processUtil
+			//		.ExecuteAsync(new ExecuteRequest
+			//		{
+			//			FilePath = ReportGeneratorExePath,
+			//			Arguments = string.Join(" ", reportTypeSettings),
+			//			WorkingDirectory = reportOutputFolder
+			//		},cancellationToken);
 
-			var overviewTrHoverRule = styleRules.First(r => r.SelectorText == ".overview tr:hover");
-			overviewTrHoverRule.Style.Background = jsReportColours.CoverageTableRowHoverBackgroundColour;
 
-			var expandCollapseIconColor = ReportColours.CoverageTableExpandCollapseIconColour;
-			plusBase64ReportImage.FillSvg(styleRules, expandCollapseIconColor.ToJsColour());
-			minusBase64ReportImage.FillSvg(styleRules, expandCollapseIconColor.ToJsColour());
+			//	if (result.ExitCode != 0)
+			//	{
+			//		logger.Log($"{title} [reporttype:{outputReportType}] Error", result.Output, $"ExitCode : {result.ExitCode}");
 
-			var coverageTableActiveSortColor = ReportColours.CoverageTableActiveSortColour.ToJsColour();
-			var coverageTableInactiveSortColor = ReportColours.CoverageTableInactiveSortColour.ToJsColour();
-			downActiveBase64ReportImage.FillSvg(styleRules, coverageTableActiveSortColor);
-			upActiveBase64ReportImage.FillSvg(styleRules, coverageTableActiveSortColor);
-			downInactiveBase64ReportImage.FillSvg(styleRules, coverageTableInactiveSortColor);
+			//		throw new Exception(result.Output);
+			//	}
 
-			var linkColor = jsReportColours.LinkColour;
-			var linkRule = styleRules.First(r => r.SelectorText == "a");
-			var linkHoverRule = styleRules.First(r => r.SelectorText == "a:hover");
+			//	logger.Log($"{title} [reporttype:{outputReportType}]", result.Output);
 
-			linkRule.Style.Color = linkColor;
-			linkRule.Style.Cursor = "pointer";
-			linkRule.Style.TextDecoration = "none";
+			//}
 
-			linkHoverRule.Style.Color = linkColor;
-			linkHoverRule.Style.Cursor = "pointer";
-			linkHoverRule.Style.TextDecoration = "none";
+			//var reportGeneratorResult = new ReportGeneratorResult { UnifiedHtml = null, UnifiedXmlFile = unifiedXmlFile };
 
-			var stringWriter = new StringWriter();
-			var formatter = new CompressedStyleFormatter();
-			stylesheet.ToCss(stringWriter, formatter);
-			var changedCss = stringWriter.ToString();
-			style.InnerHtml = changedCss;
+			//var startTime = DateTime.Now;
+			//LogCoverageProcess("Generating cobertura report");
+			//await run("Cobertura", string.Join(";", coverOutputFiles));
+			//var duration = DateTime.Now - startTime;
+
+			//var coberturaDurationMesage = $"Cobertura report generation duration - {duration}";
+			//LogCoverageProcess(coberturaDurationMesage); // result output includes duration for normal log
+
+			//startTime = DateTime.Now;
+			//LogCoverageProcess("Generating html report");
+			//await run("HtmlInline_AzurePipelines", unifiedXmlFile);
+			//duration = DateTime.Now - startTime;
+			//cancellationToken.ThrowIfCancellationRequested();
+			//var htmlReportDurationMessage = $"Html report generation duration - {duration}";
+			//LogCoverageProcess(htmlReportDurationMessage); // result output includes duration for normal log
+			//reportGeneratorResult.UnifiedHtml = fileUtil.ReadAllText(unifiedHtmlFile);
+
+			//return reportGeneratorResult;
 		}
 
 		private string GetStickyTableHead()
@@ -862,11 +846,6 @@ observer.observe(targetNode, config);
 
 		}
 
-		private string GetFontNameSize()
-        {
-			return $"{FontSize}{FontName}";
-		}
-
 		private string HideCyclomaticComplexityLink()
         {
 			return @"
@@ -877,678 +856,678 @@ risk-hotspots > div > table > thead > tr > th:last-of-type > a:last-of-type {
 
 		}
 
-		public string ProcessUnifiedHtml(string htmlForProcessing, string reportOutputFolder)
-		{
-			previousFontSizeName = GetFontNameSize();
-			unprocessedReport = htmlForProcessing;
-			previousReportOutputFolder = reportOutputFolder;
-			var previousLogMessages = $"[{string.Join(",",logs.Select(l => $"'{l}'"))}]";
-			var appOptions = appOptionsProvider.Get();
-			var namespacedClasses = appOptions.NamespacedClasses;
-			ReportColours = reportColoursProvider.GetColours();
-			return assemblyUtil.RunInAssemblyResolvingContext(() =>
-			{
-				var (cyclomaticThreshold, crapScoreThreshold, nPathThreshold) = HotspotThresholds();
-				var noRiskHotspotsHeader = "No risk hotspots that exceed options :";
-				var noRiskHotspotsCyclomaticMsg = $"Cyclomatic complexity : {cyclomaticThreshold}";
-				var noRiskHotspotsNpathMsg =$"NPath complexity      : {nPathThreshold}";
-				var noRiskHotspotsCrapMessage = $"Crap score            : {crapScoreThreshold}";
-				var doc = new HtmlDocument
-				{
-					OptionFixNestedTags = true,
-					OptionAutoCloseOnEnd = true
-				};
+		//public string ProcessUnifiedHtml(string htmlForProcessing, string reportOutputFolder)
+		//{
+		//	previousFontSizeName = GetFontNameSize();
+		//	unprocessedReport = htmlForProcessing;
+		//	previousReportOutputFolder = reportOutputFolder;
+		//	var previousLogMessages = $"[{string.Join(",",logs.Select(l => $"'{l}'"))}]";
+		//	var appOptions = appOptionsProvider.Get();
+		//	var namespacedClasses = appOptions.NamespacedClasses;
+		//	ReportColours = reportColoursProvider.GetColours();
+		//	return assemblyUtil.RunInAssemblyResolvingContext(() =>
+		//	{
+		//		var (cyclomaticThreshold, crapScoreThreshold, nPathThreshold) = HotspotThresholds();
+		//		var noRiskHotspotsHeader = "No risk hotspots that exceed options :";
+		//		var noRiskHotspotsCyclomaticMsg = $"Cyclomatic complexity : {cyclomaticThreshold}";
+		//		var noRiskHotspotsNpathMsg =$"NPath complexity      : {nPathThreshold}";
+		//		var noRiskHotspotsCrapMessage = $"Crap score            : {crapScoreThreshold}";
+		//		var doc = new HtmlDocument
+		//		{
+		//			OptionFixNestedTags = true,
+		//			OptionAutoCloseOnEnd = true
+		//		};
 
 
-				doc.LoadHtml(htmlForProcessing);
-				SetInitialTheme(doc);
-				htmlForProcessing = null;
+		//		doc.LoadHtml(htmlForProcessing);
+		//		SetInitialTheme(doc);
+		//		htmlForProcessing = null;
 
-				doc.DocumentNode.QuerySelectorAll(".footer").ToList().ForEach(x => x.SetAttributeValue("style", "display:none"));
-				doc.DocumentNode.QuerySelectorAll(".container").ToList().ForEach(x => x.SetAttributeValue("style", "margin:0;padding:25px;border:0"));
-				doc.DocumentNode.QuerySelectorAll(".containerleft").ToList().ForEach(x => x.SetAttributeValue("style", "margin:0;padding:0;border:0"));
-				doc.DocumentNode.QuerySelectorAll(".containerleft > h1 , .containerleft > p").ToList().ForEach(x => x.SetAttributeValue("style", "display:none"));
+		//		doc.DocumentNode.QuerySelectorAll(".footer").ToList().ForEach(x => x.SetAttributeValue("style", "display:none"));
+		//		doc.DocumentNode.QuerySelectorAll(".container").ToList().ForEach(x => x.SetAttributeValue("style", "margin:0;padding:25px;border:0"));
+		//		doc.DocumentNode.QuerySelectorAll(".containerleft").ToList().ForEach(x => x.SetAttributeValue("style", "margin:0;padding:0;border:0"));
+		//		doc.DocumentNode.QuerySelectorAll(".containerleft > h1 , .containerleft > p").ToList().ForEach(x => x.SetAttributeValue("style", "display:none"));
 
-				// DOM changes
+		//		// DOM changes
 
-				HideRowsFromOverviewTable(doc);
+		//		HideRowsFromOverviewTable(doc);
 				
 
-				// TEXT changes
-				var assemblyClassDelimiter = "!";
+		//		// TEXT changes
+		//		var assemblyClassDelimiter = "!";
 
-				var outerHtml = doc.DocumentNode.OuterHtml;
-				var htmlSb = new StringBuilder(outerHtml);
-				FixGroupingMax(htmlSb);
-				FixCollapse(htmlSb);
+		//		var outerHtml = doc.DocumentNode.OuterHtml;
+		//		var htmlSb = new StringBuilder(outerHtml);
+		//		FixGroupingMax(htmlSb);
+		//		FixCollapse(htmlSb);
 
-				var assembliesSearch = "var assemblies = [";
-				var startIndex = outerHtml.IndexOf(assembliesSearch) + assembliesSearch.Length - 1;
-				var endIndex = outerHtml.IndexOf("var historicCoverageExecutionTimes");
-				var assembliesToReplace = outerHtml.Substring(startIndex, endIndex - startIndex);
-				endIndex = assembliesToReplace.LastIndexOf(']');
-				assembliesToReplace = assembliesToReplace.Substring(0, endIndex + 1);
+		//		var assembliesSearch = "var assemblies = [";
+		//		var startIndex = outerHtml.IndexOf(assembliesSearch) + assembliesSearch.Length - 1;
+		//		var endIndex = outerHtml.IndexOf("var historicCoverageExecutionTimes");
+		//		var assembliesToReplace = outerHtml.Substring(startIndex, endIndex - startIndex);
+		//		endIndex = assembliesToReplace.LastIndexOf(']');
+		//		assembliesToReplace = assembliesToReplace.Substring(0, endIndex + 1);
 
-				var assemblies = JArray.Parse(assembliesToReplace);
-				var groupingLevel = 0;
-				foreach (JObject assembly in assemblies)
-				{
-					var assemblyName = assembly["name"];
-					var classes = assembly["classes"] as JArray;
+		//		var assemblies = JArray.Parse(assembliesToReplace);
+		//		var groupingLevel = 0;
+		//		foreach (JObject assembly in assemblies)
+		//		{
+		//			var assemblyName = assembly["name"];
+		//			var classes = assembly["classes"] as JArray;
 
-					var autoGeneratedRemovals = new List<JObject>();
-					foreach (JObject @class in classes)
-					{
-						var className = @class["name"].ToString();
-						if (className == "AutoGeneratedProgram")
-						{
-							autoGeneratedRemovals.Add(@class);
-						}
-						else
-						{
-							var namespaces = className.Split('.').Length - 1;
-							if (namespaces > groupingLevel)
-							{
-								groupingLevel = namespaces;
-							}
-							if (!namespacedClasses)
-							{
-								// simplify name
-								var lastIndexOfDotInName = className.LastIndexOf('.');
-								if (lastIndexOfDotInName != -1) @class["name"] = className.Substring(lastIndexOfDotInName).Trim('.');
-							}
-							//mark with # and add the assembly name
-							var rp = @class["rp"].ToString();
-							var htmlIndex = rp.IndexOf(".html");
-							@class["rp"] = $"#{assemblyName}{assemblyClassDelimiter}{className + ".html" + rp.Substring(htmlIndex + 5)}";
-						}
+		//			var autoGeneratedRemovals = new List<JObject>();
+		//			foreach (JObject @class in classes)
+		//			{
+		//				var className = @class["name"].ToString();
+		//				if (className == "AutoGeneratedProgram")
+		//				{
+		//					autoGeneratedRemovals.Add(@class);
+		//				}
+		//				else
+		//				{
+		//					var namespaces = className.Split('.').Length - 1;
+		//					if (namespaces > groupingLevel)
+		//					{
+		//						groupingLevel = namespaces;
+		//					}
+		//					if (!namespacedClasses)
+		//					{
+		//						// simplify name
+		//						var lastIndexOfDotInName = className.LastIndexOf('.');
+		//						if (lastIndexOfDotInName != -1) @class["name"] = className.Substring(lastIndexOfDotInName).Trim('.');
+		//					}
+		//					//mark with # and add the assembly name
+		//					var rp = @class["rp"].ToString();
+		//					var htmlIndex = rp.IndexOf(".html");
+		//					@class["rp"] = $"#{assemblyName}{assemblyClassDelimiter}{className + ".html" + rp.Substring(htmlIndex + 5)}";
+		//				}
 
-					}
-					foreach (var autoGeneratedRemoval in autoGeneratedRemovals)
-					{
-						classes.Remove(autoGeneratedRemoval);
-					}
+		//			}
+		//			foreach (var autoGeneratedRemoval in autoGeneratedRemovals)
+		//			{
+		//				classes.Remove(autoGeneratedRemoval);
+		//			}
 
-				}
-				var assembliesReplaced = assemblies.ToString();
-				htmlSb.Replace(assembliesToReplace, assembliesReplaced);
+		//		}
+		//		var assembliesReplaced = assemblies.ToString();
+		//		htmlSb.Replace(assembliesToReplace, assembliesReplaced);
 
-				//is this even present if there are no riskhotspots
-				var riskHotspotsSearch = "var riskHotspots = [";
-				var rhStartIndex = outerHtml.IndexOf(riskHotspotsSearch) + riskHotspotsSearch.Length - 1;
-				var rhEndIndex = outerHtml.IndexOf("var branchCoverageAvailable");
-				var rhToReplace = outerHtml.Substring(rhStartIndex, rhEndIndex - rhStartIndex);
-				rhEndIndex = rhToReplace.LastIndexOf(']');
-				rhToReplace = rhToReplace.Substring(0, rhEndIndex + 1);
+		//		//is this even present if there are no riskhotspots
+		//		var riskHotspotsSearch = "var riskHotspots = [";
+		//		var rhStartIndex = outerHtml.IndexOf(riskHotspotsSearch) + riskHotspotsSearch.Length - 1;
+		//		var rhEndIndex = outerHtml.IndexOf("var branchCoverageAvailable");
+		//		var rhToReplace = outerHtml.Substring(rhStartIndex, rhEndIndex - rhStartIndex);
+		//		rhEndIndex = rhToReplace.LastIndexOf(']');
+		//		rhToReplace = rhToReplace.Substring(0, rhEndIndex + 1);
 
-				var riskHotspots = JArray.Parse(rhToReplace);
-				foreach (JObject riskHotspot in riskHotspots)
-				{
-					var assembly = riskHotspot["assembly"].ToString();
-					var qualifiedClassName = riskHotspot["class"].ToString();
-					if (!namespacedClasses)
-					{
-						// simplify name
-						var lastIndexOfDotInName = qualifiedClassName.LastIndexOf('.');
-						if (lastIndexOfDotInName != -1) riskHotspot["class"] = qualifiedClassName.Substring(lastIndexOfDotInName).Trim('.');
-					}
-					var newReportPath = $"#{assembly}{assemblyClassDelimiter}{qualifiedClassName}.html";
-					riskHotspot["reportPath"] = newReportPath;
-				}
-				var riskHotspotsReplaced = riskHotspots.ToString();
-				htmlSb.Replace(rhToReplace, riskHotspotsReplaced);
+		//		var riskHotspots = JArray.Parse(rhToReplace);
+		//		foreach (JObject riskHotspot in riskHotspots)
+		//		{
+		//			var assembly = riskHotspot["assembly"].ToString();
+		//			var qualifiedClassName = riskHotspot["class"].ToString();
+		//			if (!namespacedClasses)
+		//			{
+		//				// simplify name
+		//				var lastIndexOfDotInName = qualifiedClassName.LastIndexOf('.');
+		//				if (lastIndexOfDotInName != -1) riskHotspot["class"] = qualifiedClassName.Substring(lastIndexOfDotInName).Trim('.');
+		//			}
+		//			var newReportPath = $"#{assembly}{assemblyClassDelimiter}{qualifiedClassName}.html";
+		//			riskHotspot["reportPath"] = newReportPath;
+		//		}
+		//		var riskHotspotsReplaced = riskHotspots.ToString();
+		//		htmlSb.Replace(rhToReplace, riskHotspotsReplaced);
 
-				htmlSb.Replace(".table-fixed", ".table-fixed-ignore-me");
+		//		htmlSb.Replace(".table-fixed", ".table-fixed-ignore-me");
 
-				var fontColour = jsReportColours.FontColour;
-				var scrollbarThumbColour = jsReportColours.ScrollBarThumbColour;
-				var sliderThumbColour = jsReportColours.SliderThumbColour;
-				htmlSb.Replace("</head>", $@"
-				<style id=""fccStyle1"" type=""text/css"">
-					*, body {{ font-family:{FontName};font-size: {FontSize}; color: {fontColour}}}
-					button {{ cursor:pointer; padding:10px; color: {jsReportColours.ButtonTextColour}; background:{jsReportColours.ButtonColour}; border-color:{jsReportColours.ButtonBorderColour}}}
-					button:hover {{ color : {jsReportColours.ButtonHoverTextColour}; background:{jsReportColours.ButtonHoverColour}; border-color:{jsReportColours.ButtonBorderHoverColour}}}
-					button:active {{ color : {jsReportColours.ButtonPressedTextColour}; background:{jsReportColours.ButtonPressedColour}; border-color:{jsReportColours.ButtonBorderPressedColour}}}
-					table td {{ white-space: nowrap; }}
-					table.coverage {{ width:150px;height:13px }}
-					body {{ padding-left:3px;padding-right:3px;padding-bottom:3px }}
-					{HideCyclomaticComplexityLink()}
-					body {{ -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none }}
-					table.overview th, table.overview td {{ white-space: nowrap; word-break: normal; padding-left:10px;padding-right:10px; }}
-					{GetGroupingCss(namespacedClasses)}
-					table,tr,th,td {{ border: 1px solid;}}
-					input[type=text] {{ color:{jsReportColours.TextBoxTextColour}; background-color:{jsReportColours.TextBoxColour};border-color:{jsReportColours.TextBoxBorderColour} }}
-					select {{ color:{jsReportColours.ComboBoxTextColour}; background-color:{jsReportColours.ComboBoxColour};border-color:{jsReportColours.ComboBoxBorderColour} }}
-                    body, html {{ scrollbar-arrow-color:{jsReportColours.ScrollBarArrowColour};scrollbar-track-color:{jsReportColours.ScrollBarTrackColour};scrollbar-face-color:{scrollbarThumbColour};scrollbar-shadow-color:{scrollbarThumbColour};scrollbar-highlight-color:{scrollbarThumbColour};scrollbar-3dlight-color:{scrollbarThumbColour};scrollbar-darkshadow-color:{scrollbarThumbColour} }}				
-					input[type=range]::-ms-thumb {{
-					  background: {sliderThumbColour};
-					  border: {sliderThumbColour}
-					}}
-					input[type=range]::-ms-track {{
-						color: transparent;
-						border-color: transparent;
-						background: transparent;
-					}}
+		//		var fontColour = jsReportColours.FontColour;
+		//		var scrollbarThumbColour = jsReportColours.ScrollBarThumbColour;
+		//		var sliderThumbColour = jsReportColours.SliderThumbColour;
+		//		htmlSb.Replace("</head>", $@"
+		//		<style id=""fccStyle1"" type=""text/css"">
+		//			*, body {{ font-family:{FontName};font-size: {FontSize}; color: {fontColour}}}
+		//			button {{ cursor:pointer; padding:10px; color: {jsReportColours.ButtonTextColour}; background:{jsReportColours.ButtonColour}; border-color:{jsReportColours.ButtonBorderColour}}}
+		//			button:hover {{ color : {jsReportColours.ButtonHoverTextColour}; background:{jsReportColours.ButtonHoverColour}; border-color:{jsReportColours.ButtonBorderHoverColour}}}
+		//			button:active {{ color : {jsReportColours.ButtonPressedTextColour}; background:{jsReportColours.ButtonPressedColour}; border-color:{jsReportColours.ButtonBorderPressedColour}}}
+		//			table td {{ white-space: nowrap; }}
+		//			table.coverage {{ width:150px;height:13px }}
+		//			body {{ padding-left:3px;padding-right:3px;padding-bottom:3px }}
+		//			{HideCyclomaticComplexityLink()}
+		//			body {{ -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none }}
+		//			table.overview th, table.overview td {{ white-space: nowrap; word-break: normal; padding-left:10px;padding-right:10px; }}
+		//			{GetGroupingCss(namespacedClasses)}
+		//			table,tr,th,td {{ border: 1px solid;}}
+		//			input[type=text] {{ color:{jsReportColours.TextBoxTextColour}; background-color:{jsReportColours.TextBoxColour};border-color:{jsReportColours.TextBoxBorderColour} }}
+		//			select {{ color:{jsReportColours.ComboBoxTextColour}; background-color:{jsReportColours.ComboBoxColour};border-color:{jsReportColours.ComboBoxBorderColour} }}
+  //                  body, html {{ scrollbar-arrow-color:{jsReportColours.ScrollBarArrowColour};scrollbar-track-color:{jsReportColours.ScrollBarTrackColour};scrollbar-face-color:{scrollbarThumbColour};scrollbar-shadow-color:{scrollbarThumbColour};scrollbar-highlight-color:{scrollbarThumbColour};scrollbar-3dlight-color:{scrollbarThumbColour};scrollbar-darkshadow-color:{scrollbarThumbColour} }}				
+		//			input[type=range]::-ms-thumb {{
+		//			  background: {sliderThumbColour};
+		//			  border: {sliderThumbColour}
+		//			}}
+		//			input[type=range]::-ms-track {{
+		//				color: transparent;
+		//				border-color: transparent;
+		//				background: transparent;
+		//			}}
 					
-					input[type=range]::-ms-fill-lower {{
-					  background: {jsReportColours.SliderLeftColour};  
-					}}
-					input[type=range]::-ms-fill-upper {{
-					  background: {jsReportColours.SliderRightColour}; 
-					}}
-				</style>
-				</head>
-			");
+		//			input[type=range]::-ms-fill-lower {{
+		//			  background: {jsReportColours.SliderLeftColour};  
+		//			}}
+		//			input[type=range]::-ms-fill-upper {{
+		//			  background: {jsReportColours.SliderRightColour}; 
+		//			}}
+		//		</style>
+		//		</head>
+		//	");
 
-				htmlSb.Replace("</body>", $@"
-					<script type=""text/javascript"">
-						{GetStickyTableHead()}
-						{HackGroupingToAllowAll(groupingLevel)}
-						{ObserveAndHideFullyCovered()}
-						function getRuleBySelector(cssRules,selector){{
-						for(var i=0;i<cssRules.length;i++){{
-							if(cssRules[i].selectorText == selector){{
-								return cssRules[i];
-							}}
-						}}
-					}}
-					function getStyleBySelector(cssRules,selector){{
-						return getRuleBySelector(cssRules,selector).style;
-					}}
+		//		htmlSb.Replace("</body>", $@"
+		//			<script type=""text/javascript"">
+		//				{GetStickyTableHead()}
+		//				{HackGroupingToAllowAll(groupingLevel)}
+		//				{ObserveAndHideFullyCovered()}
+		//				function getRuleBySelector(cssRules,selector){{
+		//				for(var i=0;i<cssRules.length;i++){{
+		//					if(cssRules[i].selectorText == selector){{
+		//						return cssRules[i];
+		//					}}
+		//				}}
+		//			}}
+		//			function getStyleBySelector(cssRules,selector){{
+		//				return getRuleBySelector(cssRules,selector).style;
+		//			}}
 
-					function getStyleSheetById(id){{
-						for(var i=0;i<document.styleSheets.length;i++){{
-							var styleSheet = document.styleSheets[i];
-							if(styleSheet.ownerNode && styleSheet.ownerNode.id == id){{
-								return styleSheet;
-							}}
-						}}
-					}}
-					function {FontChangedJSFunctionName}(fontNameAndSize){{
-						var parts = fontNameAndSize.split(':');
-						var fccStyleSheet1Rules = getStyleSheetById('fccStyle1').cssRules;
-						var generalStyle = getStyleBySelector(fccStyleSheet1Rules,'*, body');
-						generalStyle.setProperty('font-family',parts[0]);
-						generalStyle.setProperty('font-size',parts[1]);
-					}}
-					function {ThemeChangedJSFunctionName}(theme){{
-							var fccMediaStylesheet = getStyleSheetById('fccMediaStyle');	
-							var highContrastRule = fccMediaStylesheet.cssRules[0]
-							var highContrastRules = highContrastRule.cssRules
-							getStyleBySelector(highContrastRules,'table.coverage > td.gray').setProperty('background-color',theme.{nameof(JsThemeStyling.GrayCoverageColour)});
+		//			function getStyleSheetById(id){{
+		//				for(var i=0;i<document.styleSheets.length;i++){{
+		//					var styleSheet = document.styleSheets[i];
+		//					if(styleSheet.ownerNode && styleSheet.ownerNode.id == id){{
+		//						return styleSheet;
+		//					}}
+		//				}}
+		//			}}
+		//			function {FontChangedJSFunctionName}(fontNameAndSize){{
+		//				var parts = fontNameAndSize.split(':');
+		//				var fccStyleSheet1Rules = getStyleSheetById('fccStyle1').cssRules;
+		//				var generalStyle = getStyleBySelector(fccStyleSheet1Rules,'*, body');
+		//				generalStyle.setProperty('font-family',parts[0]);
+		//				generalStyle.setProperty('font-size',parts[1]);
+		//			}}
+		//			function {ThemeChangedJSFunctionName}(theme){{
+		//					var fccMediaStylesheet = getStyleSheetById('fccMediaStyle');	
+		//					var highContrastRule = fccMediaStylesheet.cssRules[0]
+		//					var highContrastRules = highContrastRule.cssRules
+		//					getStyleBySelector(highContrastRules,'table.coverage > td.gray').setProperty('background-color',theme.{nameof(JsThemeStyling.GrayCoverageColour)});
 
-							var fccStyleSheet1Rules = getStyleSheetById('fccStyle1').cssRules;		
-							var buttonStyle = getStyleBySelector(fccStyleSheet1Rules,'button');
-							buttonStyle.setProperty('color',theme.{nameof(JsThemeStyling.ButtonTextColour)});
-							buttonStyle.setProperty('background',theme.{nameof(JsThemeStyling.ButtonColour)});
-							buttonStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ButtonBorderColour)});
-							var buttonHoverStyle = getStyleBySelector(fccStyleSheet1Rules,'button:hover');
-							buttonHoverStyle.setProperty('color',theme.{nameof(JsThemeStyling.ButtonHoverTextColour)});
-							buttonHoverStyle.setProperty('background',theme.{nameof(JsThemeStyling.ButtonHoverColour)});
-							buttonHoverStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ButtonBorderHoverColour)});
-							var buttonPressedStyle = getStyleBySelector(fccStyleSheet1Rules,'button:active');
-							buttonPressedStyle.setProperty('color',theme.{nameof(JsThemeStyling.ButtonPressedTextColour)});
-							buttonPressedStyle.setProperty('background',theme.{nameof(JsThemeStyling.ButtonPressedColour)});
-							buttonPressedStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ButtonBorderPressedColour)});
+		//					var fccStyleSheet1Rules = getStyleSheetById('fccStyle1').cssRules;		
+		//					var buttonStyle = getStyleBySelector(fccStyleSheet1Rules,'button');
+		//					buttonStyle.setProperty('color',theme.{nameof(JsThemeStyling.ButtonTextColour)});
+		//					buttonStyle.setProperty('background',theme.{nameof(JsThemeStyling.ButtonColour)});
+		//					buttonStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ButtonBorderColour)});
+		//					var buttonHoverStyle = getStyleBySelector(fccStyleSheet1Rules,'button:hover');
+		//					buttonHoverStyle.setProperty('color',theme.{nameof(JsThemeStyling.ButtonHoverTextColour)});
+		//					buttonHoverStyle.setProperty('background',theme.{nameof(JsThemeStyling.ButtonHoverColour)});
+		//					buttonHoverStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ButtonBorderHoverColour)});
+		//					var buttonPressedStyle = getStyleBySelector(fccStyleSheet1Rules,'button:active');
+		//					buttonPressedStyle.setProperty('color',theme.{nameof(JsThemeStyling.ButtonPressedTextColour)});
+		//					buttonPressedStyle.setProperty('background',theme.{nameof(JsThemeStyling.ButtonPressedColour)});
+		//					buttonPressedStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ButtonBorderPressedColour)});
 
 
-							var rangeInputFillLower = getStyleBySelector(fccStyleSheet1Rules, 'input[type=range]::-ms-fill-lower');
-							rangeInputFillLower.setProperty('background',theme.{nameof(JsThemeStyling.SliderLeftColour)});
-							var rangeInputFillUpper = getStyleBySelector(fccStyleSheet1Rules, 'input[type=range]::-ms-fill-upper');
-							rangeInputFillUpper.setProperty('background',theme.{nameof(JsThemeStyling.SliderRightColour)});
-							var rangeInputThumb = getStyleBySelector(fccStyleSheet1Rules, 'input[type=range]::-ms-thumb');
-							rangeInputThumb.setProperty('background',theme.{nameof(JsThemeStyling.SliderThumbColour)});
-							rangeInputThumb.setProperty('border',theme.{nameof(JsThemeStyling.SliderThumbColour)});
+		//					var rangeInputFillLower = getStyleBySelector(fccStyleSheet1Rules, 'input[type=range]::-ms-fill-lower');
+		//					rangeInputFillLower.setProperty('background',theme.{nameof(JsThemeStyling.SliderLeftColour)});
+		//					var rangeInputFillUpper = getStyleBySelector(fccStyleSheet1Rules, 'input[type=range]::-ms-fill-upper');
+		//					rangeInputFillUpper.setProperty('background',theme.{nameof(JsThemeStyling.SliderRightColour)});
+		//					var rangeInputThumb = getStyleBySelector(fccStyleSheet1Rules, 'input[type=range]::-ms-thumb');
+		//					rangeInputThumb.setProperty('background',theme.{nameof(JsThemeStyling.SliderThumbColour)});
+		//					rangeInputThumb.setProperty('border',theme.{nameof(JsThemeStyling.SliderThumbColour)});
 
-							var scrollBarStyle = getStyleBySelector(fccStyleSheet1Rules,'body, html');
-							scrollBarStyle.setProperty('scrollbar-arrow-color',theme.{nameof(JsThemeStyling.ScrollBarArrowColour)});
-							scrollBarStyle.setProperty('scrollbar-track-color',theme.{nameof(JsThemeStyling.ScrollBarTrackColour)});
-							scrollBarStyle.setProperty('scrollbar-face-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
-							scrollBarStyle.setProperty('scrollbar-shadow-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
-							scrollBarStyle.setProperty('scrollbar-highlight-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
-							scrollBarStyle.setProperty('scrollbar-3dlight-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
-							scrollBarStyle.setProperty('scrollbar-darkshadow-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
+		//					var scrollBarStyle = getStyleBySelector(fccStyleSheet1Rules,'body, html');
+		//					scrollBarStyle.setProperty('scrollbar-arrow-color',theme.{nameof(JsThemeStyling.ScrollBarArrowColour)});
+		//					scrollBarStyle.setProperty('scrollbar-track-color',theme.{nameof(JsThemeStyling.ScrollBarTrackColour)});
+		//					scrollBarStyle.setProperty('scrollbar-face-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
+		//					scrollBarStyle.setProperty('scrollbar-shadow-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
+		//					scrollBarStyle.setProperty('scrollbar-highlight-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
+		//					scrollBarStyle.setProperty('scrollbar-3dlight-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
+		//					scrollBarStyle.setProperty('scrollbar-darkshadow-color',theme.{nameof(JsThemeStyling.ScrollBarThumbColour)});
 
-							getStyleBySelector(fccStyleSheet1Rules,'*, body').setProperty('color',theme.{nameof(JsThemeStyling.FontColour)});
-							var textStyle = getStyleBySelector(fccStyleSheet1Rules,'input[type=text]');
-							textStyle.setProperty('color',theme.{nameof(JsThemeStyling.TextBoxTextColour)});			
-							textStyle.setProperty('background-color',theme.{nameof(JsThemeStyling.TextBoxColour)});								
-							textStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.TextBoxBorderColour)});
+		//					getStyleBySelector(fccStyleSheet1Rules,'*, body').setProperty('color',theme.{nameof(JsThemeStyling.FontColour)});
+		//					var textStyle = getStyleBySelector(fccStyleSheet1Rules,'input[type=text]');
+		//					textStyle.setProperty('color',theme.{nameof(JsThemeStyling.TextBoxTextColour)});			
+		//					textStyle.setProperty('background-color',theme.{nameof(JsThemeStyling.TextBoxColour)});								
+		//					textStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.TextBoxBorderColour)});
 
-							var comboStyle = getStyleBySelector(fccStyleSheet1Rules,'select');
-							comboStyle.setProperty('color',theme.{nameof(JsThemeStyling.ComboBoxTextColour)});		
-							comboStyle.setProperty('background-color',theme.{nameof(JsThemeStyling.ComboBoxColour)});	
-							comboStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ComboBoxBorderColour)});
+		//					var comboStyle = getStyleBySelector(fccStyleSheet1Rules,'select');
+		//					comboStyle.setProperty('color',theme.{nameof(JsThemeStyling.ComboBoxTextColour)});		
+		//					comboStyle.setProperty('background-color',theme.{nameof(JsThemeStyling.ComboBoxColour)});	
+		//					comboStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.ComboBoxBorderColour)});
 
-							var fccStyleSheet2Rules = getStyleSheetById('fccStyle2').cssRules;	
-							getStyleBySelector(fccStyleSheet2Rules,'#divHeader').setProperty('background-color',theme.{nameof(JsThemeStyling.DivHeaderBackgroundColour)});							
-							var headerTabsStyle = getStyleBySelector(fccStyleSheet2Rules,'table#headerTabs td');
-							headerTabsStyle.setProperty('color',theme.{nameof(JsThemeStyling.HeaderFontColour)});
-							headerTabsStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.HeaderBorderColour)});
-							getStyleBySelector(fccStyleSheet2Rules,'table#headerTabs td.tab').setProperty('background-color',theme.{nameof(JsThemeStyling.TabBackgroundColour)});		
+		//					var fccStyleSheet2Rules = getStyleSheetById('fccStyle2').cssRules;	
+		//					getStyleBySelector(fccStyleSheet2Rules,'#divHeader').setProperty('background-color',theme.{nameof(JsThemeStyling.DivHeaderBackgroundColour)});							
+		//					var headerTabsStyle = getStyleBySelector(fccStyleSheet2Rules,'table#headerTabs td');
+		//					headerTabsStyle.setProperty('color',theme.{nameof(JsThemeStyling.HeaderFontColour)});
+		//					headerTabsStyle.setProperty('border-color',theme.{nameof(JsThemeStyling.HeaderBorderColour)});
+		//					getStyleBySelector(fccStyleSheet2Rules,'table#headerTabs td.tab').setProperty('background-color',theme.{nameof(JsThemeStyling.TabBackgroundColour)});		
 
-							var mainStyle = document.styleSheets[0];
-							var mainRules = mainStyle.cssRules;
+		//					var mainStyle = document.styleSheets[0];
+		//					var mainRules = mainStyle.cssRules;
 
-							getStyleBySelector(mainRules,'.gray').setProperty('background-color',theme.{nameof(JsThemeStyling.GrayCoverageColour)});
+		//					getStyleBySelector(mainRules,'.gray').setProperty('background-color',theme.{nameof(JsThemeStyling.GrayCoverageColour)});
 
-							getStyleBySelector(mainRules,'html').setProperty('background-color',theme.{nameof(JsThemeStyling.BackgroundColour)});
-							getStyleBySelector(mainRules,'.container').setProperty('background-color',theme.{nameof(JsThemeStyling.BackgroundColour)});
+		//					getStyleBySelector(mainRules,'html').setProperty('background-color',theme.{nameof(JsThemeStyling.BackgroundColour)});
+		//					getStyleBySelector(mainRules,'.container').setProperty('background-color',theme.{nameof(JsThemeStyling.BackgroundColour)});
 
-							var overviewTableBorder = '1px solid ' + theme.{nameof(JsThemeStyling.TableBorderColour)};
-							var overviewStyle = getStyleBySelector(mainRules,'.overview');
-							overviewStyle.setProperty('border',overviewTableBorder);
-							var overviewThStyle = getStyleBySelector(mainRules,'.overview th');
-							overviewThStyle.setProperty('background-color',theme.{nameof(JsThemeStyling.BackgroundColour)});
-							overviewThStyle.setProperty('border',overviewTableBorder);
-							var overviewTdStyle = getStyleBySelector(mainRules,'.overview td');
-							overviewTdStyle.setProperty('border',overviewTableBorder);
+		//					var overviewTableBorder = '1px solid ' + theme.{nameof(JsThemeStyling.TableBorderColour)};
+		//					var overviewStyle = getStyleBySelector(mainRules,'.overview');
+		//					overviewStyle.setProperty('border',overviewTableBorder);
+		//					var overviewThStyle = getStyleBySelector(mainRules,'.overview th');
+		//					overviewThStyle.setProperty('background-color',theme.{nameof(JsThemeStyling.BackgroundColour)});
+		//					overviewThStyle.setProperty('border',overviewTableBorder);
+		//					var overviewTdStyle = getStyleBySelector(mainRules,'.overview td');
+		//					overviewTdStyle.setProperty('border',overviewTableBorder);
 
-							var overviewHeaderLinksStyle = getStyleBySelector(mainRules,'.overview th a');
-							overviewHeaderLinksStyle.setProperty('color',theme.{nameof(JsThemeStyling.CoverageTableHeaderFontColour)});
+		//					var overviewHeaderLinksStyle = getStyleBySelector(mainRules,'.overview th a');
+		//					overviewHeaderLinksStyle.setProperty('color',theme.{nameof(JsThemeStyling.CoverageTableHeaderFontColour)});
 
-							var overviewTrHoverStyle = getStyleBySelector(mainRules,'.overview tr:hover');
-							overviewTrHoverStyle.setProperty('background',theme.{nameof(JsThemeStyling.CoverageTableRowHoverBackgroundColour)});
+		//					var overviewTrHoverStyle = getStyleBySelector(mainRules,'.overview tr:hover');
+		//					overviewTrHoverStyle.setProperty('background',theme.{nameof(JsThemeStyling.CoverageTableRowHoverBackgroundColour)});
 
-							var linkStyle = getStyleBySelector(mainRules,'a');
-							var linkHoverStyle = getStyleBySelector(mainRules,'a:hover');
-							linkStyle.setProperty('color',theme.{nameof(JsThemeStyling.LinkColour)});
-							linkHoverStyle.setProperty('color',theme.{nameof(JsThemeStyling.LinkColour)});
+		//					var linkStyle = getStyleBySelector(mainRules,'a');
+		//					var linkHoverStyle = getStyleBySelector(mainRules,'a:hover');
+		//					linkStyle.setProperty('color',theme.{nameof(JsThemeStyling.LinkColour)});
+		//					linkHoverStyle.setProperty('color',theme.{nameof(JsThemeStyling.LinkColour)});
 
-							var iconPlusStyle = getStyleBySelector(mainRules,'.icon-plus');
-							iconPlusStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.PlusBase64)});
-							var iconMinusStyle = getStyleBySelector(mainRules,'.icon-minus');
-							iconMinusStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.MinusBase64)});
-							var iconDownActiveStyle = getStyleBySelector(mainRules,'.icon-down-dir_active');
-							iconDownActiveStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.DownActiveBase64)});
-							var iconDownInactiveStyle = getStyleBySelector(mainRules,'.icon-down-dir');
-							iconDownInactiveStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.DownInactiveBase64)});
-							var iconUpActiveStyle = getStyleBySelector(mainRules,'.icon-up-dir_active');
-							iconUpActiveStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.UpActiveBase64)});
-					}}
-						var htmlExtension = '.html';
+		//					var iconPlusStyle = getStyleBySelector(mainRules,'.icon-plus');
+		//					iconPlusStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.PlusBase64)});
+		//					var iconMinusStyle = getStyleBySelector(mainRules,'.icon-minus');
+		//					iconMinusStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.MinusBase64)});
+		//					var iconDownActiveStyle = getStyleBySelector(mainRules,'.icon-down-dir_active');
+		//					iconDownActiveStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.DownActiveBase64)});
+		//					var iconDownInactiveStyle = getStyleBySelector(mainRules,'.icon-down-dir');
+		//					iconDownInactiveStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.DownInactiveBase64)});
+		//					var iconUpActiveStyle = getStyleBySelector(mainRules,'.icon-up-dir_active');
+		//					iconUpActiveStyle.setProperty('background-image',theme.{nameof(JsThemeStyling.UpActiveBase64)});
+		//			}}
+		//				var htmlExtension = '.html';
 						
-						var eventListener = function (element, event, func) {{
-							if (element.addEventListener)
-								element.addEventListener(event, func, false);
-							else if (element.attachEvent)
-								element.attachEvent('on' + event, func);
-							else
-								element['on' + event] = func;
-						}};
+		//				var eventListener = function (element, event, func) {{
+		//					if (element.addEventListener)
+		//						element.addEventListener(event, func, false);
+		//					else if (element.attachEvent)
+		//						element.attachEvent('on' + event, func);
+		//					else
+		//						element['on' + event] = func;
+		//				}};
 
-						eventListener(window,'focus',function(){{window.external.{nameof(ScriptManager.DocumentFocused)}}});
+		//				eventListener(window,'focus',function(){{window.external.{nameof(ScriptManager.DocumentFocused)}}});
 
-						eventListener(document, 'click', function (event) {{
+		//				eventListener(document, 'click', function (event) {{
 							
-							var target = event.target;
-							if (target.tagName.toLowerCase() !== 'a') return;
+		//					var target = event.target;
+		//					if (target.tagName.toLowerCase() !== 'a') return;
 							
-							var href = target.getAttribute('href');
-							if (!href || href[0] !== '#') return;
+		//					var href = target.getAttribute('href');
+		//					if (!href || href[0] !== '#') return;
 							
-							var htmlExtensionIndex = href.toLowerCase().indexOf(htmlExtension);
-							if (htmlExtensionIndex === -1) return;
+		//					var htmlExtensionIndex = href.toLowerCase().indexOf(htmlExtension);
+		//					if (htmlExtensionIndex === -1) return;
 							
-							if (event.preventDefault) event.preventDefault()
-							if (event.stopPropagation) event.stopPropagation();
+		//					if (event.preventDefault) event.preventDefault()
+		//					if (event.stopPropagation) event.stopPropagation();
 							
-							var assemblyAndQualifiedClassName = href.substring(1, htmlExtensionIndex);
-							var delimiterIndex = assemblyAndQualifiedClassName.indexOf('{assemblyClassDelimiter}');
-							var assembly = assemblyAndQualifiedClassName.substring(0, delimiterIndex);
-							var qualifiedClassName = assemblyAndQualifiedClassName.substring(delimiterIndex + 1);
-							var fileLine = href.substring(htmlExtensionIndex + htmlExtension.length);
+		//					var assemblyAndQualifiedClassName = href.substring(1, htmlExtensionIndex);
+		//					var delimiterIndex = assemblyAndQualifiedClassName.indexOf('{assemblyClassDelimiter}');
+		//					var assembly = assemblyAndQualifiedClassName.substring(0, delimiterIndex);
+		//					var qualifiedClassName = assemblyAndQualifiedClassName.substring(delimiterIndex + 1);
+		//					var fileLine = href.substring(htmlExtensionIndex + htmlExtension.length);
 							
-							if (fileLine.indexOf('#') !== -1)
-								fileLine = fileLine.substring(fileLine.indexOf('#') + 1).replace('file', '').replace('line', '').split('_');
-							else
-								fileLine = ['-1', '0'];
+		//					if (fileLine.indexOf('#') !== -1)
+		//						fileLine = fileLine.substring(fileLine.indexOf('#') + 1).replace('file', '').replace('line', '').split('_');
+		//					else
+		//						fileLine = ['-1', '0'];
 							
-							window.external.OpenFile(assembly, qualifiedClassName, parseInt(fileLine[0]), parseInt(fileLine[1]));
+		//					window.external.OpenFile(assembly, qualifiedClassName, parseInt(fileLine[0]), parseInt(fileLine[1]));
 							
-							return false;
-						}});
+		//					return false;
+		//				}});
 							
-					</script>
-					</body>
-				");
+		//			</script>
+		//			</body>
+		//		");
 
-				htmlSb.Replace("</head>", $@"
-				<style type=""text/css"" id='fccMediaStyle'>
-					@media screen and (-ms-high-contrast:active){{
-						table.coverage > td.green{{ background-color: windowText }}
-						table.coverage > td.gray{{ 
-							background-color: {jsReportColours.GrayCoverageColour}
-						}}
+		//		htmlSb.Replace("</head>", $@"
+		//		<style type=""text/css"" id='fccMediaStyle'>
+		//			@media screen and (-ms-high-contrast:active){{
+		//				table.coverage > td.green{{ background-color: windowText }}
+		//				table.coverage > td.gray{{ 
+		//					background-color: {jsReportColours.GrayCoverageColour}
+		//				}}
 	
-					}}
-				</style>
+		//			}}
+		//		</style>
 
-				</head>
-			");
+		//		</head>
+		//	");
 
-				htmlSb.Replace("<body>", $@"
-					<body oncontextmenu='return false;'>
-					<style id='fccStyle2'>
-						#divHeader {{
-							background-color: {jsReportColours.DivHeaderBackgroundColour};
-						}}
-						table#headerTabs td {{
-							color: {jsReportColours.HeaderFontColour};
-							border-color: {jsReportColours.HeaderBorderColour};
-						}}	
-						table#headerTabs td {{
-							border-width:3px;
-							padding: 3px;
-							padding-left: 7px;
-							padding-right: 7px;
-						}}
-						table#headerTabs td.tab {{
-							cursor: pointer;
-							background-color : {jsReportColours.TabBackgroundColour};
-						}}
-						table#headerTabs td.active {{
-							border-bottom: 3px solid transparent;
-							font-weight: bolder;
-						}}
+		//		htmlSb.Replace("<body>", $@"
+		//			<body oncontextmenu='return false;'>
+		//			<style id='fccStyle2'>
+		//				#divHeader {{
+		//					background-color: {jsReportColours.DivHeaderBackgroundColour};
+		//				}}
+		//				table#headerTabs td {{
+		//					color: {jsReportColours.HeaderFontColour};
+		//					border-color: {jsReportColours.HeaderBorderColour};
+		//				}}	
+		//				table#headerTabs td {{
+		//					border-width:3px;
+		//					padding: 3px;
+		//					padding-left: 7px;
+		//					padding-right: 7px;
+		//				}}
+		//				table#headerTabs td.tab {{
+		//					cursor: pointer;
+		//					background-color : {jsReportColours.TabBackgroundColour};
+		//				}}
+		//				table#headerTabs td.active {{
+		//					border-bottom: 3px solid transparent;
+		//					font-weight: bolder;
+		//				}}
 					
-					</style>
-					<script>
-						var body = document.getElementsByTagName('body')[0];
-						body.style['padding-top'] = '50px';
+		//			</style>
+		//			<script>
+		//				var body = document.getElementsByTagName('body')[0];
+		//				body.style['padding-top'] = '50px';
 					
-						var tabs = [
-							{{ button: 'btnCoverage', content: 'coverage-info' }}, 
-							{{ button: 'btnSummary', content: 'table-fixed' }},
-							{{ button: 'btnRiskHotspots', content: 'risk-hotspots' }},
-							{{ button: 'btnCoverageLog', content: 'coverage-log' }},
-						];
+		//				var tabs = [
+		//					{{ button: 'btnCoverage', content: 'coverage-info' }}, 
+		//					{{ button: 'btnSummary', content: 'table-fixed' }},
+		//					{{ button: 'btnRiskHotspots', content: 'risk-hotspots' }},
+		//					{{ button: 'btnCoverageLog', content: 'coverage-log' }},
+		//				];
 
-						var riskHotspotsTable;
-						var riskHotspotsElement;
-						var addedFileIndexToRiskHotspots = false;
-						var addFileIndexToRiskHotspotsClassLink = function(){{
-						  if(!addedFileIndexToRiskHotspots){{
-							addedFileIndexToRiskHotspots = true;
-							var riskHotspotsElements = document.getElementsByTagName('risk-hotspots');
-							if(riskHotspotsElements.length == 1){{
-								riskHotspotsElement = riskHotspotsElements[0];
-								riskHotspotsTable = riskHotspotsElement.querySelector('table');
-								if(riskHotspotsTable){{
-									var rhBody = riskHotspotsTable.querySelector('tbody');
-									var rows = rhBody.rows;
-									for(var i=0;i<rows.length;i++){{
-									  var row = rows[i];
-									  var cells = row.cells;
-									  var classCell = cells[1];
-									  var classLink = classCell.children[0];
-									  var methodCell = cells[2];
-									  var classLink = classCell.children[0];
-									  var methodLink = methodCell.children[0];
-									  var methodHash = methodLink.hash;
-									  var methodHtmlIndex = methodHash.indexOf('.html');
-									  var fileLine = methodHash.substring(methodHtmlIndex + 6);
-									  var fileAndLine = fileLine.replace('file', '').replace('line', '').split('_');
-									  var file = fileAndLine[0];
-									  var line = fileAndLine[1];
-									  classLink.href = classLink.hash + '#file' + file + '_line0';
-									}}
-								}}
+		//				var riskHotspotsTable;
+		//				var riskHotspotsElement;
+		//				var addedFileIndexToRiskHotspots = false;
+		//				var addFileIndexToRiskHotspotsClassLink = function(){{
+		//				  if(!addedFileIndexToRiskHotspots){{
+		//					addedFileIndexToRiskHotspots = true;
+		//					var riskHotspotsElements = document.getElementsByTagName('risk-hotspots');
+		//					if(riskHotspotsElements.length == 1){{
+		//						riskHotspotsElement = riskHotspotsElements[0];
+		//						riskHotspotsTable = riskHotspotsElement.querySelector('table');
+		//						if(riskHotspotsTable){{
+		//							var rhBody = riskHotspotsTable.querySelector('tbody');
+		//							var rows = rhBody.rows;
+		//							for(var i=0;i<rows.length;i++){{
+		//							  var row = rows[i];
+		//							  var cells = row.cells;
+		//							  var classCell = cells[1];
+		//							  var classLink = classCell.children[0];
+		//							  var methodCell = cells[2];
+		//							  var classLink = classCell.children[0];
+		//							  var methodLink = methodCell.children[0];
+		//							  var methodHash = methodLink.hash;
+		//							  var methodHtmlIndex = methodHash.indexOf('.html');
+		//							  var fileLine = methodHash.substring(methodHtmlIndex + 6);
+		//							  var fileAndLine = fileLine.replace('file', '').replace('line', '').split('_');
+		//							  var file = fileAndLine[0];
+		//							  var line = fileAndLine[1];
+		//							  classLink.href = classLink.hash + '#file' + file + '_line0';
+		//							}}
+		//						}}
 								
-							}}
-							}}
-						}}
+		//					}}
+		//					}}
+		//				}}
 						
-						// necessary for WebBrowser 
-						function removeElement(element){{
-							element.parentNode.removeChild(element);
-						}}
+		//				// necessary for WebBrowser 
+		//				function removeElement(element){{
+		//					element.parentNode.removeChild(element);
+		//				}}
 
-						function insertAfter(newNode, existingNode) {{
-							existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-						}}
+		//				function insertAfter(newNode, existingNode) {{
+		//					existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+		//				}}
 
-						var noHotspotsMessage
-						var addNoRiskHotspotsMessageIfRequired = function(){{
-							if(riskHotspotsTable == null){{
-								noHotspotsMessage = document.createElement(""p"");
-								noHotspotsMessage.style.margin = ""0"";
-								var header = ""{noRiskHotspotsHeader}"";
-								var cyclomaticMessage = ""{noRiskHotspotsCyclomaticMsg}"";
-								var crapMessage =""{noRiskHotspotsCrapMessage}""; 
-								var nPathMessage = ""{noRiskHotspotsNpathMsg}"";
-								noHotspotsMessage.innerText = header + ""\n"" + cyclomaticMessage + ""\n"" + crapMessage + ""\n"" + nPathMessage;
+		//				var noHotspotsMessage
+		//				var addNoRiskHotspotsMessageIfRequired = function(){{
+		//					if(riskHotspotsTable == null){{
+		//						noHotspotsMessage = document.createElement(""p"");
+		//						noHotspotsMessage.style.margin = ""0"";
+		//						var header = ""{noRiskHotspotsHeader}"";
+		//						var cyclomaticMessage = ""{noRiskHotspotsCyclomaticMsg}"";
+		//						var crapMessage =""{noRiskHotspotsCrapMessage}""; 
+		//						var nPathMessage = ""{noRiskHotspotsNpathMsg}"";
+		//						noHotspotsMessage.innerText = header + ""\n"" + cyclomaticMessage + ""\n"" + crapMessage + ""\n"" + nPathMessage;
 
-								insertAfter(noHotspotsMessage, riskHotspotsElement);
-							}}
-						}}
+		//						insertAfter(noHotspotsMessage, riskHotspotsElement);
+		//					}}
+		//				}}
 
-						var removeNoRiskHotspotsMessage = function(){{
-							if(noHotspotsMessage){{
-								removeElement(noHotspotsMessage);
-								noHotspotsMessage = null;
-							}}
-						}}
+		//				var removeNoRiskHotspotsMessage = function(){{
+		//					if(noHotspotsMessage){{
+		//						removeElement(noHotspotsMessage);
+		//						noHotspotsMessage = null;
+		//					}}
+		//				}}
 
-						var openTab = function (tabIndex) {{
-							if(tabIndex==2){{
-								addFileIndexToRiskHotspotsClassLink();
-								addNoRiskHotspotsMessageIfRequired();
-							}}else{{
-								removeNoRiskHotspotsMessage();
-							}}
-							for (var i = 0; i < tabs.length; i++) {{
+		//				var openTab = function (tabIndex) {{
+		//					if(tabIndex==2){{
+		//						addFileIndexToRiskHotspotsClassLink();
+		//						addNoRiskHotspotsMessageIfRequired();
+		//					}}else{{
+		//						removeNoRiskHotspotsMessage();
+		//					}}
+		//					for (var i = 0; i < tabs.length; i++) {{
 							
-								var tab = tabs[i];
-								if (!tab) continue;
+		//						var tab = tabs[i];
+		//						if (!tab) continue;
 							
-								var button = document.getElementById(tab.button);
-								if (!button) continue;
+		//						var button = document.getElementById(tab.button);
+		//						if (!button) continue;
 							
-								var content = document.getElementsByTagName(tab.content)[0];
-								if (!content) content = document.getElementsByClassName(tab.content)[0];
-								if (!content) continue;
+		//						var content = document.getElementsByTagName(tab.content)[0];
+		//						if (!content) content = document.getElementsByClassName(tab.content)[0];
+		//						if (!content) continue;
 							
-								if (i == tabIndex) {{
-									if (button.className.indexOf('active') == -1) button.className += ' active';
-									content.style.display = 'block';
-								}} else {{
-									button.className = button.className.replace('active', '');
-									content.style.display = 'none';
-								}}
-							}}
-						}};
+		//						if (i == tabIndex) {{
+		//							if (button.className.indexOf('active') == -1) button.className += ' active';
+		//							content.style.display = 'block';
+		//						}} else {{
+		//							button.className = button.className.replace('active', '');
+		//							content.style.display = 'none';
+		//						}}
+		//					}}
+		//				}};
 					
-						window.addEventListener('load', function() {{
-							addCoverageLogElements();
-							openTab(0);
-						}});
+		//				window.addEventListener('load', function() {{
+		//					addCoverageLogElements();
+		//					openTab(0);
+		//				}});
 
-						var previousLogMessages = {previousLogMessages}
-						var coverageLogElement;
+		//				var previousLogMessages = {previousLogMessages}
+		//				var coverageLogElement;
 
-						function clearFCCWindowLogs(){{
-							coverageLogElement.textContent = '';
-							window.external.{nameof(ScriptManager.ClearFCCWindowLogs)}();
-						}}
+		//				function clearFCCWindowLogs(){{
+		//					coverageLogElement.textContent = '';
+		//					window.external.{nameof(ScriptManager.ClearFCCWindowLogs)}();
+		//				}}
 
-						function addCoverageLogElements(){{
-							var container = document.getElementsByClassName('container')[0];
-							var coverageLogContainer = document.createElement('div');
+		//				function addCoverageLogElements(){{
+		//					var container = document.getElementsByClassName('container')[0];
+		//					var coverageLogContainer = document.createElement('div');
 							
-							coverageLogContainer.className = 'coverage-log';
-							var clearFCCWindowLogsButton = document.createElement('button');
-							clearFCCWindowLogsButton.textContent = 'Clear';
-							clearFCCWindowLogsButton.onclick = clearFCCWindowLogs;
-							coverageLogContainer.appendChild(clearFCCWindowLogsButton);
-                            coverageLogElement = document.createElement('div');
-							coverageLogElement.style.marginTop = '25px';
-							for(var i =0 ; i< previousLogMessages.length;i++){{
-								addLogMessageElement(previousLogMessages[i]);
-							}}
-							coverageLogContainer.appendChild(coverageLogElement);
-							container.appendChild(coverageLogContainer);
-						}}
-						function addExternalMessage(logElement,message,matchLinkPart, externalFn){{
-							var matched = false;
-							var startIndex = message.indexOf(matchLinkPart);
-							if(startIndex != -1){{
-								matched = true;
-								if(startIndex != 0){{
-									var before = message.substring(0,startIndex);
-									var beforeEl = document.createElement('span');
-									beforeEl.innerText = before;
-									logElement.appendChild(beforeEl);
-								}}
-								var externalLink = document.createElement('a');
-								externalLink.innerText = matchLinkPart;
-								externalLink.href = '#';
-								externalLink.onclick = function(){{
-									window.external[externalFn]();
-									return false; 
-								}}
-								logElement.appendChild(externalLink);
-								var after = message.substring(startIndex + matchLinkPart.length);
-								if(after != ''){{
-									var afterEl = document.createElement('span');
-									afterEl.innerText = after;
-									logElement.appendChild(afterEl);
-								}}
-							}}
-							return matched;
-						}}
-						function addLogMessageElement(message){{
-							var logElement = document.createElement('div');
-							var matched = addExternalMessage(logElement,message,'FCC Output Pane','{nameof(ScriptManager.ShowFCCOutputPane)}');
-							if(!matched){{
-								matched = addExternalMessage(logElement,message,'View readme','{nameof(ScriptManager.ReadReadMe)}');
-							}}
-							if(!matched){{
-								logElement.innerText = message;
-							}}
+		//					coverageLogContainer.className = 'coverage-log';
+		//					var clearFCCWindowLogsButton = document.createElement('button');
+		//					clearFCCWindowLogsButton.textContent = 'Clear';
+		//					clearFCCWindowLogsButton.onclick = clearFCCWindowLogs;
+		//					coverageLogContainer.appendChild(clearFCCWindowLogsButton);
+  //                          coverageLogElement = document.createElement('div');
+		//					coverageLogElement.style.marginTop = '25px';
+		//					for(var i =0 ; i< previousLogMessages.length;i++){{
+		//						addLogMessageElement(previousLogMessages[i]);
+		//					}}
+		//					coverageLogContainer.appendChild(coverageLogElement);
+		//					container.appendChild(coverageLogContainer);
+		//				}}
+		//				function addExternalMessage(logElement,message,matchLinkPart, externalFn){{
+		//					var matched = false;
+		//					var startIndex = message.indexOf(matchLinkPart);
+		//					if(startIndex != -1){{
+		//						matched = true;
+		//						if(startIndex != 0){{
+		//							var before = message.substring(0,startIndex);
+		//							var beforeEl = document.createElement('span');
+		//							beforeEl.innerText = before;
+		//							logElement.appendChild(beforeEl);
+		//						}}
+		//						var externalLink = document.createElement('a');
+		//						externalLink.innerText = matchLinkPart;
+		//						externalLink.href = '#';
+		//						externalLink.onclick = function(){{
+		//							window.external[externalFn]();
+		//							return false; 
+		//						}}
+		//						logElement.appendChild(externalLink);
+		//						var after = message.substring(startIndex + matchLinkPart.length);
+		//						if(after != ''){{
+		//							var afterEl = document.createElement('span');
+		//							afterEl.innerText = after;
+		//							logElement.appendChild(afterEl);
+		//						}}
+		//					}}
+		//					return matched;
+		//				}}
+		//				function addLogMessageElement(message){{
+		//					var logElement = document.createElement('div');
+		//					var matched = addExternalMessage(logElement,message,'FCC Output Pane','{nameof(ScriptManager.ShowFCCOutputPane)}');
+		//					if(!matched){{
+		//						matched = addExternalMessage(logElement,message,'View readme','{nameof(ScriptManager.ReadReadMe)}');
+		//					}}
+		//					if(!matched){{
+		//						logElement.innerText = message;
+		//					}}
 							
-							coverageLogElement.insertBefore(logElement, coverageLogElement.firstChild);
-						}}
-						function {ShowFCCWorkingJSFunctionName}(isWorking){{
-							var coverageLogTab = document.getElementById('btnCoverageLog');
-							coverageLogTab.innerText = isWorking ? '{CoverageLogTabName} *' : '{CoverageLogTabName}';
-						}}
+		//					coverageLogElement.insertBefore(logElement, coverageLogElement.firstChild);
+		//				}}
+		//				function {ShowFCCWorkingJSFunctionName}(isWorking){{
+		//					var coverageLogTab = document.getElementById('btnCoverageLog');
+		//					coverageLogTab.innerText = isWorking ? '{CoverageLogTabName} *' : '{CoverageLogTabName}';
+		//				}}
 
-						function {CoverageLogJSFunctionName}(message){{
-							showFCCWorking(true);
-							addLogMessageElement(message);
-						}}
-					</script>
-					<div id='divHeader' style='border-collapse:collapse;padding:0;padding-top:3px;margin:0;border:0;position:fixed;top:0;left:0;width:100%;z-index:100' cellpadding='0' cellspacing='0'>
-						<table id='headerTabs' style='border-collapse:collapse;padding:0;margin:0;border:0' cellpadding='0' cellspacing='0'>
-							<tr style='padding:0;margin:0;border:0;'>
-								<td style='width:3px;white-space:no-wrap;padding-left:0;padding-right:0;border-left:0;border-top:0'>
-								</td>
-								<td id='btnCoverage' onclick='return openTab(0);' class='tab' style='width:1%;white-space:no-wrap;'>
-									Coverage
-								</td>
-								<td id='btnSummary' onclick='return openTab(1);' class='tab' style='width:1%;white-space:no-wrap'>
-									Summary
-								</td>
-								<td id='btnRiskHotspots' onclick='return openTab(2);' class='tab' style='width:1%;white-space:no-wrap'>
-									Risk Hotspots
-								</td>
-								<td id='btnCoverageLog' onclick='return openTab(3);' class='tab' style='width:1%;white-space:no-wrap'>
-									{CoverageLogTabName}
-								</td>
-								<td style='border-top:transparent;border-right:transparent;padding-top:0px' align='center'>
-									<a href='#' onclick='return window.external.{nameof(ScriptManager.RateAndReview)}();' style='margin-right:7px'>Rate & Review</a>
-									<a href='#' onclick='return window.external.{nameof(ScriptManager.LogIssueOrSuggestion)}();' style='margin-left:7px'>Log Issue/Suggestion</a>
-								</td>
-								<td style='width:1%;white-space:no-wrap;border-top:transparent;border-right:transparent;border-left:transparent;padding-top:0px'>
-									<a href='#' onclick='return window.external.{nameof(ScriptManager.BuyMeACoffee)}();'>Buy me a coffee</a>
-								</td>
-							</tr>
-						</table>
-					</div>
-				");
+		//				function {CoverageLogJSFunctionName}(message){{
+		//					showFCCWorking(true);
+		//					addLogMessageElement(message);
+		//				}}
+		//			</script>
+		//			<div id='divHeader' style='border-collapse:collapse;padding:0;padding-top:3px;margin:0;border:0;position:fixed;top:0;left:0;width:100%;z-index:100' cellpadding='0' cellspacing='0'>
+		//				<table id='headerTabs' style='border-collapse:collapse;padding:0;margin:0;border:0' cellpadding='0' cellspacing='0'>
+		//					<tr style='padding:0;margin:0;border:0;'>
+		//						<td style='width:3px;white-space:no-wrap;padding-left:0;padding-right:0;border-left:0;border-top:0'>
+		//						</td>
+		//						<td id='btnCoverage' onclick='return openTab(0);' class='tab' style='width:1%;white-space:no-wrap;'>
+		//							Coverage
+		//						</td>
+		//						<td id='btnSummary' onclick='return openTab(1);' class='tab' style='width:1%;white-space:no-wrap'>
+		//							Summary
+		//						</td>
+		//						<td id='btnRiskHotspots' onclick='return openTab(2);' class='tab' style='width:1%;white-space:no-wrap'>
+		//							Risk Hotspots
+		//						</td>
+		//						<td id='btnCoverageLog' onclick='return openTab(3);' class='tab' style='width:1%;white-space:no-wrap'>
+		//							{CoverageLogTabName}
+		//						</td>
+		//						<td style='border-top:transparent;border-right:transparent;padding-top:0px' align='center'>
+		//							<a href='#' onclick='return window.external.{nameof(ScriptManager.RateAndReview)}();' style='margin-right:7px'>Rate & Review</a>
+		//							<a href='#' onclick='return window.external.{nameof(ScriptManager.LogIssueOrSuggestion)}();' style='margin-left:7px'>Log Issue/Suggestion</a>
+		//						</td>
+		//						<td style='width:1%;white-space:no-wrap;border-top:transparent;border-right:transparent;border-left:transparent;padding-top:0px'>
+		//							<a href='#' onclick='return window.external.{nameof(ScriptManager.BuyMeACoffee)}();'>Buy me a coffee</a>
+		//						</td>
+		//					</tr>
+		//				</table>
+		//			</div>
+		//		");
 
-                if (!showBranchCoverage)
-                {
-					htmlSb.Replace("branchCoverageAvailable = true", "branchCoverageAvailable = false");
-				}
+  //              if (!showBranchCoverage)
+  //              {
+		//			htmlSb.Replace("branchCoverageAvailable = true", "branchCoverageAvailable = false");
+		//		}
 				
-				var processed = string.Join(
-				Environment.NewLine,
-				htmlSb.ToString().Split('\r', '\n')
-				.Select(line =>
-				{
-					// modify column widths
+		//		var processed = string.Join(
+		//		Environment.NewLine,
+		//		htmlSb.ToString().Split('\r', '\n')
+		//		.Select(line =>
+		//		{
+		//			// modify column widths
 
-					if (line.StartsWith(".column"))
-					{
-						line = $"{line.Substring(0, line.IndexOf('{')).Trim('{')} {{white-space: nowrap; width:1%;}}";
-					}
+		//			if (line.StartsWith(".column"))
+		//			{
+		//				line = $"{line.Substring(0, line.IndexOf('{')).Trim('{')} {{white-space: nowrap; width:1%;}}";
+		//			}
 
-					// modify coverage data
+		//			// modify coverage data
 
-					if (line.IndexOf(@"""name"":") != -1 && line.IndexOf(@"""rp"":") != -1 && line.IndexOf(@"""cl"":") != -1)
-					{
-						var lineJO = JObject.Parse(line.TrimEnd(','));
-						var name = lineJO.Value<string>("name");
+		//			if (line.IndexOf(@"""name"":") != -1 && line.IndexOf(@"""rp"":") != -1 && line.IndexOf(@"""cl"":") != -1)
+		//			{
+		//				var lineJO = JObject.Parse(line.TrimEnd(','));
+		//				var name = lineJO.Value<string>("name");
 
-						if (name.Equals("AutoGeneratedProgram"))
-						{
-							// output line
+		//				if (name.Equals("AutoGeneratedProgram"))
+		//				{
+		//					// output line
 
-							line = string.Empty;
-						}
-						else
-						{
-							// simplify name
+		//					line = string.Empty;
+		//				}
+		//				else
+		//				{
+		//					// simplify name
 
-							var lastIndexOfDotInName = name.LastIndexOf('.');
-							if (lastIndexOfDotInName != -1) lineJO["name"] = name.Substring(lastIndexOfDotInName).Trim('.');
+		//					var lastIndexOfDotInName = name.LastIndexOf('.');
+		//					if (lastIndexOfDotInName != -1) lineJO["name"] = name.Substring(lastIndexOfDotInName).Trim('.');
 
-							// prefix the url with #
+		//					// prefix the url with #
 
-							lineJO["rp"] = $"#{lineJO.Value<string>("rp")}";
+		//					lineJO["rp"] = $"#{lineJO.Value<string>("rp")}";
 
-							// output line
+		//					// output line
 
-							line = $"{lineJO.ToString(Formatting.None)},";
-						}
-					}
+		//					line = $"{lineJO.ToString(Formatting.None)},";
+		//				}
+		//			}
 
-					// modify risk host spots data
+		//			// modify risk host spots data
 
-					if (line.IndexOf(@"""assembly"":") != -1 && line.IndexOf(@"""class"":") != -1 && line.IndexOf(@"""reportPath"":") != -1)
-					{
-						var lineJO = JObject.Parse($"{{ {line.TrimEnd(',')} }}");
+		//			if (line.IndexOf(@"""assembly"":") != -1 && line.IndexOf(@"""class"":") != -1 && line.IndexOf(@"""reportPath"":") != -1)
+		//			{
+		//				var lineJO = JObject.Parse($"{{ {line.TrimEnd(',')} }}");
 
-						// simplify class
+		//				// simplify class
 
-						var _class = lineJO.Value<string>("class");
-						var lastIndexOfDotInClass = _class.LastIndexOf('.');
-						if (lastIndexOfDotInClass != -1) lineJO["class"] = _class.Substring(lastIndexOfDotInClass).Trim('.');
+		//				var _class = lineJO.Value<string>("class");
+		//				var lastIndexOfDotInClass = _class.LastIndexOf('.');
+		//				if (lastIndexOfDotInClass != -1) lineJO["class"] = _class.Substring(lastIndexOfDotInClass).Trim('.');
 
-						// prefix the urls with #
+		//				// prefix the urls with #
 
-						lineJO["reportPath"] = $"#{lineJO.Value<string>("reportPath")}";
+		//				lineJO["reportPath"] = $"#{lineJO.Value<string>("reportPath")}";
 
-						// output line
+		//				// output line
 
-						line = $"{lineJO.ToString(Formatting.None).Trim('{', '}')},";
-					}
+		//				line = $"{lineJO.ToString(Formatting.None).Trim('{', '}')},";
+		//			}
 
-					return line;
-				}));
+		//			return line;
+		//		}));
 
-				if (reportOutputFolder != null)
-				{
-					var processedHtmlFile = Path.Combine(reportOutputFolder, "index-processed.html");
-					File.WriteAllText(processedHtmlFile, processed);
-				}
+		//		if (reportOutputFolder != null)
+		//		{
+		//			var processedHtmlFile = Path.Combine(reportOutputFolder, "index-processed.html");
+		//			File.WriteAllText(processedHtmlFile, processed);
+		//		}
 
-				return processed;
+		//		return processed;
 
-			});
-		}
+		//	});
+		//}
 
 		private void PreventBrowserHistory(StringBuilder documentStringBuilder)
         {
@@ -1652,73 +1631,37 @@ risk-hotspots > div > table > thead > tr > th:last-of-type > a:last-of-type {
 			}
 		}
 
-		private (int cyclomaticThreshold, int crapScoreThreshold, int nPathThreshold) HotspotThresholds()
+		private RiskHotspotsAnalysisThresholds HotspotThresholds()
         {
 			var options = appOptionsProvider.Get();
-			return (
-				options.ThresholdForCyclomaticComplexity,
-				options.ThresholdForCrapScore,
-				options.ThresholdForNPathComplexity
-			);
+			return new RiskHotspotsAnalysisThresholds
+			{
+				MetricThresholdForCyclomaticComplexity = options.ThresholdForCyclomaticComplexity,
+				MetricThresholdForCrapScore = options.ThresholdForCrapScore,
+				MetricThresholdForNPathComplexity = options.ThresholdForNPathComplexity,
 
+			};
 		}
 
-		private void ReportColoursProvider_ColoursChanged(object sender, IReportColours reportColours)
-		{
-			ReprocessReport();
-		}
-
-        public string BlankReport(bool withHistory)
-        {
-            if (!withHistory)
-            {
-				logs.Clear();
-            }
-			return ProcessUnifiedHtml(resourceProvider.ReadResource("dummyReportToProcess.html"),null);
-        }
+		// todo replicate
+   //     public string BlankReport(bool withHistory)
+   //     {
+   //         if (!withHistory)
+   //         {
+			//	logs.Clear();
+   //         }
+			//return ProcessUnifiedHtml(resourceProvider.ReadResource("dummyReportToProcess.html"),null);
+   //     }
 
         public void LogCoverageProcess(string message)
         {
-			eventAggregator.SendMessage(new InvokeScriptMessage(CoverageLogJSFunctionName, message));
+			//eventAggregator.SendMessage(new InvokeScriptMessage(CoverageLogJSFunctionName, message));
 			logs.Add(message);
 		}
 
         public void EndOfCoverageRun()
         {
-			eventAggregator.SendMessage(new InvokeScriptMessage(ShowFCCWorkingJSFunctionName, false));
-		}
-		
-		public void UpdateReportWithDpiFontChanges()
-        {
-			if (unprocessedReport !=null && previousFontSizeName != GetFontNameSize())
-			{
-				ReprocessReport();
-			}
-        }
-
-		private void ReprocessReport()
-        {
-			var newReport = ProcessUnifiedHtml(unprocessedReport, previousReportOutputFolder);
-			eventAggregator.SendMessage(new NewReportMessage { Report = newReport });
-		}
-
-		public void Handle(EnvironmentFontDetailsChangedMessage message)
-		{
-			environmentFontDetails = message.FontDetails;
-			UpdateReportWithDpiFontChanges();
-		}
-
-		public void Handle(DpiChangedMessage message)
-		{
-			dpiScale = message.DpiScale;
-			UpdateReportWithDpiFontChanges();
-		}
-
-		public void Handle(ReadyForReportMessage message)
-		{
-			var newReport = BlankReport(false);
-			eventAggregator.SendMessage(new ObjectForScriptingMessage { ObjectForScripting = scriptManager });
-			eventAggregator.SendMessage(new NewReportMessage { Report = newReport });
+			//eventAggregator.SendMessage(new InvokeScriptMessage(ShowFCCWorkingJSFunctionName, false));
 		}
 	}
 }

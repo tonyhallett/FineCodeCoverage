@@ -67,7 +67,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\IEnvironmentVariable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IFCCEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IMessageBox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\ISourceFileOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MessageBoxWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Model\CoverageLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Model\CoverageProject.cs" />
@@ -117,16 +116,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\OpenCover\IOpenCoverUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\OpenCover\OpenCoverUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\Base64ReportImage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\IReportColours.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\IReportColoursProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\IThemeResourceKeyProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\JsThemeStyling.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ReportColours.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ReportColoursExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ReportColoursProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ReportGeneratorUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ThemeResourceKeyProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\SourceFileOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\AssemblyUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ComparableFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\DisposeAwareTaskRunner.cs" />
@@ -224,10 +218,24 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\DpiChangedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\EnvironmentFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\EnvironmentFontDetailsChangedMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\InvokeScriptMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObjectRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\IProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IWebViewHostObjectRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\AssemblyJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ClassJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\CodeFileJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\MethodMetricJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\MetricJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\MetricStatusJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\Payload.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\Report.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportOptions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\RiskHotspotAnalysisResultJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\RiskHotspotJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\SerializationExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\Styling.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\SummaryResultJson.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\NewReportMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\ObjectForScriptingMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowContext.cs" />
@@ -236,7 +244,6 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ProcessWrapper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\ReadyForReportMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ScriptManager.cs" />
   </ItemGroup>
   <ItemGroup>

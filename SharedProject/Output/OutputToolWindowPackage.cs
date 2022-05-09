@@ -13,6 +13,9 @@ using EnvDTE80;
 using Microsoft.VisualStudio;
 using System.IO;
 using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Engine.ReportGenerator;
+using System.Linq;
+using FineCodeCoverage.Output.HostObjects;
 
 namespace FineCodeCoverage.Output
 {
@@ -70,7 +73,10 @@ namespace FineCodeCoverage.Output
         {
 			return new OutputToolWindowContext
 			{
-				EventAggregator = componentModel.GetService<IEventAggregator>()
+				EventAggregator = componentModel.GetService<IEventAggregator>(),
+				ReportColoursProvider = componentModel.GetService<IReportColoursProvider>(),
+				WebViewHostObjectRegistrations = componentModel.GetExtensions<IWebViewHostObjectRegistration>().ToList(),
+				AppOptionsProvider = componentModel.GetService<IAppOptionsProvider>()
 			};
 		}
 

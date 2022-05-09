@@ -10,17 +10,15 @@ namespace Test
     public class ScriptManager_When_Called_Back_Window_External
     {
         private ScriptManager scriptManager;
-        private Mock<ISourceFileOpener> sourceFileOpener;
         private Mock<IProcess> mockProcess;
         private Mock<IEventAggregator> mockEventAggregator;
 
         [SetUp]
         public void SetUp()
         {
-            sourceFileOpener = new Mock<ISourceFileOpener>();
             mockProcess = new Mock<IProcess>();
             mockEventAggregator = new Mock<IEventAggregator>();
-            scriptManager = new ScriptManager(sourceFileOpener.Object, mockProcess.Object, mockEventAggregator.Object);
+            scriptManager = new ScriptManager(mockProcess.Object, mockEventAggregator.Object);
         }
 
         [Test]
@@ -49,14 +47,6 @@ namespace Test
         {
             scriptManager.DocumentFocused();
             mockEventAggregator.Verify(e => e.SendMessage(It.IsAny<ReportFocusedMessage>(), null));
-        }
-
-        [Test]
-        public async Task Should_Call_SourceFileOpender_When_OpenFile()
-        {
-            scriptManager.OpenFile("aname", "q.cname", 2, 3);
-            await scriptManager.openFileTask;
-            sourceFileOpener.Verify(engine => engine.OpenFileAsync("aname", "q.cname", 2, 3));
         }
     }
 }

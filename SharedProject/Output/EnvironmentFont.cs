@@ -42,14 +42,23 @@ namespace FineCodeCoverage.Output
 		{
 			EnvironmentFontSizeProperty = DependencyProperty.Register("EnvironmentFontSize", typeof(double), controlType, new PropertyMetadata((obj, args) =>
 			{
-				Size = (double)args.NewValue;
-				ValueChanged();
+				var newSize = (double)args.NewValue;
+				if (newSize != Size)
+                {
+					Size = newSize;
+					ValueChanged();
+				}
+				
 			}));
 
 			EnvironmentFontFamilyProperty = DependencyProperty.Register("EnvironmentFontFamily", typeof(FontFamily), controlType, new PropertyMetadata((obj, args) =>
 			{
-				Family = (FontFamily)args.NewValue;
-				ValueChanged();
+				var newFamily = (FontFamily)args.NewValue;
+				if (Family == null || newFamily.Source != Family.Source)
+                {
+					Family = newFamily;
+					ValueChanged();
+				}
 			}));
 		}
 
