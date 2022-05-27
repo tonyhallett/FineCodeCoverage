@@ -2,8 +2,10 @@
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine;
 using FineCodeCoverage.Engine.Model;
+using FineCodeCoverage.Output.JsMessages.Logging;
 
 namespace FineCodeCoverage.Impl
 {
@@ -57,7 +59,7 @@ namespace FineCodeCoverage.Impl
                 }
             }
 
-            if(InitializeStatus != InitializeStatus.Error)
+            if (InitializeStatus != InitializeStatus.Error)
             {
                 InitializeStatus = InitializeStatus.Initialized;
             }

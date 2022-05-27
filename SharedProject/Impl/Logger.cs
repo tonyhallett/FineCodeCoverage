@@ -10,14 +10,11 @@ using System.ComponentModel.Composition;
 using Microsoft;
 using Task = System.Threading.Tasks.Task;
 using EnvDTE80;
+using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Impl;
 
-interface IShowFCCOutputPane
-{
-    Task ShowAsync();
-}
-[Export(typeof(IShowFCCOutputPane))]
 [Export(typeof(ILogger))]
-public class Logger : ILogger, IShowFCCOutputPane
+public class Logger : ILogger, IListener<ShowFCCOutputPaneMessage>
 {
     private IVsOutputWindowPane _pane;
     private IVsOutputWindow _outputWindow;
@@ -28,7 +25,8 @@ public class Logger : ILogger, IShowFCCOutputPane
     [ImportingConstructor]
     public Logger(
         [Import(typeof(SVsServiceProvider))]
-        IServiceProvider serviceProvider
+        IServiceProvider serviceProvider,
+        IEventAggregator eventAggregator
     )
     {
         this._serviceProvider = serviceProvider;
@@ -145,7 +143,7 @@ public class Logger : ILogger, IShowFCCOutputPane
         LogImpl(message.ToArray(), false);
     }
 
-    public async Task ShowAsync()
+    private async Task ShowAsync()
     {
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -160,5 +158,10 @@ public class Logger : ILogger, IShowFCCOutputPane
             window.Activate();
             _pane.Activate();
         }
+    }
+
+    public void Handle(ShowFCCOutputPaneMessage message)
+    {
+        _ = ShowAsync();
     }
 }

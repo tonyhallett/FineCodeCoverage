@@ -1,7 +1,7 @@
 ﻿using Palmmedia.ReportGenerator.Core.CodeAnalysis;
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 
-namespace FineCodeCoverage.Output.JsSerialization
+namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class Report
 	{

@@ -116,7 +116,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\OpenCover\IOpenCoverUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\OpenCover\OpenCoverUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\Base64ReportImage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\CapturingReportBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\IReportColoursProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\IReportGeneratorUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\IThemeResourceKeyProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ReportColoursProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ReportGeneratorUtil.cs" />
@@ -131,6 +133,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\DotNet\IDotNetToolListExecutor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\DotNet\IDotNetToolListParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\EventAggregator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCGithub.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileSystemInfoDeleteExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileUtil.cs" />
@@ -148,6 +151,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ReflectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ResourceProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\SolutionEvents.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\TimespanExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\IToolFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\IToolZipProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\ToolFolder.cs" />
@@ -184,6 +188,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\OverviewMargin\PartiallyCoveredEditorFormatDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\RunSettingsRetriever.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\ShowFCCOutputPaneMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ContainerData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\IInitializer.cs" />
@@ -218,24 +223,37 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\DpiChangedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\EnvironmentFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\EnvironmentFontDetailsChangedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCOutputPaneHostObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCOutputPaneRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCResourcesNavigator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCResourcesNavigatorRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObjectRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\IProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IWebViewHostObjectRegistration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\AssemblyJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ClassJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\CodeFileJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\MethodMetricJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\MetricJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\MetricStatusJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\ClearReportMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\CoverageStoppedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\Logging\Emphasis.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\Logging\EmphasizedLogMessagePart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\Logging\FCCLink.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\Logging\LogMessagePart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\Logging\MessageContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\AssemblyJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\ClassJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\CodeFileJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\MethodMetricJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\MetricJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\MetricStatusJson.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\Payload.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\Report.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\Report.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportOptions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\RiskHotspotAnalysisResultJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\RiskHotspotJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\RiskHotspotAnalysisResultJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\RiskHotspotJson.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\SerializationExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\Styling.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\SummaryResultJson.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\NewReportMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\SummaryResultJson.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\Logging\LogMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\JsMessages\NewReportMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowContext.cs" />
@@ -244,7 +262,6 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ProcessWrapper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\ScriptManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowControl.xaml">
@@ -262,5 +279,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\Provider\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\" />
   </ItemGroup>
 </Project>

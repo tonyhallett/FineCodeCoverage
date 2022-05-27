@@ -1,7 +1,7 @@
 ﻿using Palmmedia.ReportGenerator.Core.CodeAnalysis;
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 
-namespace FineCodeCoverage.Output
+namespace FineCodeCoverage.Output.JsMessages
 {
     internal class NewReportMessage
     {

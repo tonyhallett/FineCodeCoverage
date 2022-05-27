@@ -22,7 +22,7 @@ namespace FineCodeCoverage.Output
     /// </para>
     /// </remarks>
     [Guid("320fd13f-632f-4b16-9527-a1adfe555f6c")]
-	internal class OutputToolWindow : ToolWindowPane, IListener<ReportFocusedMessage>
+	internal class OutputToolWindow : ToolWindowPane
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OutputToolWindow"/> class.
@@ -41,7 +41,6 @@ namespace FineCodeCoverage.Output
         {
 			//to see if OutputToolWindow can be internal ( and thus IScriptManager )
 			Caption = Vsix.Name;
-			context.EventAggregator.AddListener(this);
 
 			// This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
 			// we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
@@ -109,14 +108,6 @@ namespace FineCodeCoverage.Output
 
 			return null;
 		}
-
-        public void Handle(ReportFocusedMessage message)
-        {
-			ThreadHelper.JoinableTaskFactory.Run(async () =>
-			{
-				await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-				(this.Frame as IVsWindowFrame).Show();
-			});
-		}
+        
     }
 }

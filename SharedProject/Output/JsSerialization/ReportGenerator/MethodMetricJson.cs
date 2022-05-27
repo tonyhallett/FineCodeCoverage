@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FineCodeCoverage.Output.JsSerialization
+namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class MethodMetricJson
 	{

@@ -1,6 +1,6 @@
 ﻿namespace FineCodeCoverage.Output
 {
-    internal interface IProcess
+    public interface IProcess
     {
         void Start(string fileName);
     }

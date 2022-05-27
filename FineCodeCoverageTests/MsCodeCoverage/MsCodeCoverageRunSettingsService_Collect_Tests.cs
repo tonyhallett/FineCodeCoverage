@@ -92,11 +92,12 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         [Test]
         public async Task Should_Combined_Log_When_No_Cobertura_Files()
         {
-            await RunAndProcessReportAsync(null, Array.Empty<string>());
-            autoMocker.Verify<ILogger>(logger => logger.Log("No cobertura files for ms code coverage."));
-            autoMocker.Verify<IReportGeneratorUtil>(
-                reportGenerator => reportGenerator.LogCoverageProcess("No cobertura files for ms code coverage.")
-            );
+            throw new NotImplementedException();
+            //await RunAndProcessReportAsync(null, Array.Empty<string>());
+            //autoMocker.Verify<ILogger>(logger => logger.Log("No cobertura files for ms code coverage."));
+            //autoMocker.Verify<IReportGeneratorUtil>(
+            //    reportGenerator => reportGenerator.LogCoverageProcess("No cobertura files for ms code coverage.")
+            //);
         }
 
         [Test]

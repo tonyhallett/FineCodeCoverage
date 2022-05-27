@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverage.Output.JsSerialization
+﻿namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class MetricStatusJson
 	{

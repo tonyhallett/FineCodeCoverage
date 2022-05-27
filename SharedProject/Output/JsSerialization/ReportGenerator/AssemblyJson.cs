@@ -3,7 +3,7 @@ using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FineCodeCoverage.Output.JsSerialization
+namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class AssemblyJson
 	{
@@ -24,7 +24,7 @@ namespace FineCodeCoverage.Output.JsSerialization
 			Assembly = assembly;
 			name = assembly.Name;
 			shortName = assembly.ShortName;
-			classes = assembly.Classes.Select((@class, classIndex) => new ClassJson(@class, classIndex)).ToList();
+			classes = assembly.Classes.Select((@class, classIndex) => new ClassJson(@class, classIndex,index)).ToList();
 			this.index = index;
 		}
 	}

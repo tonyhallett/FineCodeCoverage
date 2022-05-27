@@ -13,6 +13,10 @@ using Task = System.Threading.Tasks.Task;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsSerialization;
 using FineCodeCoverage.Options;
+using System.IO;
+using FineCodeCoverage.Output.JsMessages.Logging;
+using FineCodeCoverage.Output.JsMessages;
+using FineCodeCoverage.Output.JsSerialization.ReportGenerator;
 
 namespace FineCodeCoverage.Output
 {
@@ -20,7 +24,7 @@ namespace FineCodeCoverage.Output
 	/// Interaction logic for OutputToolWindowControl.
 	/// </summary>
 	internal partial class OutputToolWindowControl : 
-		UserControl, IListener<NewReportMessage>
+		UserControl, IListener<NewReportMessage>, IListener<LogMessage>, IListener<CoverageStoppedMessage>, IListener<ClearReportMessage>
 	{
 		private WebView2 _webView2;
         private readonly IEventAggregator eventAggregator;
@@ -28,11 +32,17 @@ namespace FineCodeCoverage.Output
         private readonly List<IWebViewHostObjectRegistration> webViewHostObjectRegistrations;
         private readonly IAppOptionsProvider appOptionsProvider;
         private Styling styling;
+		private Report report;
 		private string htmlPath;
 		private string standaloneReportPath;
 		private const string debugDomain = "debug";
 		private const int remoteDebuggingPort = 9222;
+		private string debugDirectory;
+		private FileSystemWatcher debugHtmlWatcher;
+		private bool debugRefreshed;
 		private ReportOptions lastReportOptions;
+		private bool domContentLoaded;
+		private readonly List<LogMessage> earlyLogMessages = new List<LogMessage>();
 
 #if DEBUG
 		private readonly bool debug = true;
@@ -84,6 +94,23 @@ namespace FineCodeCoverage.Output
 			htmlPath = $"file:///{standaloneReportPath}";
 			if (debug)
             {
+				debugDirectory = @"C:/Users/tonyh/source/repos/WebView2Demo/my-app/dist/debug/";	
+				var watchFile = "watch.txt";
+				// todo refactor to interface
+				debugHtmlWatcher = new FileSystemWatcher(debugDirectory, watchFile);
+				// todo - just the filters necessary
+				debugHtmlWatcher.IncludeSubdirectories = false;
+				debugHtmlWatcher.NotifyFilter = NotifyFilters.Attributes
+								 | NotifyFilters.CreationTime
+								 | NotifyFilters.DirectoryName
+								 | NotifyFilters.FileName
+								 | NotifyFilters.LastAccess
+								 | NotifyFilters.LastWrite
+								 | NotifyFilters.Security
+								 | NotifyFilters.Size;
+				debugHtmlWatcher.EnableRaisingEvents = true;
+                debugHtmlWatcher.Created += DebugHtmlWatcher_Created;
+				// disposal
 				htmlPath = $"https://{debugDomain}/index.html";
 			}
 
@@ -97,13 +124,31 @@ namespace FineCodeCoverage.Output
 			await InitializeWebViewEnvironmentAsync();
 		}
 
-		//todo - user data folder
-		private async Task InitializeWebViewEnvironmentAsync()
+
+        private void DebugHtmlWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+			ThreadHelper.JoinableTaskFactory.Run(async () =>
+			{
+				await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+				debugRefreshed = true;
+				_webView2.CoreWebView2.Reload();
+			});
+		}
+
+        //todo - user data folder
+        private async Task InitializeWebViewEnvironmentAsync()
 		{
 			// todo
 			var userDataFolder = @"C:\Users\tonyh\AppData\Local\FineCodeCoverage\webview2";
 
-			//todo conditional and should --user-data-dir be above
+			//todo conditional
+			//should --user-data-dir be above ?
+			//https://stackoverflow.com/questions/69378977/how-do-i-enable-editable-debugging-of-files-within-vs-code-w-chrome-debugging
+			//https://chromium.googlesource.com/chromium/src/+/HEAD/docs/user_data_dir.md
+
+			// https://code.visualstudio.com/docs/nodejs/browser-debugging#_attaching-to-browsers
+			// or from an open edge - edge://inspect
+
 			string additionalBrowserArguments = $"--remote-debugging-port={remoteDebuggingPort} --user-data-dir=remote-debug-profile";
 			CoreWebView2EnvironmentOptions options = new CoreWebView2EnvironmentOptions(additionalBrowserArguments);
 			var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder, options: options);
@@ -159,8 +204,7 @@ namespace FineCodeCoverage.Output
 				coreWebView2.ContextMenuRequested += CoreWebView2_ContextMenuRequested;
                 if (debug)
                 {
-					coreWebView2.SetVirtualHostNameToFolderMapping(debugDomain, "C:/Users/tonyh/source/repos/WebView2Demo/my-app/dist/debug/", CoreWebView2HostResourceAccessKind.DenyCors);
-
+					coreWebView2.SetVirtualHostNameToFolderMapping(debugDomain, debugDirectory, CoreWebView2HostResourceAccessKind.Deny);
 				}
 				LoadHtml();
 			}
@@ -179,10 +223,26 @@ namespace FineCodeCoverage.Output
 
         private void CoreWebView2_DOMContentLoaded(object sender, CoreWebView2DOMContentLoadedEventArgs e)
         {
-			InitializeStyling();
-			InitializeReportOptions();
-			_webView2.Visibility = Visibility.Visible;
+			domContentLoaded = true;
+			if (debugRefreshed)
+            {
+				_ = RefreshJsonAsync();
+            }
+            else
+            {
+				InitializeStyling();
+				InitializeReportOptions();
+				_webView2.Visibility = Visibility.Visible;
+				_ = PostEarlyLogMessagesAsync();
+			}
 		}
+
+		private async Task RefreshJsonAsync()
+        {
+			await PostStylingAsync();
+			await PostReportOptionsAsync();
+			await PostReportAsync();
+        }
 
 		private void InitializeReportOptions()
         {
@@ -227,14 +287,29 @@ namespace FineCodeCoverage.Output
 			return PostJsonAsync("reportOptions", lastReportOptions);
         }
 
-		// a) Do messages first - will want to be able to do from html or mdx - will need to style links
-		// a) Create state and tabs 
+		private async Task PostReportAsync()
+        {
+			await PostJsonAsync("report", report);
+		}
+
+		private Task PostLogMessageAsync(LogMessage message)
+        {
+			return PostJsonAsync("message", message);
+		}
+
+		private Task PostEarlyLogMessagesAsync()
+        {
+			var whenAll = Task.WhenAll(earlyLogMessages.Select(logMessage => PostLogMessageAsync(logMessage)));
+			earlyLogMessages.Clear();
+			return whenAll;
+        }
+
         public void Handle(NewReportMessage message)
         {
-			var report = new Report(message.RiskHotspotAnalysisResult, message.RiskHotspotsAnalysisThresholds, message.SummaryResult);
+			report = new Report(message.RiskHotspotAnalysisResult, message.RiskHotspotsAnalysisThresholds, message.SummaryResult);
 			
 			GenerateStandaloneReport(message.ReportFilePath,report);
-			_ = PostJsonAsync("Report", report);
+			_ = PostReportAsync();
 		}
 
 		private void GenerateStandaloneReport(string reportPath, Report report)
@@ -317,6 +392,28 @@ namespace FineCodeCoverage.Output
 
 		}
 
+        public void Handle(LogMessage message)
+        {
+            if (domContentLoaded)
+            {
+				_ = PostLogMessageAsync(message);
+            }
+            else
+            {
+				earlyLogMessages.Add(message);
+            }
+			
+        }
 
-	}
+        public void Handle(CoverageStoppedMessage message)
+        {
+			_ = PostJsonAsync<object>("coverageStopped", null);
+        }
+
+        public void Handle(ClearReportMessage message)
+        {
+			report = null;
+			_ = PostReportAsync();
+		}
+    }
 }

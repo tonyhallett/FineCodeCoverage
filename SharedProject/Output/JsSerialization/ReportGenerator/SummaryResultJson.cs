@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FineCodeCoverage.Output.JsSerialization
+namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class SummaryResultJson
 	{
@@ -20,8 +20,9 @@ namespace FineCodeCoverage.Output.JsSerialization
 		public decimal? codeElementCoverageQuota { get; set; }
 
 		public List<AssemblyJson> assemblies { get; set; }
+        public bool supportsBranchCoverage { get; }
 
-		public SummaryResultJson() { }
+        public SummaryResultJson() { }
 		public SummaryResultJson(SummaryResult summaryResult)
 		{
 			coveredLines = summaryResult.CoveredLines;
@@ -36,6 +37,8 @@ namespace FineCodeCoverage.Output.JsSerialization
 			codeElementCoverageQuota = summaryResult.CodeElementCoverageQuota;
 
 			assemblies = summaryResult.Assemblies.Select((assembly, i) => new AssemblyJson(assembly, i)).ToList();
+
+			supportsBranchCoverage = summaryResult.SupportsBranchCoverage;
 		}
 	}
 

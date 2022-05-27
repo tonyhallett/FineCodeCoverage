@@ -1,6 +1,6 @@
 ﻿using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 
-namespace FineCodeCoverage.Output.JsSerialization
+namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
     public class CodeFileJson
     {

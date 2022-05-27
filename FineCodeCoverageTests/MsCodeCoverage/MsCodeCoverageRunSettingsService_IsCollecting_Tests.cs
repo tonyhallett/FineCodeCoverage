@@ -11,10 +11,10 @@ using FineCodeCoverage.Engine;
 using System.Linq;
 using System.Threading;
 using FineCodeCoverageTests.Test_helpers;
-using FineCodeCoverage.Engine.ReportGenerator;
 using FineCodeCoverage.Core.Utilities;
 using System.IO;
 using System;
+using FineCodeCoverage.Core.ReportGenerator;
 
 namespace FineCodeCoverageTests.MsCodeCoverage
 {
@@ -175,7 +175,8 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         {
             var exception = new Exception("Msg");
             await Throw_Exception_From_UserRunSettingsService_Analyse(exception);
-            autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.EndOfCoverageRun());
+            throw new NotImplementedException();
+            //autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.EndOfCoverageRun());
         }
 
         private Task<MsCodeCoverageCollectionStatus> Throw_Exception_From_UserRunSettingsService_Analyse(Exception exception)
@@ -355,7 +356,8 @@ namespace FineCodeCoverageTests.MsCodeCoverage
             await msCodeCoverageRunSettingsService.IsCollectingAsync(testOperation);
            
             autoMocker.Verify<ILogger>(logger => logger.Log(expectedLoggerMessages));
-            autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.LogCoverageProcess("Ms code coverage"));
+            throw new NotImplementedException();
+            //autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.LogCoverageProcess("Ms code coverage"));
         }
 
         [Test]
@@ -498,13 +500,15 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         private void VerifyLogException(string reason, Exception exception)
         {
             autoMocker.Verify<ILogger>(l => l.Log(reason, exception.ToString()));
-            autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(reason));
+            throw new NotImplementedException();
+            //autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(reason));
         }
 
         private void VerifyCombinedLogMessage(string message)
         {
             autoMocker.Verify<ILogger>(l => l.Log(message));
-            autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(message));
+            throw new NotImplementedException();
+            //autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(message));
         }
 
         private string InitializeFCCMsTestAdapterPath()

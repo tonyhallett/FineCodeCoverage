@@ -47,7 +47,6 @@ namespace FineCodeCoverage.Output
 	public sealed class OutputToolWindowPackage : AsyncPackage
 	{
 		private static Microsoft.VisualStudio.ComponentModelHost.IComponentModel componentModel;
-        private IFCCEngine fccEngine;
 
         /// <summary>
         /// OutputToolWindowPackage GUID string.
@@ -97,10 +96,9 @@ namespace FineCodeCoverage.Output
 			var sp = new ServiceProvider(_dte2 as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
 			componentModel = sp.GetService(typeof(Microsoft.VisualStudio.ComponentModelHost.SComponentModel)) as Microsoft.VisualStudio.ComponentModelHost.IComponentModel;
             Assumes.Present(componentModel);
-			fccEngine = componentModel.GetService<IFCCEngine>();			
 
 			await OutputToolWindowCommand.InitializeAsync(this, componentModel.GetService<ILogger>());
-			await ClearUICommand.InitializeAsync(this, fccEngine);
+			await ClearUICommand.InitializeAsync(this, componentModel.GetService<IFCCEngine>());
 		}
 		
         protected override Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken)

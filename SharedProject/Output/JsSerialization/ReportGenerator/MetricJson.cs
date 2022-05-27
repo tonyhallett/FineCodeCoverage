@@ -1,15 +1,15 @@
 ﻿using Newtonsoft.Json;
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 
-namespace FineCodeCoverage.Output.JsSerialization
+namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class MetricJson
 	{
 		[JsonIgnore]
 		public Metric Metric { get; }
 
-		public string metricType { get; }
-		public string mergeOrder { get; }
+		public MetricType metricType { get; }
+		public MetricMergeOrder mergeOrder { get; }
 		public string explanationUrl { get; }
 		public string name { get; }
 		public decimal? value { get; }
@@ -20,9 +20,9 @@ namespace FineCodeCoverage.Output.JsSerialization
 		{
 			this.index = index;
 			Metric = metric;
-			metricType = metric.MetricType.ToString();
+			metricType = metric.MetricType;
 			explanationUrl = metric.ExplanationUrl.ToString();
-			mergeOrder = metric.MergeOrder.ToString();
+			mergeOrder = metric.MergeOrder;
 			name = metric.Name;
 			value = metric.Value;
 		}
