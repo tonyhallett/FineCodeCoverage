@@ -9,8 +9,9 @@ using System;
 using FineCodeCoverage.Core.Utilities;
 using System.IO;
 using System.Xml.Linq;
+using FineCodeCoverageTests.MsCodeCoverage_Tests.Helpers;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class TestCoverageProjectRunSettings : ICoverageProjectRunSettings
     {

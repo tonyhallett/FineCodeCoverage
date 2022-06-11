@@ -31,6 +31,7 @@ public class Logger : ILogger, IListener<ShowFCCOutputPaneMessage>
     {
         this._serviceProvider = serviceProvider;
         staticLogger = this;
+        eventAggregator.AddListener(this);
     }
 
     private async Task SetPaneAsync()

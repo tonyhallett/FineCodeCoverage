@@ -15,7 +15,7 @@ namespace FineCodeCoverage.Core.Coverlet
                 return (friendlyNameAttribute == null ? "" : friendlyNameAttribute.Value) == "XPlat code coverage";
             });
 
-            if(coverletDataCollectorElement != null)
+            if (coverletDataCollectorElement != null)
             {
                 var enabledAttribute = coverletDataCollectorElement.Attribute("enabled");
                 if(enabledAttribute == null)

@@ -8,23 +8,23 @@ namespace FineCodeCoverage.Impl
 {
 	internal class CoverageLineMarkTagger : CoverageLineTaggerBase<OverviewMarkTag>, IListener<CoverageMarginOptionsChangedMessage>
 	{
-		private ICoverageMarginOptions coverageMarginOptions;
+		internal ICoverageMarginOptions _coverageMarginOptions;
 		public CoverageLineMarkTagger(ITextBuffer textBuffer, List<CoverageLine> lastCoverageLines, ICoverageMarginOptions coverageMarginOptions) : 
 			base(textBuffer, lastCoverageLines)
 		{
-			this.coverageMarginOptions = coverageMarginOptions;
+			this._coverageMarginOptions = coverageMarginOptions;
 		}
 
         public void Handle(CoverageMarginOptionsChangedMessage message)
         {
-			coverageMarginOptions = message.Options;
+			_coverageMarginOptions = message.Options;
 			RaiseTagsChanged();
         }
 
         protected override TagSpan<OverviewMarkTag> GetTagSpan(CoverageLine coverageLine, SnapshotSpan span)
 		{
 			var coverageType = coverageLine.GetCoverageType();
-			var shouldShow = coverageMarginOptions.Show(coverageType);
+			var shouldShow = _coverageMarginOptions.Show(coverageType);
 			if (!shouldShow) return null;
 
 			var newSnapshotSpan = GetLineSnapshotSpan(coverageLine.Line.Number, span);

@@ -6,11 +6,15 @@ namespace FineCodeCoverage.Impl
 {
     internal class TestOperation : ITestOperation
     {
-        private readonly TestRunRequest testRunRequest;
-        private readonly ICoverageProjectFactory coverageProjectFactory;
-        private readonly IRunSettingsRetriever runSettingsRetriever;
+        internal readonly TestRunRequest testRunRequest;
+        internal readonly ICoverageProjectFactory coverageProjectFactory;
+        internal readonly IRunSettingsRetriever runSettingsRetriever;
 
-        public TestOperation(TestRunRequest testRunRequest, ICoverageProjectFactory coverageProjectFactory, IRunSettingsRetriever runSettingsRetriever)
+        public TestOperation(
+            TestRunRequest testRunRequest, 
+            ICoverageProjectFactory coverageProjectFactory, 
+            IRunSettingsRetriever runSettingsRetriever
+        )
         {
             this.testRunRequest = testRunRequest;
             this.coverageProjectFactory = coverageProjectFactory;
@@ -22,6 +26,8 @@ namespace FineCodeCoverage.Impl
 
         public string SolutionDirectory => testRunRequest.Configuration.SolutionDirectory;
 
+        public List<string> UnsupportedProjects { get; private set; }
+
         public Task<List<ICoverageProject>> GetCoverageProjectsAsync()
         {
             return GetCoverageProjectsAsync(testRunRequest.Configuration);
@@ -32,18 +38,30 @@ namespace FineCodeCoverage.Impl
             var userRunSettings = testConfiguration.UserRunSettings;
             var testContainers = testConfiguration.Containers;
             List<ICoverageProject> coverageProjects = new List<ICoverageProject>();
+            UnsupportedProjects = new List<string>();
             foreach (var container in testContainers)
             {
-                var project = coverageProjectFactory.Create();
-                coverageProjects.Add(project);
-                project.ProjectName = container.ProjectName;
-                project.TestDllFile = container.Source;
-                project.Is64Bit = container.TargetPlatform.ToString().ToLower().Equals("x64");
-                project.TargetFramework = container.TargetFramework.ToString();
-                var containerData = container.ProjectData;
-                project.ProjectFile = container.ProjectData.ProjectFilePath;
-                project.Id = containerData.Id;
-                project.RunSettingsFile = await runSettingsRetriever.GetRunSettingsFileAsync(userRunSettings, containerData);
+                var projectFilePath = container.ProjectData.ProjectFilePath;
+                if (projectFilePath != null)
+                {
+                    var project = coverageProjectFactory.Create();
+                    coverageProjects.Add(project);
+
+                    project.ProjectName = container.ProjectName;
+                    project.TestDllFile = container.Source;
+                    project.Is64Bit = container.TargetPlatform.ToString().ToLower().Equals("x64");
+                    project.TargetFramework = container.TargetFramework.ToString();
+
+                    var containerData = container.ProjectData;
+                    project.Id = containerData.Id;
+                    project.ProjectFile = projectFilePath;
+
+                    project.RunSettingsFile = await runSettingsRetriever.GetRunSettingsFileAsync(userRunSettings, containerData);
+                }
+                else
+                {
+                    UnsupportedProjects.Add(container.ProjectName);
+                }
 
             }
             return coverageProjects;

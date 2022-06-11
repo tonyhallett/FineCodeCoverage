@@ -1,21 +1,22 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Threading;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Text;
 using System.Threading;
 using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Core.Utilities
 {
-    
     internal interface IDisposeAwareTaskRunner
     {
 #pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
         void RunAsync(Func<Task> taskProvider);
 #pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         CancellationToken DisposalToken { get; }
+
+        CancellationTokenSource CreateLinkedCancellationTokenSource();
+
+        bool IsVsShutdown { get; }
     }
 
     [Export(typeof(IDisposeAwareTaskRunner))]
@@ -36,6 +37,13 @@ namespace FineCodeCoverage.Core.Utilities
         /// Gets a <see cref="CancellationToken"/> that can be used to check if the package has been disposed.
         /// </summary>
         public CancellationToken DisposalToken => this.disposeCancellationTokenSource.Token;
+
+        public bool IsVsShutdown => DisposalToken.IsCancellationRequested;
+
+        public CancellationTokenSource CreateLinkedCancellationTokenSource()
+        {
+            return CancellationTokenSource.CreateLinkedTokenSource(DisposalToken);
+        }
 
         public void Dispose()
         {

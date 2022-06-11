@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FineCodeCoverage.Core.Utilities;
 using NUnit.Framework;
 
-namespace FineCodeCoverageTests.Test_helpers
+namespace FineCodeCoverageTests
 {
     public static class MefOrderAssertions
     {

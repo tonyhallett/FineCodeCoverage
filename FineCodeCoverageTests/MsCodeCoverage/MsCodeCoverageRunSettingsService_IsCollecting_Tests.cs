@@ -10,13 +10,12 @@ using System.Collections.Generic;
 using FineCodeCoverage.Engine;
 using System.Linq;
 using System.Threading;
-using FineCodeCoverageTests.Test_helpers;
 using FineCodeCoverage.Core.Utilities;
 using System.IO;
 using System;
-using FineCodeCoverage.Core.ReportGenerator;
+using FineCodeCoverage.Output.JsMessages.Logging;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class MsCodeCoverageRunSettingsService_StopCoverage_Test
     {
@@ -170,15 +169,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage
             Assert.AreEqual(MsCodeCoverageCollectionStatus.Error, status);
         }
 
-        [Test]
-        public async Task Should_Report_End_Of_CoverageRun_If_Error()
-        {
-            var exception = new Exception("Msg");
-            await Throw_Exception_From_UserRunSettingsService_Analyse(exception);
-            throw new NotImplementedException();
-            //autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.EndOfCoverageRun());
-        }
-
         private Task<MsCodeCoverageCollectionStatus> Throw_Exception_From_UserRunSettingsService_Analyse(Exception exception)
         {
             SetupIUserRunSettingsServiceAnalyseAny().Throws(exception);
@@ -256,8 +246,11 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         [Test]
         public async Task Should_Combined_Log_Collecting_With_RunSettings_When_Only_Suitable_RunSettings()
         {
+            var expectedMessage = "Ms code coverage collecting with user runsettings";
             await IsCollecting_With_Suitable_RunSettings_Only();
-            VerifyCombinedLogMessage("Ms code coverage with user runsettings");
+            autoMocker.Verify<ILogger>(l => l.Log(expectedMessage));
+            var mockEventAggregator = autoMocker.GetMock<IEventAggregator>();
+            mockEventAggregator.AssertSimpleSingleLog(expectedMessage, FineCodeCoverage.Output.JsMessages.Logging.MessageContext.CoverageToolStart);
         }
 
         private Task<MsCodeCoverageCollectionStatus> IsCollecting_With_Suitable_RunSettings_Only()
@@ -320,12 +313,32 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         }
 
         [Test]
-        public Task Should_Combined_Log_When_Successfully_Generate_RunSettings_From_Templates()
+        public async Task Should_Combined_Log_CoverageStart_And_Ms_CoverageToolStart()
         {
-            return Successful_RunSettings_From_Templates_CombinedLog_Test(
-                new List<string> { }, 
-                new List<string> { "Ms code coverage" }
+            SetupIUserRunSettingsServiceAnalyseAny().Returns(new UserRunSettingsAnalysisResult(true, true));
+
+            var coverageProjects = new List<ICoverageProject>
+            {
+                CreateCoverageProject(null)
+
+            };
+            var testOperation = SetUpTestOperation(coverageProjects);
+
+            SetupTemplatedRunSettingsServiceGenerateAsyncAllIsAny().ReturnsAsync(
+                new ProjectRunSettingsFromTemplateResult { }
             );
+
+
+            await msCodeCoverageRunSettingsService.IsCollectingAsync(testOperation);
+
+            var mockEventAggregator = autoMocker.GetMock<IEventAggregator>();
+            var expectedStartingCoverage = "Starting coverage";
+            var expectedMsCodeCoverageCollecting = "Ms code coverage collecting";
+            autoMocker.Verify<ILogger>(logger => logger.Log(expectedStartingCoverage));
+            autoMocker.Verify<ILogger>(logger => logger.Log(expectedMsCodeCoverageCollecting));
+            mockEventAggregator.AssertSimpleSingleLog(expectedStartingCoverage, MessageContext.CoverageStart);
+            mockEventAggregator.AssertSimpleSingleLog(expectedMsCodeCoverageCollecting, MessageContext.CoverageToolStart);
+
         }
 
         [Test]
@@ -356,8 +369,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage
             await msCodeCoverageRunSettingsService.IsCollectingAsync(testOperation);
            
             autoMocker.Verify<ILogger>(logger => logger.Log(expectedLoggerMessages));
-            throw new NotImplementedException();
-            //autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.LogCoverageProcess("Ms code coverage"));
         }
 
         [Test]
@@ -500,15 +511,8 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         private void VerifyLogException(string reason, Exception exception)
         {
             autoMocker.Verify<ILogger>(l => l.Log(reason, exception.ToString()));
-            throw new NotImplementedException();
-            //autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(reason));
-        }
-
-        private void VerifyCombinedLogMessage(string message)
-        {
-            autoMocker.Verify<ILogger>(l => l.Log(message));
-            throw new NotImplementedException();
-            //autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(message));
+            var mockEventAggregator = autoMocker.GetMock<IEventAggregator>();
+            mockEventAggregator.AssertSimpleSingleLog(reason, MessageContext.Error);
         }
 
         private string InitializeFCCMsTestAdapterPath()

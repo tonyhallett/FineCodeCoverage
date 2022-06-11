@@ -7,6 +7,7 @@ namespace FineCodeCoverage.Impl
     {
         long FailedTests { get; }
         long TotalTests { get; }
+        List<string> UnsupportedProjects { get; }
         System.Threading.Tasks.Task<List<ICoverageProject>> GetCoverageProjectsAsync();
         string SolutionDirectory { get; }
     }

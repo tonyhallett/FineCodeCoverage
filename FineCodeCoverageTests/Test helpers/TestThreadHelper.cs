@@ -3,11 +3,16 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FineCodeCoverageTests.Test_helpers
+namespace FineCodeCoverageTests
 {
     internal class TestThreadHelper : IThreadHelper
     {
         public IJoinableTaskFactory JoinableTaskFactory { get; } = new TestJoinableTaskFactory();
+
+        public void ThrowIfNotOnUIThread()
+        {
+            
+        }
     }
 
     internal class TestJoinableTaskFactory : IJoinableTaskFactory

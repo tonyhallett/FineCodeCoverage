@@ -10,12 +10,10 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft;
 using FineCodeCoverage.Engine;
 using EnvDTE80;
-using Microsoft.VisualStudio;
-using System.IO;
 using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Engine.ReportGenerator;
 using System.Linq;
 using FineCodeCoverage.Output.HostObjects;
+using FineCodeCoverage.Core.ReportGenerator.Colours;
 
 namespace FineCodeCoverage.Output
 {

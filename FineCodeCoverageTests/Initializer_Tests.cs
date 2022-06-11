@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMoq;
 using FineCodeCoverage.Engine;
 using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Impl;
+using Moq;
 using NUnit.Framework;
 
-namespace Test
+namespace FineCodeCoverageTests.Initializer_Tests
 {
     public class Initializer_Tests
     {
@@ -45,6 +45,7 @@ namespace Test
 			callback?.Invoke(initializeException);
 
 		}
+		
 		[Test]
 		public async Task Should_Set_InitializeStatus_To_Error_If_Exception_When_Initialize()
 		{
@@ -65,6 +66,13 @@ namespace Test
 			Exception initializeException = null;
 			await InitializeWithExceptionAsync(exc => initializeException = exc);
 			mocker.Verify<ILogger>(l => l.Log("Failed Initialization", initializeException));
+		}
+
+		[Test]
+		public async Task Should_Not_Log_Failed_Initialization_When_Initialize_Cancelled()
+		{
+			await initializer.InitializeAsync(CancellationTokenHelper.GetCancelledCancellationToken());
+			mocker.Verify<ILogger>(l => l.Log("Failed Initialization", It.IsAny<Exception>()), Times.Never());
 		}
 
 		[Test]
@@ -112,5 +120,47 @@ namespace Test
 			mocker.Verify<IFCCEngine>(engine => engine.Initialize(initializer, disposalToken));
         }
 
+		[Test]
+		public void Should_ThrowIfCancellationRequested_When_PollInitializedStatusAsync()
+        {
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.Cancel();
+
+			Assert.ThrowsAsync<OperationCanceledException>(
+				async () => await initializer.WaitForInitializedAsync(cancellationTokenSource.Token));
+        }
+
+		[Test]
+		public async Task Should_Throw_If_InitializationFailed_When_PollInitializedStatusAsync()
+        {
+			var mockCoverageProjectFactory = mocker.GetMock<ICoverageProjectFactory>();
+			mockCoverageProjectFactory.Setup(
+				coverageProjectFactory => coverageProjectFactory.Initialize()
+				).Throws(new Exception("The exception message"));
+
+			await initializer.InitializeAsync(CancellationToken.None);
+
+			Assert.ThrowsAsync<Exception>(
+				async () => await initializer.WaitForInitializedAsync(CancellationToken.None),
+				"Initialization failed.  Please check the following error which may be resolved by reopening visual studio which will start the initialization process again.  The exception message"
+				);
+		}
+
+		[Test]
+		public async Task Should_PollInitializedStatus_Logging_If_Initializing()
+        {
+		    var times = 5;
+			initializer.initializeWait = 100;
+			var pollInitializedStatusTask =  initializer.WaitForInitializedAsync(CancellationToken.None);
+
+            var setInitializedTask = Task.Delay(times * initializer.initializeWait).ContinueWith(_ =>
+            {
+                initializer.InitializeStatus = InitializeStatus.Initialized;
+            });
+
+			await Task.WhenAll(pollInitializedStatusTask, setInitializedTask);
+
+            mocker.Verify<ILogger>(l => l.Log(CoverageStatus.Initializing.Message()), Times.AtLeast(times));
+        }
 	}
 }

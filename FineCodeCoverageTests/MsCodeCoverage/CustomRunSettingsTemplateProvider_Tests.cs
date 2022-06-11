@@ -5,7 +5,7 @@ using System;
 using AutoMoq;
 using FineCodeCoverage.Core.Utilities;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class CustomRunSettingsTemplateProvider_Tests
     {

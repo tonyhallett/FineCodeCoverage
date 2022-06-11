@@ -8,7 +8,7 @@ namespace FineCodeCoverage.Output.HostObjects
         [ImportingConstructor]
         public FCCResourcesNavigatorRegistration(IProcess process)
         {
-            HostObject = new FCCResourcesNavigator(process);
+            HostObject = new FCCResourcesNavigatorHostObject(process);
         }
         public const string HostObjectName = "fccResourcesNavigator";
         public string Name => HostObjectName;

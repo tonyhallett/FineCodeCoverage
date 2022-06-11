@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Moq;
 using System.Linq;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class TemplatedRunSettingsService_Tests
     {

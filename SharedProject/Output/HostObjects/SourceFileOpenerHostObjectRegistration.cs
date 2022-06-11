@@ -1,7 +1,4 @@
-﻿using EnvDTE80;
-using Microsoft;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+﻿using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel.Composition;
 
@@ -17,11 +14,7 @@ namespace FineCodeCoverage.Output.HostObjects
             ILogger logger
         )
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            var dte = (DTE2)serviceProvider.GetService(typeof(SDTE));
-            Assumes.Present(dte);
-
-            HostObject = new SourceFileOpener(dte, logger);
+            HostObject = new SourceFileOpenerHostObject(serviceProvider, logger);
         }
 
         public string Name => "sourceFileOpener";

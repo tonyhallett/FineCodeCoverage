@@ -9,7 +9,7 @@ using FineCodeCoverage.Engine.Model;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class TestMsCodeCoverageOptions : IMsCodeCoverageOptions
     {

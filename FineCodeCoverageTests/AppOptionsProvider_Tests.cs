@@ -7,7 +7,7 @@ using FineCodeCoverage.Options;
 using Moq;
 using NUnit.Framework;
 
-namespace FineCodeCoverageTests
+namespace FineCodeCoverageTests_AppOptions_Tests
 {
     public class AppOptionsProvider_Tests
     {
@@ -70,8 +70,10 @@ namespace FineCodeCoverageTests
             mockWritableSettingsStore.Setup(
                 writableSettingsStore => writableSettingsStore.PropertyExists("FineCodeCoverage", nameof(IAppOptions.AttributesExclude))
             ).Returns(false);
-            var mockAppOptions = new Mock<IAppOptions>();
-            mockAppOptions.DefaultValueProvider = new NullStringArrayDefaultValueProvider();
+            var mockAppOptions = new Mock<IAppOptions>
+            {
+                DefaultValueProvider = new NullStringArrayDefaultValueProvider()
+            };
             mockAppOptions.SetupAllProperties();
             var appOptions = mockAppOptions.Object;
 
@@ -218,8 +220,10 @@ namespace FineCodeCoverageTests
                 writableSettingsStore => writableSettingsStore.GetString("FineCodeCoverage", nameof(IAppOptions.AttributesExclude))
             ).Returns(nullOrWhitespace);
 
-            var mockAppOptions = new Mock<IAppOptions>();
-            mockAppOptions.DefaultValueProvider = new NullStringArrayDefaultValueProvider();
+            var mockAppOptions = new Mock<IAppOptions>
+            {
+                DefaultValueProvider = new NullStringArrayDefaultValueProvider()
+            };
             mockAppOptions.SetupAllProperties();
             var appOptions = mockAppOptions.Object;
 
@@ -232,8 +236,10 @@ namespace FineCodeCoverageTests
         [Test]
         public void Should_Use_Deseralized_String_From_Store_For_AppOption_Property_LoadSettingsFromStorage()
         {
-            var mockAppOptions = new Mock<IAppOptions>();
-            mockAppOptions.DefaultValueProvider = new NullStringArrayDefaultValueProvider();
+            var mockAppOptions = new Mock<IAppOptions>
+            {
+                DefaultValueProvider = new NullStringArrayDefaultValueProvider()
+            };
             mockAppOptions.SetupAllProperties();
             var appOptions = mockAppOptions.Object;
 

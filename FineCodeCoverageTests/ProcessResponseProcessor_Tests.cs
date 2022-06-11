@@ -3,7 +3,7 @@ using AutoMoq;
 using FineCodeCoverage.Core.Utilities;
 using NUnit.Framework;
 
-namespace Test
+namespace FineCodeCoverageTests_Process_Tests
 {
     public class ProcessResponseProcessor_Tests
     {

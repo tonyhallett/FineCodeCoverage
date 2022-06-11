@@ -4,9 +4,9 @@ namespace FineCodeCoverage.Impl
 {
     internal class CoverageMarginOptions : ICoverageMarginOptions
     {
-        public bool ShowCoveredInOverviewMargin { get; set; }
-        public bool ShowPartiallyCoveredInOverviewMargin { get; set; }
-        public bool ShowUncoveredInOverviewMargin { get; set; }
+        private bool ShowCoveredInOverviewMargin { get; set; }
+        private bool ShowPartiallyCoveredInOverviewMargin { get; set; }
+        private bool ShowUncoveredInOverviewMargin { get; set; }
 
         public bool AreEqual(CoverageMarginOptions options)
         {
@@ -21,6 +21,7 @@ namespace FineCodeCoverage.Impl
             {
                 return new CoverageMarginOptions();
             }
+
             return new CoverageMarginOptions
             {
                 ShowCoveredInOverviewMargin = appOptions.ShowCoveredInOverviewMargin,

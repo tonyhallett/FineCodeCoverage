@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using FineCodeCoverage.Engine.Model;
 using Moq;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     public class ShimCopier_Tests
     {

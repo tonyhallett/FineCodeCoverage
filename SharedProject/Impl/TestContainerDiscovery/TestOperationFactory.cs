@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using FineCodeCoverage.Engine.Model;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
-using ReflectObject;
 
 namespace FineCodeCoverage.Impl
 {
@@ -11,30 +9,32 @@ namespace FineCodeCoverage.Impl
     {
         private readonly ICoverageProjectFactory coverageProjectFactory;
         private readonly IRunSettingsRetriever runSettingsRetriever;
+        private readonly ITestRunRequestFactory testRunRequestFactory;
         private readonly ILogger logger;
 
         [ImportingConstructor]
         public TestOperationFactory(
             ICoverageProjectFactory coverageProjectFactory,
             IRunSettingsRetriever runSettingsRetriever,
+            ITestRunRequestFactory testRunRequestFactory,
             ILogger logger
             )
         {
             this.coverageProjectFactory = coverageProjectFactory;
             this.runSettingsRetriever = runSettingsRetriever;
+            this.testRunRequestFactory = testRunRequestFactory;
             this.logger = logger;
         }
         public ITestOperation Create(IOperation operation)
         {
-            try
-            {
-                return new TestOperation(new TestRunRequest(operation), coverageProjectFactory, runSettingsRetriever);
-            }
-            catch (PropertyDoesNotExistException propertyDoesNotExistException)
-            {
-                logger.Log("Error test container discoverer reflection");
-                throw new Exception(propertyDoesNotExistException.Message);
-            }
+            return new LoggingUnsupportedProjectsTestOperation(
+                new TestOperation(
+                    testRunRequestFactory.Create(operation),
+                    coverageProjectFactory,
+                    runSettingsRetriever
+                ),
+                logger
+            );
         }
     }
 }

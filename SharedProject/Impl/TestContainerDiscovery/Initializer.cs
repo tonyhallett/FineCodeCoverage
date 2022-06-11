@@ -2,10 +2,8 @@
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine;
 using FineCodeCoverage.Engine.Model;
-using FineCodeCoverage.Output.JsMessages.Logging;
 
 namespace FineCodeCoverage.Impl
 {
@@ -16,8 +14,11 @@ namespace FineCodeCoverage.Impl
         private readonly ILogger logger;
         private readonly ICoverageProjectFactory coverageProjectFactory;
         private readonly IPackageInitializer packageInitializer;
+        internal const string initializationFailedMessagePrefix = "Initialization failed.  Please check the following error which may be resolved by reopening visual studio which will start the initialization process again.";
+        internal int initializeWait = 5000;
 
         public InitializeStatus InitializeStatus { get; set; } = InitializeStatus.Initializing;
+        private bool Initialized => InitializeStatus == InitializeStatus.Initialized;
         public string InitializeExceptionMessage { get; set; }
 
         [ImportingConstructor]
@@ -33,21 +34,30 @@ namespace FineCodeCoverage.Impl
             this.coverageProjectFactory = coverageProjectFactory;
             this.packageInitializer = packageInitializer;
         }
+
+        private async Task DoInitializeAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            logger.Log($"Initializing");
+
+            cancellationToken.ThrowIfCancellationRequested();
+            coverageProjectFactory.Initialize();
+
+            fccEngine.Initialize(this, cancellationToken);
+            await packageInitializer.InitializeAsync(cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            InitializeStatus = InitializeStatus.Initialized;
+
+            logger.Log($"Initialized");
+        }
+
         public async Task InitializeAsync(CancellationToken cancellationToken)
         {
             try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                logger.Log($"Initializing");
-
-                cancellationToken.ThrowIfCancellationRequested();
-                coverageProjectFactory.Initialize();
-
-                fccEngine.Initialize(this, cancellationToken);
-                await packageInitializer.InitializeAsync(cancellationToken);
-
-                cancellationToken.ThrowIfCancellationRequested();
-                logger.Log($"Initialized");
+                await DoInitializeAsync(cancellationToken);
             }
             catch (Exception exception)
             {
@@ -58,13 +68,35 @@ namespace FineCodeCoverage.Impl
                     logger.Log($"Failed Initialization", exception);
                 }
             }
+        }
 
-            if (InitializeStatus != InitializeStatus.Error)
+        private void ThrowIfInitializationFailed()
+        {
+            if (InitializeStatus == InitializeStatus.Error)
             {
-                InitializeStatus = InitializeStatus.Initialized;
+                throw new Exception($"{initializationFailedMessagePrefix} {InitializeExceptionMessage}");
             }
         }
-        
+
+        private Task WaitForInitializationAsync()
+        {
+            logger.Log(CoverageStatus.Initializing.Message());
+            return Task.Delay(initializeWait);
+        }
+
+        public async Task WaitForInitializedAsync(CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfInitializationFailed();
+                if (Initialized)
+                {
+                    return;
+                }
+                await WaitForInitializationAsync();
+            }
+        }
     }
 
 }

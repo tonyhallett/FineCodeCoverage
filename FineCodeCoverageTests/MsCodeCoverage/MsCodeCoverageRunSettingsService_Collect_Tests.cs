@@ -11,12 +11,10 @@ using FineCodeCoverage.Impl;
 using FineCodeCoverage.Engine;
 using System.Threading.Tasks;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
-using FineCodeCoverageTests.Test_helpers;
-using FineCodeCoverage.Engine.ReportGenerator;
 using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Options;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class MsCodeCoverageRunSettingsService_Test_Execution_Not_Finished_Tests
     {
@@ -25,7 +23,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         {
             var autoMocker = new AutoMoqer();
             var msCodeCoverageRunSettingsService = autoMocker.Create<MsCodeCoverageRunSettingsService>();
-
+            msCodeCoverageRunSettingsService.threadHelper = new TestThreadHelper();
 
             var mockUserRunSettingsService = autoMocker.GetMock<IUserRunSettingsService>();
             mockUserRunSettingsService.Setup(
@@ -90,17 +88,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         }
 
         [Test]
-        public async Task Should_Combined_Log_When_No_Cobertura_Files()
-        {
-            throw new NotImplementedException();
-            //await RunAndProcessReportAsync(null, Array.Empty<string>());
-            //autoMocker.Verify<ILogger>(logger => logger.Log("No cobertura files for ms code coverage."));
-            //autoMocker.Verify<IReportGeneratorUtil>(
-            //    reportGenerator => reportGenerator.LogCoverageProcess("No cobertura files for ms code coverage.")
-            //);
-        }
-
-        [Test]
         public async Task Should_Clean_Up_RunSettings_Coverage_Projects_From_IsCollecting()
         {
             await RunAndProcessReportAsync(null, Array.Empty<string>());
@@ -124,6 +111,26 @@ namespace FineCodeCoverageTests.MsCodeCoverage
             msCodeCoverageRunSettingsService.threadHelper = new TestThreadHelper();
 
             var mockFccEngine = new Mock<IFCCEngine>();
+            var vsLinkedCancellationToken = CancellationToken.None;
+            var coverageLines = new List<CoverageLine>();
+            Func<CancellationToken, Task<List<CoverageLine>>> resultProvider = null;
+            mockFccEngine.Setup(
+                fccEngine => fccEngine.RunCancellableCoverageTask(
+                    It.IsAny<Func<CancellationToken, Task<List<CoverageLine>>>>(), null
+                )
+            ).Callback<Func<CancellationToken, Task<List<CoverageLine>>>, Action>((_resultProvider, a) =>
+              {
+                  resultProvider = _resultProvider;
+              });
+            mockFccEngine.Setup(
+                engine => engine.RunAndProcessReport(
+                    It.Is<string[]>(coberturaFiles => 
+                        !expectedCoberturaFiles.Except(coberturaFiles).Any() && 
+                        !coberturaFiles.Except(expectedCoberturaFiles).Any()
+                    ), vsLinkedCancellationToken
+                )
+            ).Returns(coverageLines);
+
             msCodeCoverageRunSettingsService.Initialize("", mockFccEngine.Object, CancellationToken.None);
 
             var mockOperation = new Mock<IOperation>();
@@ -139,16 +146,14 @@ namespace FineCodeCoverageTests.MsCodeCoverage
                 runSettingsCoverageProject
             };
             mockTestOperation.Setup(testOperation => testOperation.GetCoverageProjectsAsync()).ReturnsAsync(coverageProjects);
+
             var mockAppOptionsProvider = autoMocker.GetMock<IAppOptionsProvider>();
             mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Get()).Returns(new Mock<IAppOptions>().Object);
             await msCodeCoverageRunSettingsService.IsCollectingAsync(mockTestOperation.Object);
 
             await msCodeCoverageRunSettingsService.CollectAsync(mockOperation.Object, mockTestOperation.Object);
-            
-            mockFccEngine.Verify(engine => engine.RunAndProcessReport(
-                    It.Is<string[]>(coberturaFiles => !expectedCoberturaFiles.Except(coberturaFiles).Any() && !coberturaFiles.Except(expectedCoberturaFiles).Any()), It.IsAny<Action>()
-                )
-            );
+            var processedCoverageLines = await resultProvider(vsLinkedCancellationToken);
+            Assert.AreSame(coverageLines, processedCoverageLines);
         }
 
         private ICoverageProject CreateCoverageProject(string runSettingsFile)

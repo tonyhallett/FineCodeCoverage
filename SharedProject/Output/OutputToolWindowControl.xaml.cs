@@ -8,7 +8,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Web.WebView2.Core;
 using Newtonsoft.Json;
-using FineCodeCoverage.Engine.ReportGenerator;
 using Task = System.Threading.Tasks.Task;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsSerialization;
@@ -17,6 +16,7 @@ using System.IO;
 using FineCodeCoverage.Output.JsMessages.Logging;
 using FineCodeCoverage.Output.JsMessages;
 using FineCodeCoverage.Output.JsSerialization.ReportGenerator;
+using FineCodeCoverage.Core.ReportGenerator.Colours;
 
 namespace FineCodeCoverage.Output
 {
@@ -27,7 +27,6 @@ namespace FineCodeCoverage.Output
 		UserControl, IListener<NewReportMessage>, IListener<LogMessage>, IListener<CoverageStoppedMessage>, IListener<ClearReportMessage>
 	{
 		private WebView2 _webView2;
-        private readonly IEventAggregator eventAggregator;
         private readonly IReportColoursProvider reportColoursProvider;
         private readonly List<IWebViewHostObjectRegistration> webViewHostObjectRegistrations;
         private readonly IAppOptionsProvider appOptionsProvider;
@@ -59,7 +58,6 @@ namespace FineCodeCoverage.Output
 			List<IWebViewHostObjectRegistration> webViewHostObjectRegistrations,
 			IAppOptionsProvider appOptionsProvider)
 		{
-			this.eventAggregator = eventAggregator;
 			eventAggregator.AddListener(this);
 			this.reportColoursProvider = reportColoursProvider;
             this.webViewHostObjectRegistrations = webViewHostObjectRegistrations;
@@ -83,7 +81,7 @@ namespace FineCodeCoverage.Output
         private async Task InitializeAsync()
 		{
 			await InitializeWebViewAsync();
-			reportColoursProvider.ColoursChanged += ReportColoursProvider_ColoursChanged;
+			reportColoursProvider.CategorizedNamedColoursChanged += ReportColoursProvider_ColoursChanged;
 		}
 
 		//todo - html path
@@ -190,7 +188,7 @@ namespace FineCodeCoverage.Output
 		}
 		
 		// note that can only access the CoreWebView2 here
-		private void Webview2_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
+		private void Webview2_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
 		{
 			if (e.IsSuccess)
 			{
@@ -254,7 +252,7 @@ namespace FineCodeCoverage.Output
 		{
 			styling = new Styling
 			{
-				categoryColours = reportColoursProvider.GetColours().ToDictionary()
+				categoryColours = reportColoursProvider.GetCategorizedNamedColoursList().SerializeAsDictionary()
 			};
 			var environmentFont = new EnvironmentFont();
 			environmentFont.Changed += (sender, fontDetails) =>
@@ -324,11 +322,11 @@ namespace FineCodeCoverage.Output
 			
 		}
 
-		private void ReportColoursProvider_ColoursChanged(object sender, List<CategoryColour> reportColours)
+		private void ReportColoursProvider_ColoursChanged(object sender, List<CategorizedNamedColours> reportColours)
 		{
 			if (styling != null)
             {
-				styling.categoryColours = reportColours.ToDictionary();
+				styling.categoryColours = reportColours.SerializeAsDictionary();
 				_ = PostStylingAsync();
 			}
 		}

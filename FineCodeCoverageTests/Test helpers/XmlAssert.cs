@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Org.XmlUnit.Builder;
 
-namespace FineCodeCoverageTests.Test_helpers
+namespace FineCodeCoverageTests
 {
     internal static class XmlAssert
     {

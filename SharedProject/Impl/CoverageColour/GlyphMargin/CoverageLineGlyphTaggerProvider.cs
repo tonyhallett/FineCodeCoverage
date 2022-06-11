@@ -2,10 +2,10 @@
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Shell;
 using FineCodeCoverage.Core.Utilities;
 using System.Collections.Generic;
 using FineCodeCoverage.Engine.Model;
+using FineCodeCoverage.Core.Utilities.VsThreading;
 
 namespace FineCodeCoverage.Impl
 {
@@ -16,7 +16,7 @@ namespace FineCodeCoverage.Impl
 	internal class CoverageLineGlyphTaggerProvider : CoverageLineTaggerProviderBase<CoverageLineGlyphTagger, CoverageLineGlyphTag>
     {
         private readonly ICoverageColoursProvider coverageColoursProvider;
-        private RefreshCoverageGlyphsMessage refreshCoverageGlyphsMessage = new RefreshCoverageGlyphsMessage();
+        private readonly RefreshCoverageGlyphsMessage refreshCoverageGlyphsMessage = new RefreshCoverageGlyphsMessage();
         [ImportingConstructor]
 		public CoverageLineGlyphTaggerProvider(
             IEventAggregator eventAggregator, 
@@ -28,6 +28,8 @@ namespace FineCodeCoverage.Impl
             coverageColours.ColoursChanged += CoverageColours_ColoursChanged;
         }
 
+        internal IThreadHelper ThreadHelper = new VsThreadHelper();
+
         private void CoverageColours_ColoursChanged(object sender, System.EventArgs e)
         {
             eventAggregator.SendMessage(refreshCoverageGlyphsMessage);
@@ -35,10 +37,7 @@ namespace FineCodeCoverage.Impl
 
         protected override void NewCoverageLinesMessageReceived()
         {
-            ThreadHelper.JoinableTaskFactory.Run(async () =>
-            {
-                await coverageColoursProvider.PrepareAsync();
-            });
+            ThreadHelper.JoinableTaskFactory.Run(coverageColoursProvider.PrepareAsync);
         }
 
         protected override CoverageLineGlyphTagger CreateTagger(ITextBuffer textBuffer, List<CoverageLine> lastCoverageLines)

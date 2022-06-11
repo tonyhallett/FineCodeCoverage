@@ -136,7 +136,7 @@ namespace FineCodeCoverage.Engine.Coverlet
             runSettingsCoverletConfiguration = runSettingsCoverletConfigurationFactory.Create();
             this.coverageProject = coverageProject;
             
-            if(coverageProject.RunSettingsFile != null)
+            if (coverageProject.RunSettingsFile != null)
             {
                 var runSettingsXml = fileUtil.ReadAllText(coverageProject.RunSettingsFile);
                     
@@ -254,8 +254,8 @@ namespace FineCodeCoverage.Engine.Coverlet
              {
                  coverletDataCollectorGeneratedCobertura.CorrectPath(coverageProject.CoverageOutputFolder, coverageProject.CoverageOutputFile);
              });
-
         }
+
         private string GetLogTitle()
         {
             return $"{LogPrefix} ({coverageProject.ProjectName})";

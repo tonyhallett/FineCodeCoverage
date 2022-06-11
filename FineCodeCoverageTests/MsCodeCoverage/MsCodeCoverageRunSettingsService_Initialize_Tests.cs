@@ -4,7 +4,7 @@ using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
 using System.Threading;
 using FineCodeCoverage.Core.Utilities;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class MsCodeCoverageRunSettingsService_Initialize_Tests
     {

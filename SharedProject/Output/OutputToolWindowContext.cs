@@ -1,5 +1,5 @@
-﻿using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Engine.ReportGenerator;
+﻿using FineCodeCoverage.Core.ReportGenerator.Colours;
+using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Options;
 using FineCodeCoverage.Output.HostObjects;
 using System.Collections.Generic;

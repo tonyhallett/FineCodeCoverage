@@ -10,15 +10,15 @@ namespace FineCodeCoverage.Impl
 {
 	internal abstract class CoverageLineTaggerBase<TTag> : ICoverageLineTagger<TTag> where TTag : ITag
 	{
-		private readonly ITextBuffer _textBuffer;
-		private List<CoverageLine> coverageLines;
+		internal readonly ITextBuffer _textBuffer;
+		internal List<CoverageLine> _coverageLines;
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
 		public CoverageLineTaggerBase(ITextBuffer textBuffer, List<CoverageLine> lastCoverageLines)
 		{
 			_textBuffer = textBuffer;
-			coverageLines = lastCoverageLines;
+			_coverageLines = lastCoverageLines;
 			if (lastCoverageLines != null)
 			{
 				RaiseTagsChanged();
@@ -34,7 +34,7 @@ namespace FineCodeCoverage.Impl
 
 		private IEnumerable<CoverageLine> GetApplicableLines(string filePath, int startLineNumber, int endLineNumber)
 		{
-			return coverageLines
+			return _coverageLines
 			.AsParallel()
 			.Where(x => x.Class.Filename.Equals(filePath, StringComparison.OrdinalIgnoreCase))
 			.Where(x => x.Line.Number >= startLineNumber && x.Line.Number <= endLineNumber)
@@ -43,7 +43,7 @@ namespace FineCodeCoverage.Impl
 
 		public void Handle(NewCoverageLinesMessage message)
 		{
-			coverageLines = message.CoverageLines;
+			_coverageLines = message.CoverageLines;
 			RaiseTagsChanged();
 		}
 
@@ -51,7 +51,7 @@ namespace FineCodeCoverage.Impl
 		{
 			var result = new List<ITagSpan<TTag>>();
 
-			if (spans == null || coverageLines == null)
+			if (spans == null || _coverageLines == null)
 			{
 				return result;
 			}

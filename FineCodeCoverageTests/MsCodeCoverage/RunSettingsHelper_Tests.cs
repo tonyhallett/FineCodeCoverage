@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Xml.Linq;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     public class RunSettingsHelper_Tests
     {

@@ -5,9 +5,9 @@ using AutoMoq;
 using Moq;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
 using System.Collections.Generic;
-using FineCodeCoverageTests.Test_helpers;
+using FineCodeCoverageTests.MsCodeCoverage_Tests.Helpers;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class UserRunSettingsService_AddFCCSettings_Tests
     {

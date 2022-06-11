@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml;
 using System.Globalization;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests.Helpers
 {
     internal static class XmlHelper
     {

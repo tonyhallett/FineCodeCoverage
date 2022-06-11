@@ -158,9 +158,6 @@ namespace FineCodeCoverage.Engine.Model
         }
         public string TestDllFile { get; set; }
         public string ProjectOutputFolder => Path.GetDirectoryName(TestDllFile);
-        public string FailureDescription { get; set; }
-        public string FailureStage { get; set; }
-        public bool HasFailed => !string.IsNullOrWhiteSpace(FailureStage) || !string.IsNullOrWhiteSpace(FailureDescription);
         public string ProjectFile { get; set; }
         public Guid Id { get; set; }
         public string ProjectName { get; set; }
@@ -217,28 +214,6 @@ namespace FineCodeCoverage.Engine.Model
                         break;
                 }
 
-            }
-        }
-
-        public async Task StepAsync(string stepName, Func<ICoverageProject, Task> action)
-        {
-            if (HasFailed)
-            {
-                return;
-            }
-
-            try
-            {
-                await action(this);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception exception)
-            {
-                FailureStage = stepName;
-                FailureDescription = exception.ToString();
             }
         }
 

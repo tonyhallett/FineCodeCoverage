@@ -2,9 +2,9 @@
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using FineCodeCoverageTests.Test_helpers;
+using FineCodeCoverageTests.MsCodeCoverage_Tests.Helpers;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     public class RunSettingsTemplate_Tests
     {

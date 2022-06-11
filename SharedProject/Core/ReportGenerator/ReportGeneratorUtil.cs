@@ -3,51 +3,46 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Task = System.Threading.Tasks.Task;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Options;
 using System.Threading;
 using Palmmedia.ReportGenerator.Core.CodeAnalysis;
 using Palmmedia.ReportGenerator.Core;
 using FineCodeCoverage.Output.JsMessages;
+using Palmmedia.ReportGenerator.Core.Reporting;
 
 namespace FineCodeCoverage.Core.ReportGenerator
 {
 	[Export(typeof(IReportGeneratorUtil))]
 	internal partial class ReportGeneratorUtil : IReportGeneratorUtil
 	{
-		private readonly IToolFolder toolFolder;
-		private readonly IToolZipProvider toolZipProvider;
 		private readonly IAppOptionsProvider appOptionsProvider;
-        private readonly IEventAggregator eventAggregator;
-        private const string zipPrefix = "reportGenerator";
-		private const string zipDirectoryName = "reportGenerator";
-
-		public string ReportGeneratorExePath { get; private set; }
+		private readonly IEventAggregator eventAggregator;
+		private readonly IReportGenerator reportGenerator;
+        private readonly ILogger logger;
+        private readonly IReportConfigurationFactory reportConfigurationFactory;
 		private readonly string capturingReportBuilderPluginAssemblyLocation;
+		internal List<string> errorMessages = new List<string>();
 
 		[ImportingConstructor]
 		public ReportGeneratorUtil(
-			IToolFolder toolFolder,
-			IToolZipProvider toolZipProvider,
-			IFileUtil fileUtil,
 			IAppOptionsProvider appOptionsProvider,
-			IEventAggregator eventAggregator
+			IEventAggregator eventAggregator,
+			IReportGenerator reportGenerator,
+			ILogger logger,
+			IReportConfigurationFactory reportConfigurationFactory
 		)
 		{
 			this.appOptionsProvider = appOptionsProvider;
-			this.toolFolder = toolFolder;
-			this.toolZipProvider = toolZipProvider;
             this.eventAggregator = eventAggregator;
-			capturingReportBuilderPluginAssemblyLocation = typeof(CapturingReportBuilder).Assembly.Location;
-		}
-        
-		public void Initialize(string appDataFolder, CancellationToken cancellationToken)
-		{
-			var zipDestination = toolFolder.EnsureUnzipped(appDataFolder, zipDirectoryName, toolZipProvider.ProvideZip(zipPrefix), cancellationToken);
-			ReportGeneratorExePath = Directory.GetFiles(zipDestination, "reportGenerator.exe", SearchOption.AllDirectories).FirstOrDefault()
-								  ?? Directory.GetFiles(zipDestination, "*reportGenerator*.exe", SearchOption.AllDirectories).FirstOrDefault();
+            this.reportGenerator = reportGenerator;
+			this.logger = logger;
+            this.reportConfigurationFactory = reportConfigurationFactory;
+            this.reportGenerator.SetLogger((_, errorMessage) =>
+			{
+				errorMessages.Add(errorMessage);
+			});
+            capturingReportBuilderPluginAssemblyLocation = typeof(CapturingReportBuilder).Assembly.Location;
 		}
 
 		private bool RunReport(IEnumerable<string> coverOutputFiles, string reportOutputFolder, RiskHotspotsAnalysisThresholds RiskHotspotsAnalysisThresholds)
@@ -62,8 +57,7 @@ namespace FineCodeCoverage.Core.ReportGenerator
 			IEnumerable<string> classFilters = Enumerable.Empty<string>();
 			IEnumerable<string> fileFilters = Enumerable.Empty<string>();
 
-			
-			ReportConfiguration reportConfiguration = new ReportConfiguration(
+			var fccReportConfiguration = new FCCReportConfiguration(
 				coverOutputFiles,
 				reportOutputFolder,
 				sourceDirectories,
@@ -73,10 +67,14 @@ namespace FineCodeCoverage.Core.ReportGenerator
 				assemblyFilters,
 				classFilters,
 				fileFilters,
-				null, // can be null 
+				"Error",
 				""
 			);
-			return new Generator().GenerateReport(reportConfiguration, settings, RiskHotspotsAnalysisThresholds);
+            
+			IReportConfiguration reportConfiguration = reportConfigurationFactory.Create(
+				fccReportConfiguration
+			);
+			return reportGenerator.GenerateReport(reportConfiguration, settings, RiskHotspotsAnalysisThresholds);
 
 		}
 
@@ -93,32 +91,24 @@ namespace FineCodeCoverage.Core.ReportGenerator
 			);
 		}
 
-		public Task<string> GenerateAsync(IEnumerable<string> coverOutputFiles, string reportOutputFolder, CancellationToken cancellationToken)
+		public string Generate(IEnumerable<string> coverOutputFiles, string reportOutputFolder, CancellationToken cancellationToken)
 		{
-			// todo need to write out based upon the one one with logging and vs colouring
 			var unifiedHtmlFile = Path.Combine(reportOutputFolder, "index.html");
 			var unifiedXmlFile = Path.Combine(reportOutputFolder, "Cobertura.xml");
 
 			var riskHotspotsAnalysisThresholds = HotspotThresholds();
-			bool reportSuccess = false;
-			try
-			{
-				reportSuccess = RunReport(coverOutputFiles, reportOutputFolder, riskHotspotsAnalysisThresholds);
-			}catch (Exception ex)
-            {
-				//..... throw ?
-				// before would have received logged output from processUtil ?
-            }
+			bool reportSuccess = RunReport(coverOutputFiles, reportOutputFolder, riskHotspotsAnalysisThresholds);
+			
             if (!reportSuccess)
             {
-				throw new Exception("todo");
+				logger.Log(errorMessages);
+				errorMessages = new List<string> { };
+				throw new Exception("Report Generator error");
             }
 
 			RaiseNewReport(riskHotspotsAnalysisThresholds,unifiedHtmlFile);
 
-			return Task.FromResult(unifiedXmlFile);
-
-			
+			return unifiedXmlFile;
 		}
 
 		private RiskHotspotsAnalysisThresholds HotspotThresholds()

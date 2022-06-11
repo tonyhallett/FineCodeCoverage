@@ -14,9 +14,6 @@ namespace FineCodeCoverage.Engine.Model
         string DefaultCoverageOutputFolder { get; }
         List<string> ExcludedReferencedProjects { get; }
         List<string> IncludedReferencedProjects { get; }
-        string FailureDescription { get; set; }
-        string FailureStage { get; set; }
-        bool HasFailed { get; }
         bool Is64Bit { get; set; }
         string ProjectFile { get; set; }
         XElement ProjectFileXElement { get; }
@@ -30,7 +27,6 @@ namespace FineCodeCoverage.Engine.Model
         string TargetFramework { get; set; }
 
         bool IsDotNetSdkStyle();
-        Task StepAsync(string stepName, Func<ICoverageProject, Task> action);
         Task<CoverageProjectFileSynchronizationDetails> PrepareForCoverageAsync(System.Threading.CancellationToken cancellationToken, bool synchronizeBuildOuput = true);
     }
 }

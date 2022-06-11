@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
 using FineCodeCoverage.Core.Utilities;
 using Moq;
@@ -8,7 +7,7 @@ using FineCodeCoverage.Engine.Model;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace FineCodeCoverageTests.MsCodeCoverage
+namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     internal class MsCodeCoverage_UserRunSettingsService_Analysis_Tests
     {

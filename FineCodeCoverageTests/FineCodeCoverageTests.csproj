@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\NUnit3TestAdapter.3.17.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\packages\NUnit3TestAdapter.3.17.0\build\net35\NUnit3TestAdapter.props')" />
-  <Import Project="..\packages\NUnit.3.13.1\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.13.1\build\NUnit.props')" />
+  <Import Project="..\packages\NUnit.3.13.3\build\NUnit.props" Condition="Exists('..\packages\NUnit.3.13.3\build\NUnit.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -74,11 +74,11 @@
     <Reference Include="NuGet.Frameworks, Version=5.11.0.10, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\NuGet.Frameworks.5.11.0\lib\net472\NuGet.Frameworks.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=3.13.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.13.1\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.13.3.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="StructureMap, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\StructureMap.4.7.1\lib\net45\StructureMap.dll</HintPath>
+    <Reference Include="ReflectObject, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ReflectObject.1.0.2\lib\netstandard2.0\ReflectObject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -110,14 +110,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CoverageToolOutput_Tests\AppOptionsCoverageToolOutputFolderSolutionProvider_Tests.cs" />
-    <Compile Include="CoverageToolOutput_Tests\CoverageToolOutputFolderFromSolutionProvider_Tests.cs" />
-    <Compile Include="CoverageToolOutput_Tests\CoverageToolOutputManager_Tests.cs" />
-    <Compile Include="CoverageToolOutput_Tests\CoverageToolOutput_Exports_Tests.cs" />
-    <Compile Include="CoverageToolOutput_Tests\FccOutputExistenceCoverageToolOutputFolderSolutionProvider_Tests.cs" />
-    <Compile Include="CoverageToolOutput_Tests\SolutionFolderProvider_Tests.cs" />
+    <Compile Include="CoverageToolOutput\AppOptionsCoverageToolOutputFolderSolutionProvider_Tests.cs" />
+    <Compile Include="CoverageToolOutput\CoverageToolOutputFolderFromSolutionProvider_Tests.cs" />
+    <Compile Include="CoverageToolOutput\CoverageToolOutputManager_Tests.cs" />
+    <Compile Include="CoverageToolOutput\CoverageToolOutput_Exports_Tests.cs" />
+    <Compile Include="CoverageToolOutput\FccOutputExistenceCoverageToolOutputFolderSolutionProvider_Tests.cs" />
+    <Compile Include="CoverageToolOutput\SolutionFolderProvider_Tests.cs" />
     <Compile Include="AppOptionsProvider_Tests.cs" />
-    <Compile Include="CoverageUtilManager_Tests.cs" />
+    <Compile Include="OldStyleCoverage\CoverageUtilManager_Tests.cs" />
+    <Compile Include="FCCEngine\FCCEngine_CancellationToken_Tests.cs" />
+    <Compile Include="FCCEngine\FCCEngine_Initialize_Tests.cs" />
+    <Compile Include="FCCEngine\FCCEngine_RunCancellableCoverageTask_Error.cs" />
+    <Compile Include="FCCEngine\FCCEngine_RunCancellableCoverageTask_Success.cs" />
+    <Compile Include="FCCEngine\FCCEngine_RunCancellableCoverageTask_Test_Base.cs" />
+    <Compile Include="FCCEngine\FCCEngine_UI_Tests.cs" />
+    <Compile Include="OldStyleCoverage\OldStyleCoverage_Tests.cs" />
+    <Compile Include="Test helpers\CancellationTokenHelper.cs" />
+    <Compile Include="Test helpers\EventAggregatorAssertions.cs" />
     <Compile Include="MsCodeCoverage\ShimCopier_Tests.cs" />
     <Compile Include="MsCodeCoverage\TemplatedRunSettingsService_Tests.cs" />
     <Compile Include="MsCodeCoverage\CustomRunSettingsTemplateProvider_Tests.cs" />
@@ -136,25 +145,38 @@
     <Compile Include="Test helpers\MefOrderAssertions.cs" />
     <Compile Include="Test helpers\TestThreadHelper.cs" />
     <Compile Include="Test helpers\XmlAssert.cs" />
-    <Compile Include="ToolFolder_Tests.cs" />
-    <Compile Include="ToolZipProvider_Tests.cs" />
-    <Compile Include="CoverletDataCollectorGeneratedCobertura_Tests.cs" />
-    <Compile Include="CoverletDataCollectorUtil_CanUseDataCollector_Tests.cs" />
-    <Compile Include="CoverletDataCollectorUtil_Initialize_Tests.cs" />
-    <Compile Include="CoverletDataCollectorUtil_RunAsync_Tests.cs" />
-    <Compile Include="DataCollectorSettingsBuilder_Tests.cs" />
-    <Compile Include="DotNetToolList_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\LoggingUnsupportedProjectsTestOperation_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestOperationFactory_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\RunCoverageConditions_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Exceptions_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_OperationSetFinished_Should_Reset_State.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Other_OperationStates.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Cancellation_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Collect_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Initialization.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Settings_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Should_Not_Collect_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestContainerDiscoverer_Tests_Base.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestOperation_Tests.cs" />
+    <Compile Include="TestContainerDiscoverer_Tests\TestRunRequestFactory_Tests.cs" />
+    <Compile Include="Tools\ToolFolder_Tests.cs" />
+    <Compile Include="Tools\ToolZipProvider_Tests.cs" />
+    <Compile Include="Coverlet\CoverletDataCollectorGeneratedCobertura_Tests.cs" />
+    <Compile Include="Coverlet\CoverletDataCollectorUtil_CanUseDataCollector_Tests.cs" />
+    <Compile Include="Coverlet\CoverletDataCollectorUtil_Initialize_Tests.cs" />
+    <Compile Include="Coverlet\CoverletDataCollectorUtil_RunAsync_Tests.cs" />
+    <Compile Include="Coverlet\DataCollectorSettingsBuilder_Tests.cs" />
+    <Compile Include="DotNetTool\DotNetToolList_Tests.cs" />
     <Compile Include="ProcessResponseProcessor_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FCCEngine_Tests.cs" />
-    <Compile Include="CoverageProject_Settings_Tests.cs" />
+    <Compile Include="FCCEngine\FCCEngine_RunAndProcessReport_Tests.cs" />
+    <Compile Include="CoverageProject\CoverageProject_Settings_Tests.cs" />
     <Compile Include="Initializer_Tests.cs" />
-    <Compile Include="CoverletUtil_Tests.cs" />
-    <Compile Include="CoverletConsole_Tests.cs" />
-    <Compile Include="RunSettingsCoverletConfigurationFactory_Tests.cs" />
-    <Compile Include="RunSettingsCoverletConfiguration_Tests.cs" />
-    <Compile Include="ReferencedProject_Tests.cs" />
-    <Compile Include="TestContainerDiscovery_Tests.cs" />
+    <Compile Include="Coverlet\CoverletUtil_Tests.cs" />
+    <Compile Include="Coverlet\CoverletConsole_Tests.cs" />
+    <Compile Include="Coverlet\RunSettingsCoverletConfigurationFactory_Tests.cs" />
+    <Compile Include="Coverlet\RunSettingsCoverletConfiguration_Tests.cs" />
+    <Compile Include="CoverageProject\ReferencedProject_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -166,6 +188,7 @@
       <Name>FineCodeCoverage</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Label="FineCodeCoverage">
     <Exclude>
       [NUnit3.TestAdapter]*
@@ -181,7 +204,7 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\NUnit.3.13.1\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.13.1\build\NUnit.props'))" />
+    <Error Condition="!Exists('..\packages\NUnit.3.13.3\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.13.3\build\NUnit.props'))" />
     <Error Condition="!Exists('..\packages\NUnit3TestAdapter.3.17.0\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit3TestAdapter.3.17.0\build\net35\NUnit3TestAdapter.props'))" />
   </Target>
 </Project>

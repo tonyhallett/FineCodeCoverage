@@ -8,6 +8,8 @@ namespace FineCodeCoverage.Core.Utilities.VsThreading
     internal interface IThreadHelper
     {
         IJoinableTaskFactory JoinableTaskFactory { get; }
+
+        void ThrowIfNotOnUIThread();
     }
 
     internal interface IJoinableTaskFactory
@@ -32,5 +34,10 @@ namespace FineCodeCoverage.Core.Utilities.VsThreading
     internal class VsThreadHelper : IThreadHelper
     {
         public IJoinableTaskFactory JoinableTaskFactory { get; } = new VsJoinableTaskFactory();
+
+        public void ThrowIfNotOnUIThread()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+        }
     }
 }
