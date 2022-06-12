@@ -1,6 +1,7 @@
 namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 {
     using AutoMoq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Impl;
     using FineCodeCoverage.Options;

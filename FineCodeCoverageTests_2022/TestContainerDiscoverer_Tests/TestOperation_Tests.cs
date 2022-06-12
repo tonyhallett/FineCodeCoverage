@@ -107,8 +107,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         }
 
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Set_CoverageProject_Properties_From_The_TestConfiguration()
+        public async Task Should_Set_CoverageProject_Properties_From_The_TestConfiguration_Async()
         {
             var userRunSettings = new UserRunSettings();
             var containerData1 = new ContainerData
@@ -195,7 +194,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         }
 
         [Test]
-        public async Task Should_Set_UnsupportedProjects_When_GetCoverageProjectsAsync()
+        public async Task Should_Set_UnsupportedProjects_When_GetCoverageProjects_Async()
         {
             var testConfiguration = new TestConfiguration { };
             var containerData = new ContainerData
@@ -229,6 +228,5 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
             Assert.That(testOperation.UnsupportedProjects, Is.EqualTo(new List<string> { "Unsupported1", "Unsupported2" }));
 
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
     }
 }

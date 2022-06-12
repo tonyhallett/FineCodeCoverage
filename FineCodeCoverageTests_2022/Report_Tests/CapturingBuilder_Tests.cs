@@ -3,6 +3,7 @@ namespace FineCodeCoverageTests.ReportTests
     using System.Collections.Generic;
     using System.IO;
     using System.Threading;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.ReportGenerator;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Options;

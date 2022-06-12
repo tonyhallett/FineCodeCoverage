@@ -1,4 +1,4 @@
-using Palmmedia.ReportGenerator.Core.Logging;
+
 namespace FineCodeCoverageTests.ReportTests
 {
     using System;
@@ -6,6 +6,7 @@ namespace FineCodeCoverageTests.ReportTests
     using System.IO;
     using System.Linq;
     using System.Threading;
+    using ILogger = FineCodeCoverage.ILogger;
     using FineCodeCoverage.Core.ReportGenerator;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Options;
@@ -14,6 +15,7 @@ namespace FineCodeCoverageTests.ReportTests
     using NUnit.Framework;
     using Palmmedia.ReportGenerator.Core;
     using Palmmedia.ReportGenerator.Core.CodeAnalysis;
+    using Palmmedia.ReportGenerator.Core.Logging;
     using Palmmedia.ReportGenerator.Core.Parser.Analysis;
     using Palmmedia.ReportGenerator.Core.Reporting;
 

@@ -4,9 +4,11 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FineCodeCoverage.Core.Utilities
 {
+    [ExcludeFromCodeCoverage]
     [Export(typeof(ISolutionEvents))]
     public class SolutionEvents : ISolutionEvents, IVsSolutionEvents
     {

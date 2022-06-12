@@ -26,28 +26,24 @@ namespace FineCodeCoverage.Engine
             public Action CleanUp { get; set; }
         }
 
-        internal CancellationTokenSource cancellationTokenSource; // tests
+        // tests
+        internal CancellationTokenSource cancellationTokenSource; 
+        internal Task reloadCoverageTask;
 
         public string AppDataFolderPath { get; private set; }
         
-
         private readonly ICoverageUtilManager coverageUtilManager;
         private readonly ICoberturaUtil coberturaUtil;        
         private readonly IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService;
         private readonly IMsTestPlatformUtil msTestPlatformUtil;
         private readonly IReportGeneratorUtil reportGeneratorUtil;
         private readonly ILogger logger;
-        private readonly IAppDataFolder appDataFolder;
-
-        private IInitializeStatusProvider initializeStatusProvider;
         private readonly ICoverageToolOutputManager coverageOutputManager;
-        internal System.Threading.Tasks.Task reloadCoverageTask;
-#pragma warning disable IDE0052 // Remove unread private members
-        private readonly ISolutionEvents solutionEvents; // keep alive
-#pragma warning restore IDE0052 // Remove unread private members
         private readonly IEventAggregator eventAggregator;
         private readonly IDisposeAwareTaskRunner disposeAwareTaskRunner;
         private readonly IExecutionTimer executionTimer;
+        private readonly IAppDataFolder appDataFolder;
+        private IInitializeStatusProvider initializeStatusProvider;
 
         [ImportingConstructor]
         public FCCEngine(
@@ -66,7 +62,6 @@ namespace FineCodeCoverage.Engine
             IExecutionTimer executionTimer
         )
         {
-            this.solutionEvents = solutionEvents;
             this.eventAggregator = eventAggregator;
             this.disposeAwareTaskRunner = disposeAwareTaskRunner;
             this.executionTimer = executionTimer;

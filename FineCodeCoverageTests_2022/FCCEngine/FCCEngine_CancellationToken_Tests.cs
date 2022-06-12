@@ -5,6 +5,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;
@@ -90,8 +91,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Pass_The_Vs_Shutdown_Linked_CancellationToken_To_The_ReportResultProvider_When_RunCancellableCoverageTask()
+        public async Task Should_Pass_The_Vs_Shutdown_Linked_CancellationToken_To_The_ReportResultProvider_When_RunCancellableCoverageTask_Async()
         {
             var linkedCancellationTokenSource = new CancellationTokenSource();
             var linkedCancellationToken = linkedCancellationTokenSource.Token;
@@ -126,7 +126,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_WaitForInitializedAsync_With_the_Vs_Linked_CancellationToken_When_RunCancellableCoverageTask()
+        public async Task Should_WaitForInitializedAsync_With_the_Vs_Linked_CancellationToken_When_RunCancellableCoverageTask_Async()
         {
             var vsLinkedCancellationTokenSource = new CancellationTokenSource();
             var mockDisposeAwareTaskRunner = this.mocker.GetMock<IDisposeAwareTaskRunner>();
@@ -153,7 +153,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_Dispose_CancellationTokenSource_For_That_Coverage_Task_When_Completes()
+        public async Task Should_Dispose_CancellationTokenSource_For_That_Coverage_Task_When_Completes_Async()
         {
             var laterRunCancellationTokenSource = new CancellationTokenSource();
             var currentRunCancellationTokenSource = new CancellationTokenSource();
@@ -191,7 +191,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_Invoke_Clean_Up_If_Provided()
+        public async Task Should_Invoke_Clean_Up_If_Provided_Async()
         {
             var invokedCleanUp = false;
             await this.Run_Cancelled_Coverage_Task_Async(() => invokedCleanUp = true);
@@ -200,7 +200,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_Log_When_Coverage_Cancelled()
+        public async Task Should_Log_When_Coverage_Cancelled_Async()
         {
             await this.Run_Cancelled_Coverage_Task_Async();
 
@@ -209,7 +209,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_Send_CoverageStoppedMessage_When_Cancelled()
+        public async Task Should_Send_CoverageStoppedMessage_When_Cancelled_Async()
         {
             await this.Run_Cancelled_Coverage_Task_Async();
 
@@ -217,21 +217,21 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_Not_Log_Coverage_Cancelled_When_Coverage_Task_Completes_And_Vs_Shutting_Down()
+        public async Task Should_Not_Log_Coverage_Cancelled_When_Coverage_Task_Completes_And_Vs_Shutting_Down_Async()
         {
             await this.Vs_Shutting_Down_When_Running_Coverage_Task_Async();
             this.mocker.Verify<ILogger>(logger => logger.Log(CoverageStatus.Cancelled.Message()), Times.Never());
         }
 
         [Test]
-        public async Task Should_Not_Send_CoverageStoppedMessage_When_Coverage_Task_Completes_And_Vs_Shutting_Down()
+        public async Task Should_Not_Send_CoverageStoppedMessage_When_Coverage_Task_Completes_And_Vs_Shutting_Down_Async()
         {
             await this.Vs_Shutting_Down_When_Running_Coverage_Task_Async();
             this.mocker.GetMock<IEventAggregator>().AssertCoverageStopped(Times.Never());
         }
 
         [Test]
-        public async Task Should_Not_Invoke_CleanUp_When_Coverage_Task_Completes_And_Vs_Shutting_Down()
+        public async Task Should_Not_Invoke_CleanUp_When_Coverage_Task_Completes_And_Vs_Shutting_Down_Async()
         {
             var cleanUpInvoked = false;
             await this.Vs_Shutting_Down_When_Running_Coverage_Task_Async(() => cleanUpInvoked = true);
@@ -261,7 +261,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
             await this.fccEngine.reloadCoverageTask;
 #pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
 
     }
 

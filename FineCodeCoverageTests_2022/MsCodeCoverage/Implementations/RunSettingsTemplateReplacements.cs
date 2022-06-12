@@ -1,7 +1,7 @@
-﻿using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
-
 namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
+    using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
+
     internal class TemplateReplaceResult : ITemplateReplacementResult
     {
         public string Replaced { get; set; }

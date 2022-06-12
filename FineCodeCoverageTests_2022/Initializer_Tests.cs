@@ -5,6 +5,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;
     using FineCodeCoverage.Impl;
@@ -28,29 +29,28 @@ namespace FineCodeCoverageTests.Initializer_Tests
             Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Initializing));
 
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Log_Initializing_When_Initialize()
+        public async Task Should_Log_Initializing_When_Initialize_Async()
         {
             await this.initializer.InitializeAsync(CancellationToken.None);
             this.mocker.Verify<ILogger>(l => l.Log("Initializing"));
         }
 
         [Test]
-        public async Task Should_Set_InitializeStatus_To_Error_If_Exception_When_Initialize()
+        public async Task Should_Set_InitializeStatus_To_Error_If_Exception_When_Initialize_Async()
         {
             await this.InitializeWithExceptionAsync();
             Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Error));
         }
 
         [Test]
-        public async Task Should_Set_InitializeExceptionMessage_If_Exception_When_Initialize()
+        public async Task Should_Set_InitializeExceptionMessage_If_Exception_When_Initialize_Async()
         {
             await this.InitializeWithExceptionAsync();
             Assert.That(this.initializer.InitializeExceptionMessage, Is.EqualTo("initialize exception"));
         }
 
         [Test]
-        public async Task Should_Log_Failed_Initialization_With_Exception_if_Exception_When_Initialize()
+        public async Task Should_Log_Failed_Initialization_With_Exception_if_Exception_When_Initialize_Async()
         {
             Exception initializeException = null;
             await this.InitializeWithExceptionAsync(exc => initializeException = exc);
@@ -58,28 +58,28 @@ namespace FineCodeCoverageTests.Initializer_Tests
         }
 
         [Test]
-        public async Task Should_Not_Log_Failed_Initialization_When_Initialize_Cancelled()
+        public async Task Should_Not_Log_Failed_Initialization_When_Initialize_Cancelled_Async()
         {
             await this.initializer.InitializeAsync(CancellationTokenHelper.GetCancelledCancellationToken());
             this.mocker.Verify<ILogger>(l => l.Log("Failed Initialization", It.IsAny<Exception>()), Times.Never());
         }
 
         [Test]
-        public async Task Should_Set_InitializeStatus_To_Initialized_When_Successfully_Completed()
+        public async Task Should_Set_InitializeStatus_To_Initialized_When_Successfully_Completed_Async()
         {
             await this.initializer.InitializeAsync(CancellationToken.None);
             Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Initialized));
         }
 
         [Test]
-        public async Task Should_Log_Initialized_When_Successfully_Completed()
+        public async Task Should_Log_Initialized_When_Successfully_Completed_Async()
         {
             await this.initializer.InitializeAsync(CancellationToken.None);
             this.mocker.Verify<ILogger>(l => l.Log("Initialized"));
         }
 
         [Test]
-        public async Task Should_Initialize_Dependencies_In_Order()
+        public async Task Should_Initialize_Dependencies_In_Order_Async()
         {
             var disposalToken = CancellationToken.None;
             var callOrder = new List<int>();
@@ -96,7 +96,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
         }
 
         [Test]
-        public async Task Should_Pass_Itself_To_FCCEngine_For_InitializeStatus()
+        public async Task Should_Pass_Itself_To_FCCEngine_For_InitializeStatus_Async()
         {
             var disposalToken = CancellationToken.None;
             await this.initializer.InitializeAsync(disposalToken);
@@ -104,8 +104,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
         }
 
         [Test]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "<Pending>")]
-        public void Should_ThrowIfCancellationRequested_When_WaitForInitializedAsync()
+        public void Should_ThrowIfCancellationRequested_When_WaitForInitialized()
         {
             var cancellationTokenSource = new CancellationTokenSource();
             cancellationTokenSource.Cancel();
@@ -116,7 +115,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
         }
 
         [Test]
-        public async Task Should_Throw_If_InitializationFailed_When_WaitForInitializedAsync()
+        public async Task Should_Throw_If_InitializationFailed_When_WaitForInitialized_Async()
         {
             var mockCoverageProjectFactory = this.mocker.GetMock<ICoverageProjectFactory>();
             _ = mockCoverageProjectFactory.Setup(
@@ -132,20 +131,23 @@ namespace FineCodeCoverageTests.Initializer_Tests
         }
 
         [Test]
-        public async Task Should_WaitForInitializedAsync_Logging_If_Initializing()
+        public async Task Should_WaitForInitializedAsync_Logging_If_Initializing_Async()
         {
             var times = 5;
             this.initializer.initializeWait = 100;
             var waitForInitializedTask = this.initializer.WaitForInitializedAsync(CancellationToken.None);
 
             var setInitializedTask = Task.Delay(times * this.initializer.initializeWait)
-                .ContinueWith(_ => this.initializer.InitializeStatus = InitializeStatus.Initialized);
+                .ContinueWith(
+                    _ => this.initializer.InitializeStatus = InitializeStatus.Initialized,
+                    TaskScheduler.Current
+                );
 
             await Task.WhenAll(waitForInitializedTask, setInitializedTask);
 
             this.mocker.Verify<ILogger>(l => l.Log(CoverageStatus.Initializing.Message()), Times.AtLeast(times));
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
+
         private async Task InitializeWithExceptionAsync(Action<Exception> callback = null)
         {
             var initializeException = new Exception("initialize exception");

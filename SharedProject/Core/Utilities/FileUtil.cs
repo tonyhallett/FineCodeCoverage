@@ -1,5 +1,5 @@
-﻿using System;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace FineCodeCoverage.Core.Utilities
@@ -7,6 +7,7 @@ namespace FineCodeCoverage.Core.Utilities
     [Export(typeof(IFileUtil))]
     internal class FileUtil : IFileUtil
     {
+        [ExcludeFromCodeCoverage]
         public string CreateTempDirectory()
         {
             string tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -14,11 +15,13 @@ namespace FineCodeCoverage.Core.Utilities
             return tempDirectory;
         }
 
+        [ExcludeFromCodeCoverage]
         public void TryDeleteDirectory(string directory)
         {
             new DirectoryInfo(directory).TryDelete();
         }
 
+        [ExcludeFromCodeCoverage]
         public bool DirectoryExists(string directory)
         {
             return Directory.Exists(directory);
@@ -33,11 +36,13 @@ namespace FineCodeCoverage.Core.Utilities
             return directory;
         }
 
+        [ExcludeFromCodeCoverage]
         public string FileDirectoryPath(string filePath)
         {
             return new FileInfo(filePath).Directory.FullName;
         }
 
+        [ExcludeFromCodeCoverage]
         public string ReadAllText(string path)
         {
             return File.ReadAllText(path);
@@ -59,25 +64,29 @@ namespace FineCodeCoverage.Core.Utilities
             }
         }
 
+        [ExcludeFromCodeCoverage]
         public void WriteAllText(string path, string contents)
         {
             File.WriteAllText(path, contents);
         }
 
+        [ExcludeFromCodeCoverage]
         public bool Exists(string filePath)
         {
             return File.Exists(filePath);
         }
 
+        [ExcludeFromCodeCoverage]
         public void Copy(string source, string destination)
         {
             File.Copy(source, destination);
         }
 
+        [ExcludeFromCodeCoverage]
         public string DirectoryParentPath(string directoryPath)
         {
             var parentDirectory = new DirectoryInfo(directoryPath).Parent;
-            if(parentDirectory == null)
+            if (parentDirectory == null)
             {
                 return null;
             }

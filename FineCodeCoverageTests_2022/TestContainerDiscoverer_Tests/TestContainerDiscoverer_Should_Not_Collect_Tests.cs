@@ -1,9 +1,10 @@
-using Microsoft.VisualStudio.TestWindow.Extensibility;
 namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 {
+    using Microsoft.VisualStudio.TestWindow.Extensibility;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using ILogger = FineCodeCoverage.ILogger;
     using FineCodeCoverage.Core;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine.Model;

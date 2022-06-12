@@ -30,9 +30,7 @@ namespace FineCodeCoverageTests.OldStyleCoverage_Tests
 
         [TestCase(true)]
         [TestCase(false)]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Run_The_Appropriate_Cover_Tool_Based_On_IsDotNetSdkStyle(bool isDotNetSdkStyle)
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
+        public async Task Should_Run_The_Appropriate_Cover_Tool_Based_On_IsDotNetSdkStyle_Async(bool isDotNetSdkStyle)
         {
             var mockProject = new Mock<ICoverageProject>();
             _ = mockProject.Setup(cp => cp.IsDotNetSdkStyle()).Returns(isDotNetSdkStyle);

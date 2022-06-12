@@ -4,6 +4,7 @@ namespace FineCodeCoverageTests.CoverageToolOutput_Tests
     using System.Collections.Generic;
     using System.IO;
     using AutoMoq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;

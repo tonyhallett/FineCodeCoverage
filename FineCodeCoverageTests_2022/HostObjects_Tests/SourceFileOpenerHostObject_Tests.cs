@@ -3,6 +3,7 @@ namespace FineCodeCoverageTests.HostObjectTests
     using System;
     using EnvDTE;
     using EnvDTE80;
+    using FineCodeCoverage;
     using FineCodeCoverage.Output.HostObjects;
     using Microsoft.VisualStudio.Shell.Interop;
     using Moq;
@@ -11,7 +12,6 @@ namespace FineCodeCoverageTests.HostObjectTests
     internal class SourceFileOpenerHostObject_Tests
     {
         private Mock<ILogger> mockLogger;
-
         private Mock<Window> mockMainWindow;
         private Mock<ItemOperations> mockItemOperations;
         private Mock<Document> mockActiveDocument;

@@ -1,9 +1,9 @@
-using System.IO;
-using FineCodeCoverage.Core.Model;
-using NUnit.Framework;
-
 namespace FineCodeCoverageTests.CoverageProject_Tests
 {
+    using System.IO;
+    using FineCodeCoverage.Core.Model;
+    using NUnit.Framework;
+
     public class ReferencedProject_Tests
     {
         private string tempProjectFilePath;

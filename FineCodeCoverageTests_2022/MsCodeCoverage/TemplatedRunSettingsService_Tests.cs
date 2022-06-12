@@ -24,8 +24,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 
         [TestCase(true)]
         [TestCase(false)]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Create_Run_Settings_From_Template(bool isDotNetFramework)
+        public async Task Should_Create_Run_Settings_From_Template_Async(bool isDotNetFramework)
         {
             var mockCoverageProject = new Mock<ICoverageProject>();
             _ = mockCoverageProject.SetupGet(cp => cp.IsDotNetFramework).Returns(isDotNetFramework);
@@ -55,7 +54,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public async Task Should_Create_Run_Settings_From_Configured_Custom_Template_If_Available()
+        public async Task Should_Create_Run_Settings_From_Configured_Custom_Template_If_Available_Async()
         {
             var mockCustomRunSettingsTemplateProvider = this.autoMocker.GetMock<ICustomRunSettingsTemplateProvider>();
             _ = mockCustomRunSettingsTemplateProvider.Setup(
@@ -87,7 +86,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public async Task Should_Return_ExceptionReason_Result_If_Throws_Creating_RunSettings()
+        public async Task Should_Return_ExceptionReason_Result_If_Throws_Creating_RunSettings_Async()
         {
             var mockCoverageProject = new Mock<ICoverageProject>();
             _ = mockCoverageProject.Setup(cp => cp.ProjectFile).Returns(@"C:\SomeProject\SomeProject.csproj");
@@ -110,7 +109,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public async Task Should_Write_Generated_RunSettings()
+        public async Task Should_Write_Generated_RunSettings_Async()
         {
             this.SetupReplaceResult(new TemplateReplaceResult { Replaced = "RunSettings" });
 
@@ -127,7 +126,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public async Task Should_Return_ExceptionReason_Result_If_Throws_Writing_Generated_RunSettings()
+        public async Task Should_Return_ExceptionReason_Result_If_Throws_Writing_Generated_RunSettings_Async()
         {
             this.SetupReplaceResult(new TemplateReplaceResult { Replaced = "RunSettings" });
 
@@ -152,7 +151,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public async Task Should_Return_A_Result_With_No_ExceptionReason_When_No_Exception()
+        public async Task Should_Return_A_Result_With_No_ExceptionReason_When_No_Exception_Async()
         {
             var mockCoverageProject1 = new Mock<ICoverageProject>();
             _ = mockCoverageProject1.Setup(cp => cp.ProjectFile).Returns(@"C:\SomeProject\SomeProject.csproj");
@@ -201,7 +200,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public async Task Clean_Up_Should_Remove_Generated_Project_RunSettings()
+        public async Task Clean_Up_Should_Remove_Generated_Project_RunSettings_Async()
         {
             var coverageProjects = new List<ICoverageProject> { new Mock<ICoverageProject>().Object };
 
@@ -211,7 +210,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
                 projectRunSettingsGenerator => projectRunSettingsGenerator.RemoveGeneratedProjectSettingsAsync(coverageProjects)
             );
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
 
         private Moq.Language.Flow.ISetup<ICustomRunSettingsTemplateProvider, CustomRunSettingsTemplateDetails> SetupICustomRunSettingsTemplateProviderAllIsAny()
         {

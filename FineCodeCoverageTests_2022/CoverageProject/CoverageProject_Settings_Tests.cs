@@ -7,6 +7,7 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
     using System.Reflection;
     using System.Threading.Tasks;
     using System.Xml.Linq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine.Model;
     using FineCodeCoverage.Options;
@@ -86,8 +87,7 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
     public class CoverageProjectSettingsProvider_Tests
     {
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Return_The_FineCodeCoverage_Labelled_PropertyGroup()
+        public async Task Should_Return_The_FineCodeCoverage_Labelled_PropertyGroup_Async()
         {
             var coverageProjectSettingsProvider = new CoverageProjectSettingsProvider(null);
             var mockCoverageProject = new Mock<ICoverageProject>();
@@ -110,7 +110,7 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
 
         [TestCase(true)]
         [TestCase(false)]
-        public async Task Should_Return_Using_VsBuild_When_No_Labelled_PropertyGroup(bool returnNull)
+        public async Task Should_Return_Using_VsBuild_When_No_Labelled_PropertyGroup_Async(bool returnNull)
         {
             var mockCoverageProject = new Mock<ICoverageProject>();
             var coverageProjectGuid = Guid.NewGuid();
@@ -141,7 +141,6 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
 
             Assert.That(coverageProjectSettings, Is.SameAs(settingsElementFromVsBuildFCCSettingsProvider));
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
     }
 
     public class SettingsMerger_Tests
@@ -624,8 +623,7 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
     public class CoverageProjectSettingsManager_Tests
     {
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Provide_The_Merged_Result_Using_Global_Options()
+        public async Task Should_Provide_The_Merged_Result_Using_Global_Options_Async()
         {
             var mockAppOptionsProvider = new Mock<IAppOptionsProvider>();
             var mockAppOptions = new Mock<IAppOptions>();
@@ -652,7 +650,7 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
         }
 
         [Test]
-        public async Task Should_Provide_The_Merged_Result_Using_FCC_Settings_Files()
+        public async Task Should_Provide_The_Merged_Result_Using_FCC_Settings_Files_Async()
         {
             var mockCoverageProject = new Mock<ICoverageProject>();
             _ = mockCoverageProject.Setup(cp => cp.ProjectFile).Returns("SomeProject/SomeProject.csproj");
@@ -683,7 +681,7 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
         }
 
         [Test]
-        public async Task Should_Provide_The_Merged_Result_Using_Project_Settings()
+        public async Task Should_Provide_The_Merged_Result_Using_Project_Settings_Async()
         {
             var coverageProject = new Mock<ICoverageProject>().Object;
 
@@ -709,6 +707,5 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
             var coverageProjectSettings = await coverageProjectSettingsManager.GetSettingsAsync(coverageProject);
             Assert.That(coverageProjectSettings, Is.SameAs(mergedSettings));
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
     }
 }

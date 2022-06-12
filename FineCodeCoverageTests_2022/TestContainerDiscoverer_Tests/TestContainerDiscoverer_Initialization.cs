@@ -12,9 +12,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     internal class TestContainerDiscoverer_Initialization
     {
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Initialize_Vs_Shutdown_Aware()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
+        public async Task Should_Initialize_Vs_Shutdown_Aware_Async()
         {
             var mocker = new AutoMoqer();
 

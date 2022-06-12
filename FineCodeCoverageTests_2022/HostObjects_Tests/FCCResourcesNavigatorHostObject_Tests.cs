@@ -1,10 +1,10 @@
-﻿using FineCodeCoverage.Output;
-using FineCodeCoverage.Output.HostObjects;
-using Moq;
-using NUnit.Framework;
-
 namespace FineCodeCoverageTests.HostObjectTests
 {
+    using FineCodeCoverage.Output;
+    using FineCodeCoverage.Output.HostObjects;
+    using Moq;
+    using NUnit.Framework;
+
     internal class FCCResourcesNavigatorHostObject_Tests
     {
         private Mock<IProcess> mockProcess;
@@ -19,15 +19,10 @@ namespace FineCodeCoverageTests.HostObjectTests
             this.fccResourcesNavigatorHostObject = this.fccResourcesNavigatorRegistration.HostObject as FCCResourcesNavigatorHostObject;
         }
         [Test]
-        public void Should_Have_Name()
-        {
+        public void Should_Have_Name() =>
             Assert.That(this.fccResourcesNavigatorRegistration.Name, Is.EqualTo(FCCResourcesNavigatorRegistration.HostObjectName));
-        }
 
-        private void VerifyProcess(string processStart)
-        {
-            this.mockProcess.Verify(process => process.Start(processStart));
-        }
+        private void VerifyProcess(string processStart) => this.mockProcess.Verify(process => process.Start(processStart));
 
         [Test]
         public void Should_Open_Browser_At_FCC_Github_ReadMe_When_readReadMe_Called_From_Js()

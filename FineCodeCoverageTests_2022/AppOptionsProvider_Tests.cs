@@ -4,6 +4,7 @@ namespace FineCodeCoverageTests_AppOptions_Tests
     using System.Collections.Generic;
     using System.Linq;
     using AutoMoq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Options;
     using Moq;

@@ -2,6 +2,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
 {
     using System;
     using System.Threading.Tasks;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Output.JsMessages.Logging;
@@ -14,8 +15,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
             this.RunCancellableCoverageTaskAsync((_) => throw new Exception("An exception occurred"), cleanUp);
 
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Log()
+        public async Task Should_Log_Async()
         {
             await this.RunCancellableCoverageTask_That_Throws_Async();
 
@@ -32,7 +32,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_Send_CoverageStoppedMessage()
+        public async Task Should_Send_CoverageStoppedMessage_Async()
         {
             await this.RunCancellableCoverageTask_That_Throws_Async();
 
@@ -40,14 +40,13 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         }
 
         [Test]
-        public async Task Should_Invoke_Clean_Up_If_Provided()
+        public async Task Should_Invoke_Clean_Up_If_Provided_Async()
         {
             var invokedCleanUp = false;
             await this.RunCancellableCoverageTask_That_Throws_Async(() => invokedCleanUp = true);
 
             Assert.That(invokedCleanUp, Is.True);
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
     }
 
 }

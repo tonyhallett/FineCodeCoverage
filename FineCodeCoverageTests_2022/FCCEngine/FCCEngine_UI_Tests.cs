@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMoq;
-using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Engine;
-using FineCodeCoverage.Engine.Model;
-using FineCodeCoverage.Options;
-using FineCodeCoverage.Output.JsMessages;
-using Moq;
-using NUnit.Framework;
-
 namespace FineCodeCoverageTests.FCCEngine_Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using AutoMoq;
+    using FineCodeCoverage.Core.Utilities;
+    using FineCodeCoverage.Engine;
+    using FineCodeCoverage.Engine.Model;
+    using FineCodeCoverage.Options;
+    using FineCodeCoverage.Output.JsMessages;
+    using Moq;
+    using NUnit.Framework;
+
     public class FCCEngine_UI_Tests
     {
         private AutoMoqer mocker;
@@ -83,25 +83,22 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
         [Test]
         public void Should_Clear_Coverage_Lines_When_RunCancellableCoverageTask()
         {
-            this.fccEngine.RunCancellableCoverageTask((_) =>
-            {
-                return Task.FromResult(new List<CoverageLine>());
-            }, null);
+            this.fccEngine.RunCancellableCoverageTask((_) => Task.FromResult(new List<CoverageLine>()), null);
 
             this.AssertClearsCoverageLines();
         }
 
-        private void AssertClearsReport()
-        {
-            this.mocker.Verify<IEventAggregator>(eventAggregator => eventAggregator.SendMessage(It.IsAny<ClearReportMessage>(), null));
-        }
-
-        private void AssertClearsCoverageLines()
-        {
-            this.mocker.Verify<IEventAggregator>(ea =>
-                ea.SendMessage(It.Is<NewCoverageLinesMessage>(msg => msg.CoverageLines == null), null)
+        private void AssertClearsReport() =>
+            this.mocker.Verify<IEventAggregator>(eventAggregator =>
+                eventAggregator.SendMessage(It.IsAny<ClearReportMessage>(),
+                null)
             );
-        }
+
+        private void AssertClearsCoverageLines() =>
+            this.mocker.Verify<IEventAggregator>(ea =>
+                ea.SendMessage(It.Is<NewCoverageLinesMessage>(msg => msg.CoverageLines == null),
+                null)
+            );
 
         private void ChangeEnabledOption(bool enabled)
         {
@@ -115,15 +112,10 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
     internal class FCCEngine_UI_RunCancellableCoverageTask_Success : FCCEngine_RunCancellableCoverageTask_Test_Base
     {
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Send_NewCoverageLinesMessage()
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
+        public async Task Should_Send_NewCoverageLinesMessage_Async()
         {
             var coverageLines = new List<CoverageLine>();
-            await this.RunCancellableCoverageTaskAsync((_) =>
-            {
-                return Task.FromResult(coverageLines);
-            });
+            await this.RunCancellableCoverageTaskAsync((_) => Task.FromResult(coverageLines));
 
 
             this.Mocker.Verify<IEventAggregator>(

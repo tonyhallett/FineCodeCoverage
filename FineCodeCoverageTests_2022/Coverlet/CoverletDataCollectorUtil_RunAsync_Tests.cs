@@ -7,6 +7,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Core.Coverlet;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine.Coverlet;
@@ -61,8 +62,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
 
 
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Get_Settings_With_TestDllFile()
+        public async Task Should_Get_Settings_With_TestDllFile_Async()
         {
             _ = this.mockCoverageProject.Setup(cp => cp.TestDllFile).Returns("test.dll");
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("");
@@ -74,7 +74,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_Exclude_From_CoverageProject_And_RunSettings()
+        public async Task Should_Get_Settings_With_Exclude_From_CoverageProject_And_RunSettings_Async()
         {
             var projectExclude = new string[] { "excluded" };
             _ = this.mockCoverageProject.Setup(cp => cp.Settings.Exclude).Returns(projectExclude);
@@ -89,7 +89,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Not_Throw_When_Project_Setttings_Exclude_Is_Null()
+        public async Task Should_Not_Throw_When_Project_Setttings_Exclude_Is_Null_Async()
         {
             var referencedExcluded = new List<string> { "referencedExcluded" };
             _ = this.mockCoverageProject.Setup(cp => cp.ExcludedReferencedProjects).Returns(referencedExcluded);
@@ -102,7 +102,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_ExcludeByFile_From_CoverageProject_And_RunSettings()
+        public async Task Should_Get_Settings_With_ExcludeByFile_From_CoverageProject_And_RunSettings_Async()
         {
             var projectExcludeByFile = new string[] { "excludedByFile" };
             _ = this.mockCoverageProject.Setup(cp => cp.Settings.ExcludeByFile).Returns(projectExcludeByFile);
@@ -116,7 +116,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_ExcludeByAttribute_From_CoverageProject_And_RunSettings()
+        public async Task Should_Get_Settings_With_ExcludeByAttribute_From_CoverageProject_And_RunSettings_Async()
         {
             var projectExcludeByAttribute = new string[] { "excludedByAttribute" };
             _ = this.mockCoverageProject.Setup(cp => cp.Settings.ExcludeByAttribute).Returns(projectExcludeByAttribute);
@@ -128,7 +128,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_Include_From_CoverageProject_And_RunSettings()
+        public async Task Should_Get_Settings_With_Include_From_CoverageProject_And_RunSettings_Async()
         {
             var projectInclude = new string[] { "included" };
             _ = this.mockCoverageProject.Setup(cp => cp.Settings.Include).Returns(projectInclude);
@@ -143,7 +143,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
 
         [TestCase(true, "true")]
         [TestCase(false, "false")]
-        public async Task Should_Get_Settings_With_IncludeTestAssembly_From_CoverageProject_And_RunSettings(bool projectIncludeTestAssembly, string runSettingsIncludeTestAssembly)
+        public async Task Should_Get_Settings_With_IncludeTestAssembly_From_CoverageProject_And_RunSettings_Async(bool projectIncludeTestAssembly, string runSettingsIncludeTestAssembly)
         {
             _ = this.mockCoverageProject.Setup(cp => cp.Settings.IncludeTestAssembly).Returns(projectIncludeTestAssembly);
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("");
@@ -155,7 +155,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Initialize_With_Options_And_Run_Settings_First()
+        public async Task Should_Initialize_With_Options_And_Run_Settings_First_Async()
         {
             var settings = new Mock<IAppOptions>().Object;
             _ = this.mockCoverageProject.Setup(cp => cp.RunSettingsFile).Returns(".runsettings");
@@ -170,7 +170,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_ResultsDirectory()
+        public async Task Should_Get_Settings_With_ResultsDirectory_Async()
         {
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("outputfolder");
 
@@ -180,7 +180,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_Blame()
+        public async Task Should_Get_Settings_With_Blame_Async()
         {
             await this.coverletDataCollectorUtil.RunAsync(CancellationToken.None);
 
@@ -188,7 +188,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_NoLogo()
+        public async Task Should_Get_Settings_With_NoLogo_Async()
         {
             await this.coverletDataCollectorUtil.RunAsync(CancellationToken.None);
 
@@ -196,7 +196,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_Diagnostics()
+        public async Task Should_Get_Settings_With_Diagnostics_Async()
         {
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("outputfolder");
 
@@ -206,7 +206,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_IncludeDirectory_From_RunSettings()
+        public async Task Should_Get_Settings_With_IncludeDirectory_From_RunSettings_Async()
         {
             _ = this.mockRunSettingsCoverletConfiguration.Setup(rsc => rsc.IncludeDirectory).Returns("includeDirectory");
 
@@ -216,7 +216,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_SingleHit_From_RunSettings()
+        public async Task Should_Get_Settings_With_SingleHit_From_RunSettings_Async()
         {
             _ = this.mockRunSettingsCoverletConfiguration.Setup(rsc => rsc.SingleHit).Returns("true...");
 
@@ -226,7 +226,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_UseSourceLink_From_RunSettings()
+        public async Task Should_Get_Settings_With_UseSourceLink_From_RunSettings_Async()
         {
             _ = this.mockRunSettingsCoverletConfiguration.Setup(rsc => rsc.UseSourceLink).Returns("true...");
 
@@ -236,7 +236,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Get_Settings_With_SkipAutoProps_From_RunSettings()
+        public async Task Should_Get_Settings_With_SkipAutoProps_From_RunSettings_Async()
         {
             _ = this.mockRunSettingsCoverletConfiguration.Setup(rsc => rsc.SkipAutoProps).Returns("true...");
 
@@ -246,7 +246,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Log_VSTest_Run_With_Settings()
+        public async Task Should_Log_VSTest_Run_With_Settings_Async()
         {
             _ = this.mockCoverageProject.Setup(cp => cp.ProjectName).Returns("TestProject");
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("");
@@ -258,7 +258,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Execute_DotNet_Test_Collect_XPlat_With_Settings_Using_The_ProcessUtil()
+        public async Task Should_Execute_DotNet_Test_Collect_XPlat_With_Settings_Using_The_ProcessUtil_Async()
         {
             _ = this.mockCoverageProject.Setup(cp => cp.ProjectOutputFolder).Returns("projectOutputFolder");
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("");
@@ -272,7 +272,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Use_Custom_TestAdapterPath_Quoted_If_Specified_In_Settings_And_Exists()
+        public async Task Should_Use_Custom_TestAdapterPath_Quoted_If_Specified_In_Settings_And_Exists_Async()
         {
             var ct = await this.Use_Custom_TestAdapterPath_Async();
 
@@ -280,7 +280,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Log_When_Using_Custom_TestAdapterPath()
+        public async Task Should_Log_When_Using_Custom_TestAdapterPath_Async()
         {
             _ = await this.Use_Custom_TestAdapterPath_Async();
 
@@ -288,7 +288,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Use_The_ProcessResponseProcessor()
+        public async Task Should_Use_The_ProcessResponseProcessor_Async()
         {
             _ = this.mockCoverageProject.Setup(cp => cp.ProjectName).Returns("TestProject");
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("");
@@ -310,7 +310,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         [TestCase(2, false)]
         [TestCase(1, true)]
         [TestCase(0, true)]
-        public async Task Should_Only_Be_Successful_With_ExitCode_0_Or_1(int exitCode, bool expectedSuccess)
+        public async Task Should_Only_Be_Successful_With_ExitCode_0_Or_1_Async(int exitCode, bool expectedSuccess)
         {
             var mockProcessResponseProcessor = this.mocker.GetMock<IProcessResponseProcessor>();
             Func<int, bool> exitCodePredicate = null;
@@ -332,7 +332,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public async Task Should_Correct_The_CoberturaPath_Given_Successful_Execution()
+        public async Task Should_Correct_The_CoberturaPath_Given_Successful_Execution_Async()
         {
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("outputFolder");
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFile).Returns("outputFile");
@@ -354,7 +354,6 @@ namespace FineCodeCoverageTests.Coverlet_Tests
 
             this.mocker.Verify<ICoverletDataCollectorGeneratedCobertura>(gc => gc.CorrectPath("outputFolder", "outputFile"));
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
         private async Task<CancellationToken> Use_Custom_TestAdapterPath_Async()
         {
             _ = this.CreateTemporaryDirectory();

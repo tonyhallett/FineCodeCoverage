@@ -3,6 +3,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMoq;
+    using FineCodeCoverage;
     using FineCodeCoverage.Engine.Model;
     using FineCodeCoverage.Impl;
     using Moq;
@@ -45,8 +46,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         }
 
         [Test]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Return_CoverageProjects_From_Wrapped()
+        public async Task Should_Return_CoverageProjects_From_Wrapped_Async()
         {
             var coverageProjects = new List<ICoverageProject>();
             _ = this.mocker.GetMock<ITestOperation>()
@@ -61,7 +61,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         }
 
         [Test]
-        public async Task Should_Log_Unsupported_Projects()
+        public async Task Should_Log_Unsupported_Projects_Async()
         {
             _ = this.mocker.GetMock<ITestOperation>().SetupGet(wrapped => wrapped.UnsupportedProjects)
                 .Returns(new List<string> { "Unsupported1", "Unsupported2" });
@@ -71,6 +71,5 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
             IEnumerable<string> expectedLogged = new List<string> { "Unsupported projects: ", "Unsupported1", "Unsupported2" };
             this.mocker.Verify<ILogger>(logger => logger.Log(expectedLogged));
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
     }
 }

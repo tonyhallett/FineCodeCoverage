@@ -19,7 +19,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
     internal class MsCodeCoverageRunSettingsService_Test_Execution_Not_Finished_Tests
     {
         [Test]
-        public async Task Should_Clean_Up_RunSettings_Coverage_Projects()
+        public async Task Should_Clean_Up_RunSettings_Coverage_Projects_Async()
         {
             var autoMocker = new AutoMoqer();
             var msCodeCoverageRunSettingsService = autoMocker.Create<MsCodeCoverageRunSettingsService>();
@@ -68,7 +68,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         private ICoverageProject runSettingsCoverageProject;
 
         [Test]
-        public async Task Should_FCCEngine_RunAndProcessReport_With_CoberturaResults()
+        public async Task Should_FCCEngine_RunAndProcessReport_With_CoberturaResults_Async()
         {
             var resultsUris = new List<Uri>()
             {
@@ -82,10 +82,10 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public Task Should_Not_Throw_If_No_Results() => this.RunAndProcessReportAsync(null, Array.Empty<string>());
+        public Task Should_Not_Throw_If_No_Results_Async() => this.RunAndProcessReportAsync(null, Array.Empty<string>());
 
         [Test]
-        public async Task Should_Clean_Up_RunSettings_Coverage_Projects_From_IsCollecting()
+        public async Task Should_Clean_Up_RunSettings_Coverage_Projects_From_IsCollecting_Async()
         {
             await this.RunAndProcessReportAsync(null, Array.Empty<string>());
             this.autoMocker.Verify<ITemplatedRunSettingsService>(

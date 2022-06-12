@@ -86,8 +86,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 
         [TestCase(true)]
         [TestCase(false)]
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        public async Task Should_Write_RunSettings_In_Project_Output_Folder_If_The_VsRunSettingsWriter_Is_Successful(bool success)
+        public async Task Should_Write_RunSettings_In_Project_Output_Folder_If_The_VsRunSettingsWriter_Is_Successful_Async(bool success)
         {
             var mockVsRunSettingsWriter = this.autoMocker.GetMock<IVsRunSettingsWriter>();
             _ = mockVsRunSettingsWriter.Setup(rsw =>
@@ -113,7 +112,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         }
 
         [Test]
-        public async Task Should_Remove_Generated_Run_Settings_File_Path_With_The_VsRunSettingsWriter()
+        public async Task Should_Remove_Generated_Run_Settings_File_Path_With_The_VsRunSettingsWriter_Async()
         {
             var mockProjectWithGeneratedRunSettings = new Mock<ICoverageProject>();
             var mockProjectWithoutRunSettings = new Mock<ICoverageProject>();
@@ -139,6 +138,5 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             mockVsRunSettingsWriter.Verify(rsw => rsw.RemoveRunSettingsFilePathAsync(this.projectId1));
             mockVsRunSettingsWriter.VerifyNoOtherCalls();
         }
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
     }
 }

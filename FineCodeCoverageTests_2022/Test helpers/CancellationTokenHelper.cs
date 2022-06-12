@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
-
 namespace FineCodeCoverageTests
 {
+    using System;
+    using System.Threading;
+
     internal static class CancellationTokenHelper
     {
         public static CancellationToken GetCancelledCancellationToken()

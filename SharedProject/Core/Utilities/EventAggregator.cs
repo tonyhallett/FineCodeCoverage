@@ -5,6 +5,7 @@ namespace FineCodeCoverage.Core.Utilities
     using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
 
@@ -108,6 +109,7 @@ public interface IEventPublisher
 public interface IEventAggregator : IEventPublisher, IEventSubscriptionManager
 {
 }
+[ExcludeFromCodeCoverage]
 [Export(typeof(IEventAggregator))]
 public class EventAggregator : IEventAggregator
 {

@@ -1,6 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FineCodeCoverage.Core.Utilities
 {
@@ -9,6 +9,7 @@ namespace FineCodeCoverage.Core.Utilities
         int Order { get; }
     }
 
+    [ExcludeFromCodeCoverage]
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class OrderAttribute : ExportAttribute, IOrderMetadata
