@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 using Microsoft;
 using Microsoft.VisualStudio;

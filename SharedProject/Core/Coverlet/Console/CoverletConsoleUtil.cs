@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine.Model;
+using FineCodeCoverage.Logging;
 
 namespace FineCodeCoverage.Engine.Coverlet
 {

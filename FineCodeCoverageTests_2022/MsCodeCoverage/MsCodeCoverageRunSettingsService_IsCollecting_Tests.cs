@@ -7,7 +7,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;

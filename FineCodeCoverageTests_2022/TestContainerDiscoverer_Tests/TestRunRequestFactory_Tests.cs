@@ -4,7 +4,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using System;
     using System.Collections.Generic;
     using AutoMoq;
-    using ILogger = FineCodeCoverage.ILogger;
+    using ILogger = FineCodeCoverage.Logging.ILogger;
     using FineCodeCoverage.Impl;
     using NUnit.Framework;
 

@@ -3,7 +3,7 @@ namespace FineCodeCoverageTests.ReportTests
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.ReportGenerator.Colours;
     using Microsoft.VisualStudio.PlatformUI;
     using Microsoft.VisualStudio.Shell;

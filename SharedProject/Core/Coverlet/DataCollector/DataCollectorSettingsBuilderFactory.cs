@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.Composition;
-using FineCodeCoverage.Options;
+using FineCodeCoverage.Logging;
 
 namespace FineCodeCoverage.Engine.Coverlet
 {

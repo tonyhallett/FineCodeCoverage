@@ -4,7 +4,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using ILogger = FineCodeCoverage.ILogger;
+    using ILogger = FineCodeCoverage.Logging.ILogger;
     using FineCodeCoverage.Core;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine.Model;

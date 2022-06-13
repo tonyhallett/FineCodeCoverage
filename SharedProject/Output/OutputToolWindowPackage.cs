@@ -11,6 +11,7 @@ using Microsoft;
 using FineCodeCoverage.Engine;
 using EnvDTE80;
 using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Logging;
 using System.Linq;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Core.ReportGenerator.Colours;
@@ -73,7 +74,8 @@ namespace FineCodeCoverage.Output
 				EventAggregator = componentModel.GetService<IEventAggregator>(),
 				ReportColoursProvider = componentModel.GetService<IReportColoursProvider>(),
 				WebViewHostObjectRegistrations = componentModel.GetExtensions<IWebViewHostObjectRegistration>().ToList(),
-				AppOptionsProvider = componentModel.GetService<IAppOptionsProvider>()
+				AppOptionsProvider = componentModel.GetService<IAppOptionsProvider>(),
+				EnvironmentFont = componentModel.GetService<IEnvironmentFont>()
 			};
 		}
 

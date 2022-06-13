@@ -2,7 +2,7 @@ namespace FineCodeCoverageTests.DotNetTool_Tests
 {
     using System.Collections.Generic;
     using AutoMoq;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine.Coverlet;
     using NUnit.Framework;

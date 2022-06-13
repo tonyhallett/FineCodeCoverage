@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using FineCodeCoverage.Logging;
 
 namespace FineCodeCoverage.Core.Utilities
 {

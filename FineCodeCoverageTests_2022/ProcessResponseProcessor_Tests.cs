@@ -2,7 +2,7 @@ namespace FineCodeCoverageTests_Process_Tests
 {
     using System;
     using AutoMoq;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.Utilities;
     using NUnit.Framework;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.PlatformUI;
+﻿using FineCodeCoverage.Logging;
+using Microsoft.VisualStudio.PlatformUI;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -11,7 +12,6 @@ namespace FineCodeCoverage.Core.ReportGenerator.Colours
         private readonly IVsColourThemeResourceTypeProvider colourThemeResourceTypeProvider;
         private readonly ILogger logger;
         private Dictionary<string, CategorizedNamedColours> categorizedNamedColoursTypeNameLookup;
-
 
         private Dictionary<string, CategorizedNamedColours> CategoryColourTypeNameLookup
         {

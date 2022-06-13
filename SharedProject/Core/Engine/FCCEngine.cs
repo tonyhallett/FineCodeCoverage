@@ -5,6 +5,7 @@ using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Engine.MsTestPlatform;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
 using FineCodeCoverage.Impl;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 using FineCodeCoverage.Output.JsMessages;
 using FineCodeCoverage.Output.JsMessages.Logging;

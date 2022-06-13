@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Engine.MsTestPlatform;
+using FineCodeCoverage.Logging;
 using System.Threading.Tasks;
 using System.ComponentModel.Composition;
 using FineCodeCoverage.Core.Utilities;

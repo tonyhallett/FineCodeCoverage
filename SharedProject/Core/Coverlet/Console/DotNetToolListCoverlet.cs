@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Logging;
 
 namespace FineCodeCoverage.Engine.Coverlet
 {

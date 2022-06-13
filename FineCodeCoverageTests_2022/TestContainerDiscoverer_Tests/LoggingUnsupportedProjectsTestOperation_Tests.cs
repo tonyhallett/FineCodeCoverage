@@ -3,7 +3,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMoq;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Engine.Model;
     using FineCodeCoverage.Impl;
     using Moq;

@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FineCodeCoverageTests_2022"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestThemeResourceTypes", "TestThemeResourceTypes\TestThemeResourceTypes.csproj", "{07B5A79D-95CC-437A-BF94-DAD149A74DAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FineCodeCoverageWebViewReport", "FineCodeCoverageWebViewReport\FineCodeCoverageWebViewReport.csproj", "{3B248434-BB36-4A17-B384-BDF662AD9334}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FineCodeCoverageWebViewReport_Tests", "FineCodeCoverageWebViewReport_Tests\FineCodeCoverageWebViewReport_Tests.csproj", "{C94F865F-ED13-4DCE-B480-E67F172ABFA7}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SharedProject\SharedProject.projitems*{31c104bb-d294-4942-b206-896aa7a5fcb9}*SharedItemsImports = 4
@@ -60,6 +64,14 @@ Global
 		{07B5A79D-95CC-437A-BF94-DAD149A74DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07B5A79D-95CC-437A-BF94-DAD149A74DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07B5A79D-95CC-437A-BF94-DAD149A74DAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B248434-BB36-4A17-B384-BDF662AD9334}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B248434-BB36-4A17-B384-BDF662AD9334}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B248434-BB36-4A17-B384-BDF662AD9334}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B248434-BB36-4A17-B384-BDF662AD9334}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C94F865F-ED13-4DCE-B480-E67F172ABFA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C94F865F-ED13-4DCE-B480-E67F172ABFA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C94F865F-ED13-4DCE-B480-E67F172ABFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C94F865F-ED13-4DCE-B480-E67F172ABFA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

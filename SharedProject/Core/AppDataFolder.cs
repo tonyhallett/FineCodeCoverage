@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 
 namespace FineCodeCoverage.Engine

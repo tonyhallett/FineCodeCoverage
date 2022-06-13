@@ -24,12 +24,17 @@ namespace FineCodeCoverage.Output
 	/// Interaction logic for OutputToolWindowControl.
 	/// </summary>
 	internal partial class OutputToolWindowControl : 
-		UserControl, IListener<NewReportMessage>, IListener<LogMessage>, IListener<CoverageStoppedMessage>, IListener<ClearReportMessage>
+		UserControl, 
+		IListener<NewReportMessage>, 
+		IListener<LogMessage>, 
+		IListener<CoverageStoppedMessage>, 
+		IListener<ClearReportMessage>
 	{
 		private WebView2 _webView2;
         private readonly IReportColoursProvider reportColoursProvider;
         private readonly List<IWebViewHostObjectRegistration> webViewHostObjectRegistrations;
         private readonly IAppOptionsProvider appOptionsProvider;
+        private readonly IEnvironmentFont environmentFont;
         private Styling styling;
 		private Report report;
 		private string htmlPath;
@@ -43,6 +48,7 @@ namespace FineCodeCoverage.Output
 		private bool domContentLoaded;
 		private readonly List<LogMessage> earlyLogMessages = new List<LogMessage>();
 
+		private bool inVisualStudio;
 #if DEBUG
 		private readonly bool debug = true;
 #else
@@ -53,30 +59,39 @@ namespace FineCodeCoverage.Output
 		/// Initializes a new instance of the <see cref="OutputToolWindowControl"/> class.
 		/// </summary>
 		public OutputToolWindowControl(
-			IEventAggregator eventAggregator, 
-			IReportColoursProvider reportColoursProvider, 
+			IEventAggregator eventAggregator,
+			IReportColoursProvider reportColoursProvider,
 			List<IWebViewHostObjectRegistration> webViewHostObjectRegistrations,
-			IAppOptionsProvider appOptionsProvider)
+			IAppOptionsProvider appOptionsProvider,
+			IEnvironmentFont environmentFont,
+			bool inVisualStudio = true
+		)
 		{
+			this.inVisualStudio = inVisualStudio;
 			eventAggregator.AddListener(this);
 			this.reportColoursProvider = reportColoursProvider;
             this.webViewHostObjectRegistrations = webViewHostObjectRegistrations;
             this.appOptionsProvider = appOptionsProvider;
+            this.environmentFont = environmentFont;
             InitializeComponent();
             _ = InitializeAsync();
             appOptionsProvider.OptionsChanged += AppOptionsProvider_OptionsChanged;
-
 		}
 
         private void AppOptionsProvider_OptionsChanged(IAppOptions appOptions)
         {
 			var reportOptions = ReportOptions.Create(appOptions);
-            if (lastReportOptions == null || !(lastReportOptions.namespacedClasses == reportOptions.namespacedClasses && lastReportOptions.hideFullyCovered == reportOptions.hideFullyCovered))
+            if (lastReportOptions == null || ReportOptionsChanged(lastReportOptions, reportOptions))
             {
 				lastReportOptions = reportOptions;
 				_ = PostReportOptionsAsync();
             }
         }
+
+		private static bool ReportOptionsChanged(ReportOptions lastReportOptions, ReportOptions reportOptions)
+        {
+			return !(lastReportOptions.namespacedClasses == reportOptions.namespacedClasses && lastReportOptions.hideFullyCovered == reportOptions.hideFullyCovered);
+		}
 
         private async Task InitializeAsync()
 		{
@@ -92,23 +107,27 @@ namespace FineCodeCoverage.Output
 			htmlPath = $"file:///{standaloneReportPath}";
 			if (debug)
             {
-				debugDirectory = @"C:/Users/tonyh/source/repos/WebView2Demo/my-app/dist/debug/";	
-				var watchFile = "watch.txt";
-				// todo refactor to interface
-				debugHtmlWatcher = new FileSystemWatcher(debugDirectory, watchFile);
-				// todo - just the filters necessary
-				debugHtmlWatcher.IncludeSubdirectories = false;
-				debugHtmlWatcher.NotifyFilter = NotifyFilters.Attributes
-								 | NotifyFilters.CreationTime
-								 | NotifyFilters.DirectoryName
-								 | NotifyFilters.FileName
-								 | NotifyFilters.LastAccess
-								 | NotifyFilters.LastWrite
-								 | NotifyFilters.Security
-								 | NotifyFilters.Size;
-				debugHtmlWatcher.EnableRaisingEvents = true;
-                debugHtmlWatcher.Created += DebugHtmlWatcher_Created;
-				// disposal
+				if (inVisualStudio)
+				{
+					var watchFile = "watch.txt";
+					// todo refactor to interface
+					debugHtmlWatcher = new FileSystemWatcher(debugDirectory, watchFile);
+					// todo - just the filters necessary
+					debugHtmlWatcher.IncludeSubdirectories = false;
+					debugHtmlWatcher.NotifyFilter = NotifyFilters.Attributes
+									 | NotifyFilters.CreationTime
+									 | NotifyFilters.DirectoryName
+									 | NotifyFilters.FileName
+									 | NotifyFilters.LastAccess
+									 | NotifyFilters.LastWrite
+									 | NotifyFilters.Security
+									 | NotifyFilters.Size;
+					debugHtmlWatcher.EnableRaisingEvents = true;
+					debugHtmlWatcher.Created += DebugHtmlWatcher_Created;
+					// disposal
+				}
+
+				debugDirectory = @"C:/Users/tonyh/source/repos/WebView2Demo/my-app/dist/debug/";
 				htmlPath = $"https://{debugDomain}/index.html";
 			}
 
@@ -254,22 +273,29 @@ namespace FineCodeCoverage.Output
 			{
 				categoryColours = reportColoursProvider.GetCategorizedNamedColoursList().SerializeAsDictionary()
 			};
-			var environmentFont = new EnvironmentFont();
-			environmentFont.Changed += (sender, fontDetails) =>
+			environmentFont.Initialize(this,fontDetails=>
 			{
-				styling.fontName = fontDetails.Family.Source;
+				styling.fontName = fontDetails.Family;
 				styling.fontSize = $"{fontDetails.Size}px";
 				_ = PostStylingAsync();
-			};
-			environmentFont.Initialize(this);
+			});
+		}
+
+		private async Task SwitchToMainThreadAsync()
+        {
+			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 		}
 
 		private async Task PostJsonAsync<T>(string type, T data, JsonSerializerSettings settings = null)
 		{
             try
             {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-                var json = Payload<T>.AsJson(type, data, settings);
+                if (inVisualStudio)
+                {
+					await SwitchToMainThreadAsync();
+				}
+
+				var json = Payload<T>.AsJson(type, data, settings);
                 _webView2.CoreWebView2.PostWebMessageAsJson(json);
             }
             catch (ObjectDisposedException) { }
@@ -319,7 +345,6 @@ namespace FineCodeCoverage.Output
 			script.InnerHtml = $"var report={reportJson}";
 			document.DocumentNode.AppendChild(script); // todo ok ?
 			document.Save(reportPath);
-			
 		}
 
 		private void ReportColoursProvider_ColoursChanged(object sender, List<CategorizedNamedColours> reportColours)

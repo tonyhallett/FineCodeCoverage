@@ -12,5 +12,6 @@ namespace FineCodeCoverage.Output
         public IReportColoursProvider ReportColoursProvider { get; set; }
         public List<IWebViewHostObjectRegistration> WebViewHostObjectRegistrations { get; set; }
         public IAppOptionsProvider AppOptionsProvider { get; internal set; }
+        public IEnvironmentFont EnvironmentFont { get; set; }
     }
 }

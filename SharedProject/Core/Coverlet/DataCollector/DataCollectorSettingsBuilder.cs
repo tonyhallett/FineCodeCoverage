@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using FineCodeCoverage.Options;
+using FineCodeCoverage.Logging;
 
 namespace FineCodeCoverage.Engine.Coverlet
 {

@@ -4,7 +4,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
     using System.Collections.Generic;
     using System.Threading;
     using AutoMoq;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.ReportGenerator;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;

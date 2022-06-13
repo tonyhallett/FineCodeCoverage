@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE80;
+using FineCodeCoverage.Logging;
 using Microsoft;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;

@@ -5,7 +5,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;
     using FineCodeCoverage.Impl;

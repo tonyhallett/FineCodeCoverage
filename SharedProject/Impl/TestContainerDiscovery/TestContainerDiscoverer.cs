@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestWindow.Extensibility;
 using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.Utilities;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
+using ILogger = FineCodeCoverage.Logging.ILogger;
 using FineCodeCoverage.Output.JsMessages.Logging;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsMessages;

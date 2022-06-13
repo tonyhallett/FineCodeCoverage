@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using System;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Media;
 
@@ -7,17 +8,23 @@ namespace FineCodeCoverage.Output
 {
 	public class FontDetails
 	{
-		public FontDetails(double size, FontFamily fontFamily)
+		public FontDetails(double size, string fontFamily)
 		{
 			Size = size;
 			Family = fontFamily;
 		}
 		public double Size { get; }
 
-		public FontFamily Family { get; }
+		public string Family { get; }
 	}
 
-	public class EnvironmentFont : DependencyObject
+	public interface IEnvironmentFont
+    {
+		void Initialize(FrameworkElement frameworkElement, Action<FontDetails> fontDetailsChangedHandler);
+	}
+
+	[Export(typeof(IEnvironmentFont))]
+	public class EnvironmentFont : DependencyObject, IEnvironmentFont
 	{
 
 		private static DependencyProperty EnvironmentFontSizeProperty;
@@ -29,10 +36,11 @@ namespace FineCodeCoverage.Output
 		private FontFamily Family { get; set; }
 
 
-		public event EventHandler<FontDetails> Changed;
+		private Action<FontDetails> fontDetailsChangedHandler;
 
-		public void Initialize(FrameworkElement frameworkElement)
+		public void Initialize(FrameworkElement frameworkElement, Action<FontDetails> fontDetailsChangedHandler)
 		{
+			this.fontDetailsChangedHandler = fontDetailsChangedHandler;
 			RegisterDependencyProperties(frameworkElement.GetType());
 			frameworkElement.SetResourceReference(EnvironmentFontSizeProperty, VsFonts.EnvironmentFontSizeKey);
 			frameworkElement.SetResourceReference(EnvironmentFontFamilyProperty, VsFonts.EnvironmentFontFamilyKey);
@@ -66,7 +74,7 @@ namespace FineCodeCoverage.Output
 		{
 			if (Family != null && Size != default)
 			{
-				Changed?.Invoke(this, new FontDetails(Size, Family));
+				fontDetailsChangedHandler(new FontDetails(Size, Family.Source));
 			}
 		}
 	}

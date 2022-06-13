@@ -3,7 +3,7 @@ namespace FineCodeCoverageTests.HostObjectTests
     using System;
     using EnvDTE;
     using EnvDTE80;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Output.HostObjects;
     using Microsoft.VisualStudio.Shell.Interop;
     using Moq;

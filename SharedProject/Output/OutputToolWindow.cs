@@ -5,8 +5,6 @@ using System.Reflection;
 using FineCodeCoverage.Engine;
 using Microsoft.VisualStudio.Shell;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell.Interop;
-using FineCodeCoverage.Core.Utilities;
 
 namespace FineCodeCoverage.Output
 {
@@ -53,8 +51,9 @@ namespace FineCodeCoverage.Output
 					context.EventAggregator, 
 					context.ReportColoursProvider, 
 					context.WebViewHostObjectRegistrations,
-					context.AppOptionsProvider
-					);
+					context.AppOptionsProvider,
+					context.EnvironmentFont
+				);
 			}
 			finally
 			{

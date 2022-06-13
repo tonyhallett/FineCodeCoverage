@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 using System.Threading;
 using Palmmedia.ReportGenerator.Core.CodeAnalysis;

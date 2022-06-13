@@ -10,6 +10,7 @@ using EnvDTE;
 using FineCodeCoverage.Core.Model;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine.FileSynchronization;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.CodeAnalysis.MSBuild;

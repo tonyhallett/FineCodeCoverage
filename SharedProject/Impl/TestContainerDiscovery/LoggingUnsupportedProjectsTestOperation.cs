@@ -1,4 +1,5 @@
 ﻿using FineCodeCoverage.Engine.Model;
+using FineCodeCoverage.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

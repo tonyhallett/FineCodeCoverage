@@ -3,7 +3,7 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;

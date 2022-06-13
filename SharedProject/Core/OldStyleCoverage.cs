@@ -1,6 +1,7 @@
 ﻿using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine;
 using FineCodeCoverage.Engine.Model;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Output.JsMessages.Logging;
 using System;
 using System.Collections.Generic;

@@ -209,8 +209,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\Provider\ICoverageColours.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\Provider\ICoverageColoursProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\ILogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\Logging\FCCOutputPane.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\Logging\IFCCOutputPane.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\Logging\ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\Logging\FCCOutputPaneLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\OverviewMargin\PartiallyCoveredEditorFormatDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\RunSettingsRetriever.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ShowFCCOutputPaneMessage.cs" />

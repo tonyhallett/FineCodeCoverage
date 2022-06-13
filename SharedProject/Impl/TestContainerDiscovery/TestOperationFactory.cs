@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using FineCodeCoverage.Engine.Model;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
+using ILogger = FineCodeCoverage.Logging.ILogger;
 
 namespace FineCodeCoverage.Impl
 {

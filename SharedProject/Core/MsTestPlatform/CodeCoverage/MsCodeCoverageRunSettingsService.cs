@@ -17,6 +17,7 @@ using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsMessages.Logging;
 using FineCodeCoverage.Core.ReportGenerator;
 using FineCodeCoverage.Core;
+using ILogger = FineCodeCoverage.Logging.ILogger;
 
 namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
 {

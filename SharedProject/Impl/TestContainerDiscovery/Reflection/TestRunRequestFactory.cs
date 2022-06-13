@@ -2,6 +2,7 @@
 using ReflectObject;
 using System;
 using System.ComponentModel.Composition;
+using ILogger = FineCodeCoverage.Logging.ILogger;
 
 namespace FineCodeCoverage.Impl
 {

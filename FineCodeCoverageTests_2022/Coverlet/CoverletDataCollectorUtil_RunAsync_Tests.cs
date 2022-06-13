@@ -7,7 +7,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.Coverlet;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine.Coverlet;

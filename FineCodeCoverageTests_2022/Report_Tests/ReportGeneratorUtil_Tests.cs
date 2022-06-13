@@ -6,7 +6,7 @@ namespace FineCodeCoverageTests.ReportTests
     using System.IO;
     using System.Linq;
     using System.Threading;
-    using ILogger = FineCodeCoverage.ILogger;
+    using ILogger = FineCodeCoverage.Logging.ILogger;
     using FineCodeCoverage.Core.ReportGenerator;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Options;

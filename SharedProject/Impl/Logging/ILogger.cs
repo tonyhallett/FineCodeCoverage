@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace FineCodeCoverage {
+namespace FineCodeCoverage.Logging
+{
     public interface ILogger
     {
         void Log(IEnumerable<object> message);

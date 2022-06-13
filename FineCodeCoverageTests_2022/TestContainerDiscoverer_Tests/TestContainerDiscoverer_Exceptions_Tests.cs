@@ -1,7 +1,7 @@
 namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 {
     using System;
-    using FineCodeCoverage;
+    using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.JsMessages.Logging;

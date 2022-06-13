@@ -1,4 +1,5 @@
 ﻿using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 using FineCodeCoverage.Output.JsMessages.Logging;
 using System;
@@ -12,7 +13,7 @@ namespace FineCodeCoverage.Impl
     {
         private readonly IEventAggregator eventAggregator;
         private readonly ILogger logger;
-        private List<Func<ITestOperation, IAppOptions, bool>> conditions;
+        private readonly List<Func<ITestOperation, IAppOptions, bool>> conditions;
 
         [ImportingConstructor]
         public RunCoverageConditions(

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.Composition;
-using System.Threading;
 using EnvDTE;
 using EnvDTE80;
 using FineCodeCoverage.Engine.FileSynchronization;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 using Microsoft.Build.Locator;
 using Microsoft.VisualStudio.Shell;

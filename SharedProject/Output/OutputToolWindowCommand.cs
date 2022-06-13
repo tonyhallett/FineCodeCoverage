@@ -3,6 +3,7 @@ using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
+using FineCodeCoverage.Logging;
 
 namespace FineCodeCoverage.Output
 {
