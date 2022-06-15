@@ -25,7 +25,6 @@ namespace FineCodeCoverageWebViewReport_Tests
         [SetUp]
         public void Setup()
         {
-            // I can supply arguments.........
             var edgeOptions = new EdgeOptions
             {
                 UseWebView = true,
@@ -48,7 +47,7 @@ namespace FineCodeCoverageWebViewReport_Tests
             edgeDriver!.Quit();
         }
 
-        private static string GetSerializedStyling()
+        private static Styling GetStyling()
         {
             Dictionary<string, Dictionary<string, string>> categoryColours = new()
             {
@@ -69,16 +68,18 @@ namespace FineCodeCoverageWebViewReport_Tests
                 categoryColours = categoryColours
             };
 
-            return JsonConvert.SerializeObject(styling);
+            return styling;
         }
 
-        private void ExecutePostBack(string hostObjectRegistrationName,string serialized)
+        private void ExecutePostBack(string hostObjectRegistrationName,object objectToPostBack)
         {
+            var serialized = JsonConvert.SerializeObject(objectToPostBack);
             edgeDriver!.ExecuteScript(
                 $"window.chrome.webview.hostObjects.{hostObjectRegistrationName}.{nameof(IHostObject.postBack)}(arguments[0])",
                 serialized
             );
         }
+
         private List<Invocation> ExecuteGetInvocations(string hostObjectRegistrationName)
         {
             // todo nameof when have refactored to base HostObject
@@ -88,6 +89,7 @@ namespace FineCodeCoverageWebViewReport_Tests
             var invocations =  JsonConvert.DeserializeObject<List<Invocation>>((string)serialized!);
             return invocations;
         }
+
         private IWebElement WaitForContent()
         {
             return new WebDriverWait(edgeDriver, TimeSpan.FromSeconds(15))
@@ -106,7 +108,7 @@ namespace FineCodeCoverageWebViewReport_Tests
 
         private void WaitForStyledContent()
         {
-            ExecutePostBack(StylingJsonPosterRegistration.RegistrationName, GetSerializedStyling());
+            ExecutePostBack(StylingJsonPosterRegistration.RegistrationName, GetStyling());
 
             WaitForContent();
         }
@@ -152,8 +154,7 @@ namespace FineCodeCoverageWebViewReport_Tests
             throw new NotImplementedException();
             // May need to instead refactor to interface .... including the factory and removal of T in Payload<T>
             Report report = null; 
-            var serializedReport = JsonConvert.SerializeObject(report);
-            ExecutePostBack(ReportJsonPosterRegistration.RegistrationName, serializedReport);
+            ExecutePostBack(ReportJsonPosterRegistration.RegistrationName, report);
         }
 
         private IWebElement FindFirstClassOpenerButton(IWebElement coverageTabPanel)
@@ -178,7 +179,6 @@ namespace FineCodeCoverageWebViewReport_Tests
 
             Assert.That(invocations.Count, Is.EqualTo(1));
             Assert.That(invocations[0].Name, Is.EqualTo(""));
-
         }
     }
 }
