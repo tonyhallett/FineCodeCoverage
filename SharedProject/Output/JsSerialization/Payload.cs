@@ -1,14 +1,12 @@
-﻿using Newtonsoft.Json;
-
-namespace FineCodeCoverage.Output.JsSerialization
+﻿namespace FineCodeCoverage.Output.JsSerialization
 {
     public class Payload<T>
     {
+#pragma warning disable IDE1006 // Naming Styles
         public string type { get; set; }
+
         public T data { get; set; }
-        public static string AsJson(string type, T data, JsonSerializerSettings settings = null)
-        {
-            return JsonConvert.SerializeObject(new Payload<T> { type = type, data = data }, settings);
-        }
+#pragma warning restore IDE1006 // Naming Styles
+
     }
 }

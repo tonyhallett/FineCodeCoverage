@@ -169,7 +169,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
         {
             collectingWithUserRunSettings = false;
             collectionStatus = MsCodeCoverageCollectionStatus.NotCollecting;
-            runMsCodeCoverage = appOptionsProvider.Get().RunMsCodeCoverage;
+            runMsCodeCoverage = appOptionsProvider.Provide().RunMsCodeCoverage;
             useMsCodeCoverage = runMsCodeCoverage == RunMsCodeCoverage.Yes;
             userRunSettingsProjectDetailsLookup = null;
             return CleanUpAsync(testOperation);

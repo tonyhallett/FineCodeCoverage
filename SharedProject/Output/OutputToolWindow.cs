@@ -48,11 +48,7 @@ namespace FineCodeCoverage.Output
 			{
 				AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 				Content = new OutputToolWindowControl(
-					context.EventAggregator, 
-					context.ReportColoursProvider, 
-					context.WebViewHostObjectRegistrations,
-					context.AppOptionsProvider,
-					context.EnvironmentFont
+					context.WebViewController
 				);
 			}
 			finally

@@ -495,7 +495,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             var mockAppOptionsProvider = this.autoMocker.GetMock<IAppOptionsProvider>();
             var mockOptions = new Mock<IAppOptions>();
             _ = mockOptions.Setup(options => options.RunMsCodeCoverage).Returns(runMsCodeCoverage);
-            _ = mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Get()).Returns(mockOptions.Object);
+            _ = mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Provide()).Returns(mockOptions.Object);
         }
 
         private void VerifyLogException(string reason, Exception exception)

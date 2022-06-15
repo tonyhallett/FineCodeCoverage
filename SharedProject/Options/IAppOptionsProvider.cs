@@ -5,7 +5,7 @@ namespace FineCodeCoverage.Options
     internal interface IAppOptionsProvider
     {
         event Action<IAppOptions> OptionsChanged;
-        IAppOptions Get();
+        IAppOptions Provide();
     }
 
 

@@ -22,7 +22,7 @@ namespace FineCodeCoverage.Impl
             IAppOptionsProvider appOptionsProvider
         ) : base(eventAggregator)
         {
-            var appOptions = appOptionsProvider.Get();
+            var appOptions = appOptionsProvider.Provide();
             coverageMarginOptions = CoverageMarginOptions.Create(appOptions);
             appOptionsProvider.OptionsChanged += AppOptionsProvider_OptionsChanged;
         }

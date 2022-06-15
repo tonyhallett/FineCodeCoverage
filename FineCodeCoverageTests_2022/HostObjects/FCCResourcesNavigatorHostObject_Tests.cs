@@ -1,6 +1,6 @@
 namespace FineCodeCoverageTests.HostObjectTests
 {
-    using FineCodeCoverage.Output;
+    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.HostObjects;
     using Moq;
     using NUnit.Framework;

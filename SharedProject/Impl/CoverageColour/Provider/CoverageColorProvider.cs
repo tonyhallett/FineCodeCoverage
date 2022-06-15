@@ -41,7 +41,7 @@ namespace FineCodeCoverage.Impl
             ThreadHelper.ThrowIfNotOnUIThread();
             fontAndColorStorage = (IVsFontAndColorStorage)serviceProvider.GetService(typeof(IVsFontAndColorStorage));
             Assumes.Present(fontAndColorStorage);
-            coverageColoursFromFontsAndColours = appOptionsProvider.Get().CoverageColoursFromFontsAndColours;
+            coverageColoursFromFontsAndColours = appOptionsProvider.Provide().CoverageColoursFromFontsAndColours;
             appOptionsProvider.OptionsChanged += AppOptionsProvider_OptionsChanged;
             this.logger = logger;
             DetermineColors();

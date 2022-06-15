@@ -5,7 +5,7 @@ namespace FineCodeCoverage.Output.HostObjects
 {
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [ComVisible(true)]
-    public class FCCResourcesNavigatorHostObject
+    public class FCCResourcesNavigatorHostObject : IFCCResourcesNavigatorHostObject
     {
         private const string payPal = "https://paypal.me/FortuneNgwenya";
 
@@ -17,7 +17,6 @@ namespace FineCodeCoverage.Output.HostObjects
             this.process = process;
         }
 
-#pragma warning disable IDE1006 // Naming Styles
         public void readReadMe()
         {
             process.Start(FCCGithub.Readme);
@@ -37,7 +36,6 @@ namespace FineCodeCoverage.Output.HostObjects
         {
             process.Start(marketPlaceRateAndReview);
         }
-#pragma warning restore IDE1006 // Naming Styles
     }
 
 }

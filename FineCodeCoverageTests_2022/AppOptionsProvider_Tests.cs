@@ -238,7 +238,7 @@ namespace FineCodeCoverageTests_AppOptions_Tests
 
         [Test]
         public void Should_Use_Deseralized_String_From_Store_For_AppOption_Property_Get() =>
-            this.Should_Use_Deseralized_String_From_Store_For_AppOption_Property(() => this.appOptionsProvider.Get());
+            this.Should_Use_Deseralized_String_From_Store_For_AppOption_Property(() => this.appOptionsProvider.Provide());
 
         private void Should_Use_Deseralized_String_From_Store_For_AppOption_Property(Func<IAppOptions> act)
         {

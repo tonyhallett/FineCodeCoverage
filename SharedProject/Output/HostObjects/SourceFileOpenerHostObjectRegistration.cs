@@ -18,7 +18,8 @@ namespace FineCodeCoverage.Output.HostObjects
             HostObject = new SourceFileOpenerHostObject(serviceProvider, logger);
         }
 
-        public string Name => "sourceFileOpener";
+        public const string HostObjectName = "sourceFileOpener";
+        public string Name => HostObjectName;
 
         public object HostObject { get; }
     }

@@ -114,7 +114,7 @@ namespace FineCodeCoverageTests.Tagging_Test
             this.initialAppOptions = this.GetInitialCoverageMarginAppOptions();
             _ = this.Mocker.GetMock<IAppOptionsProvider>()
                 .Setup(
-                    appOptionsProvider => appOptionsProvider.Get()
+                    appOptionsProvider => appOptionsProvider.Provide()
                 )
                 .Returns(this.initialAppOptions);
         }

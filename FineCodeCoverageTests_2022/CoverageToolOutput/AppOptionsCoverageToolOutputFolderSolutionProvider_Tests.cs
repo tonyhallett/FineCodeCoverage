@@ -21,7 +21,7 @@ namespace FineCodeCoverageTests.CoverageToolOutput_Tests
             var mockAppOptionsProvider = this.mocker.GetMock<IAppOptionsProvider>();
             var mockAppOptions = new Mock<IAppOptions>();
             _ = mockAppOptions.SetupGet(options => options.FCCSolutionOutputDirectoryName).Returns(optionValue);
-            _ = mockAppOptionsProvider.Setup(aop => aop.Get()).Returns(mockAppOptions.Object);
+            _ = mockAppOptionsProvider.Setup(aop => aop.Provide()).Returns(mockAppOptions.Object);
 
             var provider = this.mocker.Create<AppOptionsCoverageToolOutputFolderSolutionProvider>();
             var providedSolutionFolder = false;
@@ -45,7 +45,7 @@ namespace FineCodeCoverageTests.CoverageToolOutput_Tests
             var mockAppOptionsProvider = this.mocker.GetMock<IAppOptionsProvider>();
             var mockAppOptions = new Mock<IAppOptions>();
             _ = mockAppOptions.SetupGet(options => options.FCCSolutionOutputDirectoryName).Returns("Value");
-            _ = mockAppOptionsProvider.Setup(aop => aop.Get()).Returns(mockAppOptions.Object);
+            _ = mockAppOptionsProvider.Setup(aop => aop.Provide()).Returns(mockAppOptions.Object);
             var provider = this.mocker.Create<AppOptionsCoverageToolOutputFolderSolutionProvider>();
             Assert.That(provider.Provide(() => null), Is.Null);
         }
@@ -56,7 +56,7 @@ namespace FineCodeCoverageTests.CoverageToolOutput_Tests
             var mockAppOptionsProvider = this.mocker.GetMock<IAppOptionsProvider>();
             var mockAppOptions = new Mock<IAppOptions>();
             _ = mockAppOptions.SetupGet(options => options.FCCSolutionOutputDirectoryName).Returns("FCCOutput");
-            _ = mockAppOptionsProvider.Setup(aop => aop.Get()).Returns(mockAppOptions.Object);
+            _ = mockAppOptionsProvider.Setup(aop => aop.Provide()).Returns(mockAppOptions.Object);
             var provider = this.mocker.Create<AppOptionsCoverageToolOutputFolderSolutionProvider>();
             Assert.That(Path.Combine("SolutionFolder", "FCCOutput"), Is.EqualTo(provider.Provide(() => "SolutionFolder")));
         }

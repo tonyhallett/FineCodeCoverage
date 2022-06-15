@@ -10,7 +10,7 @@ namespace FineCodeCoverage.Output.HostObjects
 {
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [ComVisible(true)]
-    public class SourceFileOpenerHostObject
+    public class SourceFileOpenerHostObject : ISourceFileOpenerHostObject
     {
         private DTE2 dte;
         private readonly IServiceProvider serviceProvider;
@@ -26,7 +26,7 @@ namespace FineCodeCoverage.Output.HostObjects
         {
             get
             {
-                if(dte == null)
+                if (dte == null)
                 {
                     dte = (DTE2)serviceProvider.GetService(typeof(SDTE));
                     Assumes.Present(dte);

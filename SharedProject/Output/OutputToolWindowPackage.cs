@@ -15,6 +15,7 @@ using FineCodeCoverage.Logging;
 using System.Linq;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Core.ReportGenerator.Colours;
+using FineCodeCoverage.Output.WebView;
 
 namespace FineCodeCoverage.Output
 {
@@ -71,11 +72,7 @@ namespace FineCodeCoverage.Output
         {
 			return new OutputToolWindowContext
 			{
-				EventAggregator = componentModel.GetService<IEventAggregator>(),
-				ReportColoursProvider = componentModel.GetService<IReportColoursProvider>(),
-				WebViewHostObjectRegistrations = componentModel.GetExtensions<IWebViewHostObjectRegistration>().ToList(),
-				AppOptionsProvider = componentModel.GetService<IAppOptionsProvider>(),
-				EnvironmentFont = componentModel.GetService<IEnvironmentFont>()
+				WebViewController = componentModel.GetService<IWebViewController>()
 			};
 		}
 

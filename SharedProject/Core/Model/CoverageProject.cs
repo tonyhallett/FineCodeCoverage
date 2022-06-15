@@ -39,7 +39,7 @@ namespace FineCodeCoverage.Engine.Model
             {
                 if(buildOutputPath == null)
                 {
-                    var adjacentBuildOutput = appOptionsProvider.Get().AdjacentBuildOutput;
+                    var adjacentBuildOutput = appOptionsProvider.Provide().AdjacentBuildOutput;
                     if (adjacentBuildOutput)
                     {
                         // Net framework - Debug | Debug-NET45

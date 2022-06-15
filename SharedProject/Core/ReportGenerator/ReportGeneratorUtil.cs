@@ -114,7 +114,7 @@ namespace FineCodeCoverage.Core.ReportGenerator
 
 		private RiskHotspotsAnalysisThresholds HotspotThresholds()
         {
-			var options = appOptionsProvider.Get();
+			var options = appOptionsProvider.Provide();
 			return new RiskHotspotsAnalysisThresholds
 			{
 				MetricThresholdForCyclomaticComplexity = options.ThresholdForCyclomaticComplexity,

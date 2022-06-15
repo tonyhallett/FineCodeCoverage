@@ -51,7 +51,7 @@ namespace FineCodeCoverage.Impl
             {
                 if (settings == null)
                 {
-                    settings = appOptionsProvider.Get();
+                    settings = appOptionsProvider.Provide();
                 }
                 return settings;
             }

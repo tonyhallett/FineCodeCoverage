@@ -18,7 +18,7 @@ namespace FineCodeCoverage.Engine
         }
         public string Provide(Func<string> solutionFolderProvider)
         {
-            var appOptions = appOptionsProvider.Get();
+            var appOptions = appOptionsProvider.Provide();
             if (!String.IsNullOrEmpty(appOptions.FCCSolutionOutputDirectoryName))
             {
                 var solutionFolder = solutionFolderProvider();

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 
-namespace FineCodeCoverage.Output
+namespace FineCodeCoverage.Core.Utilities
 {
     [Export(typeof(IProcess))]
     [ExcludeFromCodeCoverage]

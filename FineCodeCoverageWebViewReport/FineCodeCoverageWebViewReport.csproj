@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -56,6 +59,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DeleteTheseTypes.cs" />
+    <Compile Include="FileLogger.cs" />
+    <Compile Include="InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsHostObject.cs" />
+    <Compile Include="InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsRecordingRegistration.cs" />
+    <Compile Include="InvocationsRecordingRegistration\Invocation.cs" />
+    <Compile Include="InvocationsRecordingRegistration\InvocationsRecordingHostObject.cs" />
+    <Compile Include="InvocationsRecordingRegistration\SourceFileOpenerInvocationsHostObject.cs" />
+    <Compile Include="InvocationsRecordingRegistration\SourceFileOpenerInvocationsRecordingRegistration.cs" />
+    <Compile Include="JsonPosterRegistration\HostObject.cs" />
+    <Compile Include="JsonPosterRegistration\IHostObject.cs" />
+    <Compile Include="JsonPosterRegistration\IRegJsonPoster.cs" />
+    <Compile Include="JsonPosterRegistration\JsonPosterRegistrationBase.cs" />
+    <Compile Include="JsonPosterRegistration\ReportJsonPosterRegistration.cs" />
+    <Compile Include="JsonPosterRegistration\StylingJsonPosterRegistration.cs" />
+    <Compile Include="WebViewControllerProvider.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -87,6 +105,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -101,5 +120,6 @@
       <Name>FineCodeCoverage2022</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,8 +1,17 @@
+using FineCodeCoverage.Output.HostObjects;
+using FineCodeCoverage.Output.JsSerialization;
+using FineCodeCoverage.Output.JsSerialization.ReportGenerator;
+using FineCodeCoverageWebViewReport.InvocationsRecordingRegistration;
+using FineCodeCoverageWebViewReport.JsonPosterRegistration;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace FineCodeCoverageWebViewReport_Tests
 {
@@ -10,17 +19,27 @@ namespace FineCodeCoverageWebViewReport_Tests
     {
         private EdgeDriver? edgeDriver;
 
+        // if not getting expected results set to true, debug FineCodeCoverageWebViewReport in another vs instance then start the test
+        private bool attach;
+
         [SetUp]
         public void Setup()
         {
             // I can supply arguments.........
-            edgeDriver = new EdgeDriver(
-                new EdgeOptions
-                {
-                    UseWebView = true,
-                    BinaryLocation = @"C:\Users\tonyh\source\repos\FineCodeCoverage\FineCodeCoverageWebViewReport\bin\Debug\FineCodeCoverageWebViewReport.exe",
-                }
-            );
+            var edgeOptions = new EdgeOptions
+            {
+                UseWebView = true,
+                BinaryLocation = @"C:\Users\tonyh\source\repos\FineCodeCoverage\FineCodeCoverageWebViewReport\bin\Debug\FineCodeCoverageWebViewReport.exe",
+            };
+
+            if (attach)
+            {
+                edgeOptions.DebuggerAddress = "localhost:9222";
+            }
+
+            edgeDriver = new EdgeDriver(edgeOptions);
+
+            Thread.Sleep(3000);
         }
 
         [TearDown]
@@ -29,65 +48,137 @@ namespace FineCodeCoverageWebViewReport_Tests
             edgeDriver!.Quit();
         }
 
+        private static string GetSerializedStyling()
+        {
+            Dictionary<string, Dictionary<string, string>> categoryColours = new()
+            {
+                {
+                    "EnvironmentColors",
+                    new Dictionary<string, string>
+                    {
+                        { "ToolWindowText", "rgb(0,0,0)"},
+                        { "ToolWindowBackground", "rgb(0,0,0)"}
+                    }
+                }
+            };
+
+            var styling = new Styling
+            {
+                fontName = "Arial",
+                fontSize = "10px",
+                categoryColours = categoryColours
+            };
+
+            return JsonConvert.SerializeObject(styling);
+        }
+
+        private void ExecutePostBack(string hostObjectRegistrationName,string serialized)
+        {
+            edgeDriver!.ExecuteScript(
+                $"window.chrome.webview.hostObjects.{hostObjectRegistrationName}.{nameof(IHostObject.postBack)}(arguments[0])",
+                serialized
+            );
+        }
+        private List<Invocation> ExecuteGetInvocations(string hostObjectRegistrationName)
+        {
+            // todo nameof when have refactored to base HostObject
+            var serialized = edgeDriver!.ExecuteScript(
+                $"return window.chrome.webview.hostObjects.{hostObjectRegistrationName}.getInvocations()"
+            );
+            var invocations =  JsonConvert.DeserializeObject<List<Invocation>>((string)serialized!);
+            return invocations;
+        }
+        private IWebElement WaitForContent()
+        {
+            return new WebDriverWait(edgeDriver, TimeSpan.FromSeconds(15))
+                .Until(driver =>
+                {
+                    var root = driver.FindElement(By.Id("root"));
+                    return root.FindElement(By.CssSelector("*"));
+                });
+        }
+
         [Test]
-        public void Test1()
+        public void Should_Not_Display_If_No_Styling_Received()
         {
-            var wait = new WebDriverWait(edgeDriver, TimeSpan.FromMinutes(1));
-            // TagName,
-            // Id
-            // ClassName,
-            // CssSelector - Name is also string text = "*[name =\"" + EscapeCssSelector(nameToFind) + "\"]";
-            // XPath
-
-            // should look for extensions so can follow the react testing framework method of roles
-            // https://www.nuget.org/packages/Selenium.Axe/
-
-            var summaryElement = wait.Until(driver => driver.FindElementByText("Summary"));
-            // summaryElement.GetDomAttribute / GetAttribute difference
-            var tagName = summaryElement.TagName;
-
-            var backgroundColor = summaryElement.GetBackgroundColor();
-            var foregroundColor = summaryElement.GetBackgroundColor();
-            var fontSize = summaryElement.GetFontSize();
-            var fontFamily = summaryElement.GetFontFamily();
-
-            edgeDriver!.GetScreenshot().SaveAsFile(@"C:\Users\tonyh\Downloads\testScreenshot.png");
-        }
-    }
-
-    public static class ISearchContextExtensions
-    {
-        public static IWebElement FindElementByText(this ISearchContext searchContext, string text)
-        {
-            return searchContext.FindElement(By.XPath($"//*[text()='{text}']"));
+            Assert.That(WaitForContent, Throws.InstanceOf<WebDriverTimeoutException>());
         }
 
-        public static IWebElement FindElementContainingText(this ISearchContext searchContext, string text)
+        private void WaitForStyledContent()
         {
-            return searchContext.FindElement(By.XPath($"//*[contains(text(),'{text}')]"));
-        }
-    }
+            ExecutePostBack(StylingJsonPosterRegistration.RegistrationName, GetSerializedStyling());
 
-    public static class IWebElementExtensions
-    {
-        public static string GetBackgroundColor(this IWebElement webElement)
-        {
-            return webElement.GetCssValue("background-color");
+            WaitForContent();
         }
 
-        public static string GetForegroundColor(this IWebElement webElement)
+        [Test]
+        public void Should_Display_When_Receive_Styling()
         {
-            return webElement.GetCssValue("foreground-color");
+            WaitForStyledContent();
+            
+            // could drive the ui and take screen shots for the github repo
+            // edgeDriver!.GetScreenshot().SaveAsFile(@"C:\Users\tonyh\Downloads\testScreenshot.png");
         }
 
-        public static string GetFontFamily(this IWebElement webElement)
+        private void SelectTab(string tabName)
         {
-            return webElement.GetCssValue("font-family");
+            var tabList = edgeDriver!.FindElementByRole("tablist");
+            var tab = tabList.FindElement(By.Name(tabName));
+            tab.Click();
         }
 
-        public static string GetFontSize(this IWebElement webElement)
+        [TestCase("Review", nameof(IFCCResourcesNavigatorHostObject.rateAndReview))]
+        [TestCase("Buy me a beer", nameof(IFCCResourcesNavigatorHostObject.buyMeACoffee))]
+        [TestCase("Log issue or suggestion", nameof(IFCCResourcesNavigatorHostObject.logIssueOrSuggestion))]
+        public void Feedback_Buttons_Should_Invoke_The_FCCResourcesNavigatorHostObject(string buttonAriaLabel, string expectedInvocationName)
         {
-            return webElement.GetCssValue("font-size");
+            WaitForStyledContent();
+
+            SelectTab("Feedback");
+
+            var feedbackTabPanel = edgeDriver!.FindNonHiddenTabpanel();
+            var feedbackButtons = feedbackTabPanel.FindElements(By.TagName("button"));
+            var reviewButton = feedbackButtons.First(feedbackButton => feedbackButton.GetAriaLabel() == buttonAriaLabel);
+            reviewButton.Click();
+
+            var invocations = ExecuteGetInvocations(FCCResourcesNavigatorRegistration.HostObjectName);
+
+            Assert.That(invocations.Count, Is.EqualTo(1));
+            Assert.That(invocations[0].Name, Is.EqualTo(expectedInvocationName));
+        }
+
+        private void SendReport()
+        {
+            throw new NotImplementedException();
+            // May need to instead refactor to interface .... including the factory and removal of T in Payload<T>
+            Report report = null; 
+            var serializedReport = JsonConvert.SerializeObject(report);
+            ExecutePostBack(ReportJsonPosterRegistration.RegistrationName, serializedReport);
+        }
+
+        private IWebElement FindFirstClassOpenerButton(IWebElement coverageTabPanel)
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test] // there will need to be two tests for this 
+        public void Class_File_Buttons_Should_Invoke_The_SourceFileOpenerHostObject()
+        {
+            throw new NotImplementedException();
+            WaitForStyledContent();
+
+            SendReport();
+            SelectTab("Coverage");
+
+            var coverageTabPanel = edgeDriver!.FindNonHiddenTabpanel();
+            var classOpenerButton = FindFirstClassOpenerButton(coverageTabPanel);
+            classOpenerButton.Click();
+
+            var invocations = ExecuteGetInvocations(SourceFileOpenerHostObjectRegistration.HostObjectName);
+
+            Assert.That(invocations.Count, Is.EqualTo(1));
+            Assert.That(invocations[0].Name, Is.EqualTo(""));
+
         }
     }
 }

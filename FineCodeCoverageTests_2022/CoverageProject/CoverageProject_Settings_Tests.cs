@@ -587,7 +587,7 @@ namespace FineCodeCoverageTests.CoverageProject_Tests
             var mockAppOptionsProvider = new Mock<IAppOptionsProvider>();
             var mockAppOptions = new Mock<IAppOptions>();
             var globalOptions = mockAppOptions.Object;
-            _ = mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Get()).Returns(globalOptions);
+            _ = mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Provide()).Returns(globalOptions);
 
             var mockSettingsMerger = new Mock<ISettingsMerger>();
             var mergedSettings = new Mock<IAppOptions>().Object;

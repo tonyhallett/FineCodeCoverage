@@ -64,7 +64,7 @@ namespace FineCodeCoverage.Engine
 
         private string GetAppDataFolder()
         {
-            var dir = appOptionsProvider.Get().ToolsDirectory;
+            var dir = appOptionsProvider.Provide().ToolsDirectory;
 
             return Directory.Exists(dir) ? dir : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         }

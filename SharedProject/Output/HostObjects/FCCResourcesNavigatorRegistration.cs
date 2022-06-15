@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using FineCodeCoverage.Core.Utilities;
+using System.ComponentModel.Composition;
 
 namespace FineCodeCoverage.Output.HostObjects
 {

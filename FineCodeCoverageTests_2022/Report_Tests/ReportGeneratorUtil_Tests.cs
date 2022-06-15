@@ -79,7 +79,7 @@ namespace FineCodeCoverageTests.ReportTests
             _ = mockAppOptions.SetupGet(appOptions => appOptions.ThresholdForCrapScore).Returns(1);
             _ = mockAppOptions.SetupGet(appOptions => appOptions.ThresholdForCyclomaticComplexity).Returns(2);
             _ = mockAppOptions.SetupGet(appOptions => appOptions.ThresholdForNPathComplexity).Returns(3);
-            _ = this.mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Get()).Returns(mockAppOptions.Object);
+            _ = this.mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Provide()).Returns(mockAppOptions.Object);
 
             this.mockEventAggregator = new Mock<IEventAggregator>();
             this.mockReportGenerator = new Mock<FineCodeCoverage.Core.ReportGenerator.IReportGenerator>();
@@ -141,7 +141,7 @@ namespace FineCodeCoverageTests.ReportTests
             _ = mockAppOptions.SetupGet(appOptions => appOptions.ThresholdForCrapScore).Returns(1);
             _ = mockAppOptions.SetupGet(appOptions => appOptions.ThresholdForCyclomaticComplexity).Returns(2);
             _ = mockAppOptions.SetupGet(appOptions => appOptions.ThresholdForNPathComplexity).Returns(3);
-            _ = this.mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Get()).Returns(mockAppOptions.Object);
+            _ = this.mockAppOptionsProvider.Setup(appOptionsProvider => appOptionsProvider.Provide()).Returns(mockAppOptions.Object);
             this.mockReportGenerator.Setup(reportGenerator =>
                 reportGenerator.GenerateReport(
                     It.IsAny<IReportConfiguration>(),

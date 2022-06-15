@@ -44,7 +44,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
             this.MockAppOptionsProvider = this.Mocker.GetMock<IAppOptionsProvider>();
 
             _ = this.MockAppOptionsProvider.Setup(
-                appOptionsProvider => appOptionsProvider.Get()
+                appOptionsProvider => appOptionsProvider.Provide()
             ).Returns(this.AppOptions);
         }
 

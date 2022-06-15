@@ -35,7 +35,7 @@ namespace FineCodeCoverage.Options
             OptionsChanged?.Invoke(appOptions);
         }
 
-        public IAppOptions Get()
+        public IAppOptions Provide()
         {
             var options = new AppOptions();
             LoadSettingsFromStorage(options);

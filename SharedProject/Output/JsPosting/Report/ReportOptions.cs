@@ -1,6 +1,6 @@
 ﻿using FineCodeCoverage.Options;
 
-namespace FineCodeCoverage.Output.JsSerialization
+namespace FineCodeCoverage.Output.JsPosting
 {
     public class ReportOptions
     {
