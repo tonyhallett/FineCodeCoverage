@@ -12,11 +12,10 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
             var assemblies = this.summaryResult.assemblies;
             this.riskHotspotAnalysisResult = new RiskHotspotAnalysisResultJson(riskHotspotAnalysisResult, assemblies);
         }
-#pragma warning disable IDE1006 // Naming Styles
+        public Report(){ }
 
         public SummaryResultJson summaryResult { get; set; }
         public RiskHotspotAnalysisResultJson riskHotspotAnalysisResult { get; set; }
         public RiskHotspotsAnalysisThresholds riskHotspotsAnalysisThresholds { get; set; }
-#pragma warning restore IDE1006 // Naming Styles
     }
 }

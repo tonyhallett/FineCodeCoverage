@@ -161,8 +161,8 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 
             var mockCoverageProjectFactory = new Mock<ICoverageProjectFactory>();
             _ = mockCoverageProjectFactory.
-                Setup(coverageProjectFactory => coverageProjectFactory.Create()).
-                Returns(() => new TestCoverageProject());
+                Setup(coverageProjectFactory => coverageProjectFactory.CreateAsync()).
+                ReturnsAsync(() => new TestCoverageProject());
 
             var testOperation = new TestOperation(testRunRequest, mockCoverageProjectFactory.Object, mockRunSettingsRetriever.Object);
 

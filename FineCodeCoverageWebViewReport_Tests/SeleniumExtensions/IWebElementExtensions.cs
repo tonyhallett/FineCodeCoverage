@@ -33,5 +33,10 @@ namespace FineCodeCoverageWebViewReport_Tests
         {
             return webElement.GetAttribute("aria-label");
         }
+
+        public static string GetInnerHtml(this IWebElement webElement)
+        {
+            return webElement.GetAttribute("innerHTML");
+        }
     }
 }

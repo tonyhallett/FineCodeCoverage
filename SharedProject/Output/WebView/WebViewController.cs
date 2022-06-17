@@ -143,7 +143,6 @@ namespace FineCodeCoverage.Output.WebView
 
 		public void PostJson<T>(string type, T data)
         {
-			logger.Log($"Posting {type}");
 			postJsonTask = PostJsonAsync(type , data);
         } 
 

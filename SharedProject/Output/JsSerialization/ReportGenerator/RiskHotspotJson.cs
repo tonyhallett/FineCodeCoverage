@@ -1,4 +1,5 @@
-﻿using Palmmedia.ReportGenerator.Core.CodeAnalysis;
+﻿using Newtonsoft.Json;
+using Palmmedia.ReportGenerator.Core.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,7 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class RiskHotspotJson
 	{
+#pragma warning disable IDE1006 // Naming Styles
 		public int assemblyIndex { get; }
 		public int classIndex { get; }
 		public MethodMetricJson methodMetric { get; }
@@ -13,6 +15,7 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 		public int fileIndex { get; }
 
 		public IEnumerable<MetricStatusJson> statusMetrics { get; }
+#pragma warning restore IDE1006 // Naming Styles
 
 		public RiskHotspotJson(RiskHotspot riskHotspot, List<AssemblyJson> assemblies)
 		{
@@ -30,5 +33,21 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 
 			fileIndex = riskHotspot.FileIndex;
 		}
+
+		[JsonConstructor]
+		public RiskHotspotJson(
+			int assemblyIndex,
+            int classIndex,
+            int fileIndex,
+            MethodMetricJson methodMetric,
+            IEnumerable<MetricStatusJson> statusMetrics
+		)
+        {
+			this.assemblyIndex = assemblyIndex;
+			this.classIndex = classIndex;
+			this.fileIndex = fileIndex;
+			this.methodMetric = methodMetric;
+			this.statusMetrics = statusMetrics;
+        }
 	}
 }

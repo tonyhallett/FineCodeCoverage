@@ -35,8 +35,7 @@ namespace FineCodeCoverage.Output.HostObjects
                 return dte;
             }
         }
-
-#pragma warning disable IDE1006 // Naming Styles
+        
         public void openAtLine(string filePath, int line)
         {
             var ok = TryOpenFiles(new object[] { filePath });
@@ -50,7 +49,6 @@ namespace FineCodeCoverage.Output.HostObjects
         {
             TryOpenFiles(filePaths);
         }
-#pragma warning restore IDE1006 // Naming Styles
 
         private bool TryOpenFiles(object[] filePaths)
         {

@@ -8,14 +8,17 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 		[JsonIgnore]
 		public Metric Metric { get; }
 
+#pragma warning disable IDE1006 // Naming Styles
+		[JsonIgnore]
+		public int index { get; }
 		public MetricType metricType { get; }
 		public MetricMergeOrder mergeOrder { get; }
 		public string explanationUrl { get; }
 		public string name { get; }
 		public decimal? value { get; }
+#pragma warning restore IDE1006 // Naming Styles
 
-		[JsonIgnore]
-		public int index { get; }
+
 		public MetricJson(Metric metric, int index)
 		{
 			this.index = index;
@@ -26,5 +29,21 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 			name = metric.Name;
 			value = metric.Value;
 		}
+
+		[JsonConstructor]
+		public MetricJson(
+			MetricType metricType,
+			MetricMergeOrder mergeOrder,
+			string explanationUrl,
+			string name,
+			decimal? value
+		)
+        {
+			this.metricType = metricType;
+			this.mergeOrder = mergeOrder;
+			this.explanationUrl = explanationUrl;
+			this.name = name;
+			this.value = value;
+        }
 	}
 }

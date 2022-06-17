@@ -15,7 +15,7 @@ using Palmmedia.ReportGenerator.Core.Reporting;
 namespace FineCodeCoverage.Core.ReportGenerator
 {
 	[Export(typeof(IReportGeneratorUtil))]
-	internal partial class ReportGeneratorUtil : IReportGeneratorUtil
+	internal class ReportGeneratorUtil : IReportGeneratorUtil
 	{
 		private readonly IAppOptionsProvider appOptionsProvider;
 		private readonly IEventAggregator eventAggregator;

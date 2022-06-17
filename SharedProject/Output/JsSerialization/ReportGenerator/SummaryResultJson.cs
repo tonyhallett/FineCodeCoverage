@@ -1,4 +1,5 @@
-﻿using Palmmedia.ReportGenerator.Core.Parser.Analysis;
+﻿using Newtonsoft.Json;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,7 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 {
 	public class SummaryResultJson
 	{
+#pragma warning disable IDE1006 // Naming Styles
 		public int coveredLines { get; set; }
 		public int coverableLines { get; set; }
 
@@ -21,8 +23,10 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
 
 		public List<AssemblyJson> assemblies { get; set; }
         public bool supportsBranchCoverage { get; }
+#pragma warning restore IDE1006 // Naming Styles
 
-        public SummaryResultJson() { }
+		[JsonConstructor]
+		public SummaryResultJson() { }
 		public SummaryResultJson(SummaryResult summaryResult)
 		{
 			coveredLines = summaryResult.CoveredLines;

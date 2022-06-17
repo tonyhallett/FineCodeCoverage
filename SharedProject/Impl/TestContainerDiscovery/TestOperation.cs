@@ -44,7 +44,7 @@ namespace FineCodeCoverage.Impl
                 var projectFilePath = container.ProjectData.ProjectFilePath;
                 if (projectFilePath != null)
                 {
-                    var project = coverageProjectFactory.Create();
+                    var project = await coverageProjectFactory.CreateAsync();
                     coverageProjects.Add(project);
 
                     project.ProjectName = container.ProjectName;

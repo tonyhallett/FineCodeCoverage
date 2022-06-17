@@ -14,31 +14,32 @@ namespace FineCodeCoverage.Output.JsSerialization.ReportGenerator
         [JsonIgnore]
         public Class Class { get; }
 
-        public int assemblyIndex { get; }
+        public int assemblyIndex { get; set; }
 
-        public List<CodeFileJson> files { get; }
+        public List<CodeFileJson> files { get; set; }
 
-        public string name { get; }
-        public string displayName { get; }
+        public string name { get; set; }
+        public string displayName { get; set; }
 
-        public int? coveredBranches { get; }
-        public int? totalBranches { get; }
+        public int? coveredBranches { get; set; }
+        public int? totalBranches { get; set; }
         public decimal? branchCoverageQuota { get; }
 
-        public int coveredCodeElements { get; }
-        public int totalCodeElements { get; }
-        public decimal? codeElementCoverageQuota { get; }
+        public int coveredCodeElements { get; set; }
+        public int totalCodeElements { get; set; }
+        public decimal? codeElementCoverageQuota { get; set; }
 
-        public int coveredLines { get; }
-        public int coverableLines { get; }
-        public decimal? coverageQuota { get; }
-        public int? totalLines { get; }
+        public int coveredLines { get; set; }
+        public int coverableLines { get; set; }
+        public decimal? coverageQuota { get; set; }
+        public int? totalLines { get; set; }
 
-        public CoverageType coverageType { get; }
-        
-        
+        public CoverageType coverageType { get; set; }
+
+
 #pragma warning restore IDE1006 // Naming Styles
-
+        [JsonConstructor]
+        public ClassJson() { }
         public ClassJson(Class @class, int index, int assemblyIndex)
         {
             Class = @class;
