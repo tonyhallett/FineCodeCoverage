@@ -6,7 +6,7 @@ namespace FineCodeCoverage.Output.HostObjects
 {
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [ComVisible(true)]
-    public class FCCOutputPaneHostObject
+    public class FCCOutputPaneHostObject : IFCCOutputPaneHostObject
     {
         private readonly IEventAggregator eventAggregator;
 
@@ -15,9 +15,7 @@ namespace FineCodeCoverage.Output.HostObjects
             this.eventAggregator = eventAggregator;
         }
 
-#pragma warning disable IDE1006 // Naming Styles
         public void show()
-#pragma warning restore IDE1006 // Naming Styles
         {
             eventAggregator.SendMessage(new ShowFCCOutputPaneMessage());
         }

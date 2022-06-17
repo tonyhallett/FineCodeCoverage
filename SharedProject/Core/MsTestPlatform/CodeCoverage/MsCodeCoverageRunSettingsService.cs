@@ -150,6 +150,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
                             hostObject = FCCResourcesNavigatorRegistration.HostObjectName,
                             methodName = nameof(FCCResourcesNavigatorHostObject.readReadMe),
                             title = "view readme",
+                            ariaLabel = "view readme",
                             arguments = new object[]{"Some test arg" }
                         }
                     }

@@ -59,8 +59,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DeleteTheseTypes.cs" />
     <Compile Include="FileLogger.cs" />
+    <Compile Include="InvocationsRecordingRegistration\FCCOutputPaneInvocationsHostObject.cs" />
+    <Compile Include="InvocationsRecordingRegistration\FCCOutputPaneInvocationsRecordingRegistration.cs" />
     <Compile Include="InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsHostObject.cs" />
     <Compile Include="InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsRecordingRegistration.cs" />
     <Compile Include="InvocationsRecordingRegistration\Invocation.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="JsonPosterRegistration\IHostObject.cs" />
     <Compile Include="JsonPosterRegistration\IRegJsonPoster.cs" />
     <Compile Include="JsonPosterRegistration\JsonPosterRegistrationBase.cs" />
+    <Compile Include="JsonPosterRegistration\LogJsonPosterRegistration.cs" />
     <Compile Include="JsonPosterRegistration\ReportJsonPosterRegistration.cs" />
     <Compile Include="JsonPosterRegistration\StylingJsonPosterRegistration.cs" />
     <Compile Include="WebViewControllerProvider.cs" />

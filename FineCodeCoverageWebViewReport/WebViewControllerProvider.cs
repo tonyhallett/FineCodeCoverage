@@ -16,18 +16,22 @@ namespace FineCodeCoverageWebViewReport
         {
             var stylingJsonPosterRegistration = new StylingJsonPosterRegistration();
             var reportJsonPosterRegistration = new ReportJsonPosterRegistration();
+            var logJsonPosterRegistration = new LogJsonPosterRegistration();
 
             var webViewHostRegistrations = new List<IWebViewHostObjectRegistration>
             {
                 stylingJsonPosterRegistration,
                 reportJsonPosterRegistration,
+                logJsonPosterRegistration,
                 new FCCResourcesNavigatorInvocationsRecordingRegistration(),
-                new SourceFileOpenerInvocationsRecordingRegistration()
+                new SourceFileOpenerInvocationsRecordingRegistration(),
+                new FCCOutputPaneInvocationsRecordingRegistration()
             };
 
             var jsonPosters = new List<IPostJson> {
                 stylingJsonPosterRegistration,
-                reportJsonPosterRegistration
+                reportJsonPosterRegistration,
+                logJsonPosterRegistration
             };
 
             var webViewController = new WebViewController(

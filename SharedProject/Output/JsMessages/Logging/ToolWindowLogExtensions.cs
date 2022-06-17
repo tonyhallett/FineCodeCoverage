@@ -23,9 +23,10 @@ namespace FineCodeCoverage.Output.JsMessages.Logging
                 message = new LogMessagePart[] {
                     new Emphasized(message),
                     new FCCLink{
-                        hostObject = FCCOutputPaneRegistration.HostObjectName,
+                        hostObject = FCCOutputPaneHostObjectRegistration.HostObjectName,
                         methodName = nameof(FCCOutputPaneHostObject.show),
-                        title = "FCC Output Pane"
+                        title = "FCC Output Pane",
+                        ariaLabel = "Open FCC Output Pane"
                     }
                 }
             };

@@ -325,11 +325,12 @@ namespace FineCodeCoverage.Impl
                 message = new LogMessagePart[] {
                     new Emphasized("Error processing unit test events, see "),
                     new FCCLink{
-                        hostObject = FCCOutputPaneRegistration.HostObjectName,
+                        hostObject = FCCOutputPaneHostObjectRegistration.HostObjectName,
                         methodName = nameof(FCCOutputPaneHostObject.show),
-                        title = "FCC Output Pane"
-                        }
+                        title = "FCC Output Pane",
+                        ariaLabel = "Open FCC Output Pane"
                     }
+                }
             };
             eventAggregator.SendMessage(logMessage);
             eventAggregator.SendMessage(new CoverageStoppedMessage());

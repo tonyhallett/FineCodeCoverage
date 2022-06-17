@@ -1,11 +1,10 @@
-﻿using OpenQA.Selenium;
-
-namespace FineCodeCoverageWebViewReport_Tests
+namespace FineCodeCoverageWebViewReport_Tests.SeleniumExtensions
 {
-    public static class ClickExtensions {
-        public static void SelectTab(this IWebDriver webDriver, string tabName)
-        {
+    using OpenQA.Selenium;
+
+    public static class ClickExtensions
+    {
+        public static void SelectTab(this IWebDriver webDriver, string tabName) =>
             webDriver.FindTab(tabName).Click();
-        }
     }
 }

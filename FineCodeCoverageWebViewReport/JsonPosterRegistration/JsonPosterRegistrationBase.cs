@@ -32,7 +32,13 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
 
         public void PostJson(string data)
         {
-            this.jsonPoster.PostJson(PostType, JsonConvert.DeserializeObject(data, typeof(TData)));
+            this.jsonPoster.PostJson(
+                PostType, 
+                JsonConvert.DeserializeObject(data, typeof(TData), new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.Auto,
+                    NullValueHandling = NullValueHandling.Ignore,
+                }));
         }
     }
 }

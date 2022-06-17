@@ -4,10 +4,10 @@ using System.ComponentModel.Composition;
 namespace FineCodeCoverage.Output.HostObjects
 {
     [Export(typeof(IWebViewHostObjectRegistration))]
-    public class FCCOutputPaneRegistration : IWebViewHostObjectRegistration
+    public class FCCOutputPaneHostObjectRegistration : IWebViewHostObjectRegistration
     {
         [ImportingConstructor]
-        public FCCOutputPaneRegistration(IEventAggregator eventAggregator)
+        public FCCOutputPaneHostObjectRegistration(IEventAggregator eventAggregator)
         {
             HostObject = new FCCOutputPaneHostObject(eventAggregator);
         }

@@ -12,6 +12,7 @@ namespace FineCodeCoverage.Output.JsPosting
 		private readonly List<LogMessage> earlyLogMessages = new List<LogMessage>();
 		private IJsonPoster jsonPoster;
 		private bool ready;
+		public const string PostType = "message";
 
 		[ImportingConstructor]
 		public LogMessageJsonPoster(IEventAggregator eventAggregator)
@@ -21,7 +22,7 @@ namespace FineCodeCoverage.Output.JsPosting
 
 		private void PostLogMessage(LogMessage message)
 		{
-			jsonPoster.PostJson("message", message);
+			jsonPoster.PostJson(PostType, message);
 		}
 
 		private void PostEarlyLogMessages()

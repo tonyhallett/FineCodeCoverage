@@ -71,9 +71,10 @@ namespace FineCodeCoverageTests
                     logMessage.message[0] is Emphasized emphasized &&
                     emphasized.message == message &&
                     logMessage.message[1] is FCCLink fccLink &&
-                    fccLink.hostObject == FCCOutputPaneRegistration.HostObjectName &&
+                    fccLink.hostObject == FCCOutputPaneHostObjectRegistration.HostObjectName &&
                     fccLink.methodName == nameof(FCCOutputPaneHostObject.show) &&
-                    fccLink.title == "FCC Output Pane"
+                    fccLink.title == "FCC Output Pane" &&
+                    fccLink.ariaLabel == "Open FCC Output Pane"
                 )
                 {
                     match = true;

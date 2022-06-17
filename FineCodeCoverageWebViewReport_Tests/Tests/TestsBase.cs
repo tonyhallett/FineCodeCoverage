@@ -1,15 +1,15 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium.Edge;
-using System.Threading;
-
-namespace FineCodeCoverageWebViewReport_Tests
+namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
+    using NUnit.Framework;
+    using OpenQA.Selenium.Edge;
+    using System.Threading;
+
     public abstract class TestsBase
     {
-        protected EdgeDriver edgeDriver;
+        protected EdgeDriver EdgeDriver { get; private set; }
 
         // if not getting expected results set to true, debug FineCodeCoverageWebViewReport in another vs instance then start the test
-        private readonly bool attach;
+        private readonly bool attach = false;
 
         [SetUp]
         public void Setup()
@@ -20,27 +20,22 @@ namespace FineCodeCoverageWebViewReport_Tests
                 BinaryLocation = @"C:\Users\tonyh\source\repos\FineCodeCoverage\FineCodeCoverageWebViewReport\bin\Debug\FineCodeCoverageWebViewReport.exe",
             };
 
-            if (attach)
+            if (this.attach)
             {
                 edgeOptions.DebuggerAddress = "localhost:9222";
             }
 
-            edgeDriver = new EdgeDriver(edgeOptions);
+            this.EdgeDriver = new EdgeDriver(edgeOptions);
 
             Thread.Sleep(3000);
 
-            FurtherSetup();
+            this.FurtherSetup();
         }
 
         protected virtual void FurtherSetup() { }
 
         [TearDown]
-        public void TearDown()
-        {
-            edgeDriver.Quit();
-        }
+        public void TearDown() => this.EdgeDriver.Quit();
 
     }
-
-
 }

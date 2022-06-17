@@ -1,50 +1,51 @@
-﻿using FineCodeCoverageWebViewReport.InvocationsRecordingRegistration;
-using FineCodeCoverageWebViewReport.JsonPosterRegistration;
-using NUnit.Framework;
-using OpenQA.Selenium;
-using System.Linq;
-
-namespace FineCodeCoverageWebViewReport_Tests
+namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
+    using FineCodeCoverageWebViewReport.InvocationsRecordingRegistration;
+    using FineCodeCoverageWebViewReport.JsonPosterRegistration;
+    using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
+    using NUnit.Framework;
+    using OpenQA.Selenium;
+    using System.Linq;
+
     public class SourceFileOpener_Tests : Readied_TestsBase
     {
         protected override void FurtherSetup()
         {
             base.FurtherSetup();
-            edgeDriver.ExecutePostBack(ReportJsonPosterRegistration.RegistrationName, PostObjects.Report);
+            this.EdgeDriver.ExecutePostBack(ReportJsonPosterRegistration.RegistrationName, PostObjects.Report);
         }
 
         private IWebElement FindClassOpenerButton(IWebElement coverageTabPanel, int rowIndex)
         {
-            var firstRowGroup = edgeDriver.WaitUntil(() => coverageTabPanel.FindElementByRole("rowgroup"),5);
+            var firstRowGroup = this.EdgeDriver.WaitUntil(() => coverageTabPanel.FindElementByRole("rowgroup"), 5);
             var row = firstRowGroup.FindElementsByRole("row").ElementAt(rowIndex);
             return row.FindElementByAriaLabel("Open in Visual Studio");
         }
-        
+
         private IWebElement FindTabPanel(string tabPanelToReturn)
         {
-            edgeDriver.SelectTab(tabPanelToReturn);
+            this.EdgeDriver.SelectTab(tabPanelToReturn);
 
-            return edgeDriver.FindNonHiddenTabpanel();
+            return this.EdgeDriver.FindNonHiddenTabpanel();
         }
 
         private Invocation Click_Summary_Class_Open_Button(int row)
         {
-            var coverageTabPanel = FindTabPanel("Coverage");
+            var coverageTabPanel = this.FindTabPanel("Coverage");
 
-            var classOpenerButton = FindClassOpenerButton(coverageTabPanel, row);
+            var classOpenerButton = this.FindClassOpenerButton(coverageTabPanel, row);
             classOpenerButton.Click();
 
-            return edgeDriver.GetSourceFileOpenerHostObjectInvocation();
+            return this.EdgeDriver.GetSourceFileOpenerHostObjectInvocation();
         }
 
         [Test]
         public void Should_Invoke_SourceFileOpenerHostObject_openFiles_With_Single_Path_When_Invoke_Summary_Class_Open_File_Button_For_Non_Partial_Class()
         {
-            var invocation = Click_Summary_Class_Open_Button(0);
-            
+            var invocation = this.Click_Summary_Class_Open_Button(0);
+
             Assert.That(invocation.Name, Is.EqualTo("openFiles"));
-            Assert.That(invocation.Arguments,Has.Count.EqualTo(1));
+            Assert.That(invocation.Arguments, Has.Count.EqualTo(1));
             Assert.That(invocation.Arguments[0], Is.EqualTo("Class1Path"));
         }
 
@@ -59,17 +60,17 @@ namespace FineCodeCoverageWebViewReport_Tests
         [Test]
         public void Should_Invoke_SourceFileOpenerHostObject_openFiles_With_Multiple_Paths_When_Invoke_Summary_Class_Open_File_Button_For_Partial_Class_Across_Multiple_Files()
         {
-            var invocation = Click_Summary_Class_Open_Button(1);
+            var invocation = this.Click_Summary_Class_Open_Button(1);
 
-            AssertOpenMultipleFiles(invocation);
+            this.AssertOpenMultipleFiles(invocation);
         }
 
         private Invocation Click_Riskhotspot_Button(bool isClass)
         {
-            var riskHotspotsTabPanel = FindTabPanel("Risk Hotspots");
+            var riskHotspotsTabPanel = this.FindTabPanel("Risk Hotspots");
 
-            var rowElements = edgeDriver.WaitUntilHasElements(
-                () => riskHotspotsTabPanel.FindElementsByRole("row"), 
+            var rowElements = this.EdgeDriver.WaitUntilHasElements(
+                () => riskHotspotsTabPanel.FindElementsByRole("row"),
                 5
             );
             var rowElement = rowElements.ElementAt(1);
@@ -77,21 +78,21 @@ namespace FineCodeCoverageWebViewReport_Tests
             var openButton = openButtons[isClass ? 0 : 1];
             openButton.Click();
 
-            return edgeDriver.GetSourceFileOpenerHostObjectInvocation();
+            return this.EdgeDriver.GetSourceFileOpenerHostObjectInvocation();
         }
 
         [Test]
         public void Should_Invoke_SourceFileOpenerHostObject_openFiles_With_Multiple_Paths_When_Invoke_Riskhotspot_Class_Open_File_Button_For_Partial_Class_Across_Multiple_Files()
         {
-            var invocation = Click_Riskhotspot_Button(true);
+            var invocation = this.Click_Riskhotspot_Button(true);
 
-            AssertOpenMultipleFiles(invocation);
+            this.AssertOpenMultipleFiles(invocation);
         }
 
         [Test]
         public void Should_Invoke_SourceFileOpenerHostObject_openAtLine_When_Invoke_Riskhotspot_Class_Open_File_Button_For_Partial_Class_Across_Multiple_Files()
         {
-            var invocation = Click_Riskhotspot_Button(false);
+            var invocation = this.Click_Riskhotspot_Button(false);
 
             Assert.That(invocation.Name, Is.EqualTo(nameof(SourceFileOpenerInvocationsHostObject.openAtLine)));
 

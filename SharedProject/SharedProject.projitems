@@ -257,9 +257,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\EnvironmentFont\FontDetails.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\EnvironmentFont\IEnvironmentFont.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCOutputPaneHostObject.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCOutputPaneRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCOutputPaneHostObjectRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCResourcesNavigatorHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\FCCResourcesNavigatorRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IFCCOutputPaneHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IFCCResourcesNavigatorHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\ISourceFileOpenerHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObject.cs" />
