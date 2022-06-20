@@ -6,7 +6,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
-    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;
     using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
@@ -98,18 +97,10 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         private async Task RunAndProcessReportAsync(IEnumerable<Uri> resultsUris, string[] expectedCoberturaFiles)
         {
             this.autoMocker = new AutoMoqer();
-            var mockToolFolder = this.autoMocker.GetMock<IToolFolder>();
-            _ = mockToolFolder.Setup(tf => tf.EnsureUnzipped(
-                  It.IsAny<string>(),
-                  It.IsAny<string>(),
-                  It.IsAny<ZipDetails>(),
-                  It.IsAny<CancellationToken>()
-              )).Returns("ZipDestination");
-
+            var mockFccEngine = this.autoMocker.GetMock<IFCCEngine>();
             var msCodeCoverageRunSettingsService = this.autoMocker.Create<MsCodeCoverageRunSettingsService>();
             msCodeCoverageRunSettingsService.threadHelper = new TestThreadHelper();
 
-            var mockFccEngine = new Mock<IFCCEngine>();
             var vsLinkedCancellationToken = CancellationToken.None;
             var coverageLines = new List<CoverageLine>();
             Func<CancellationToken, Task<List<CoverageLine>>> resultProvider = null;
@@ -126,8 +117,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
                     ), vsLinkedCancellationToken
                 )
             ).Returns(coverageLines);
-
-            msCodeCoverageRunSettingsService.Initialize("", mockFccEngine.Object, CancellationToken.None);
 
             var mockOperation = new Mock<IOperation>();
             _ = mockOperation.Setup(operation => operation.GetRunSettingsDataCollectorResultUri(new Uri(RunSettingsHelper.MsDataCollectorUri))).Returns(resultsUris);

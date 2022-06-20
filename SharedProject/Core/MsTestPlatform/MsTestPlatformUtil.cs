@@ -1,32 +1,23 @@
 ﻿using System.IO;
 using System.Linq;
 using System.ComponentModel.Composition;
-using FineCodeCoverage.Core.Utilities;
-using System.Threading;
+using FineCodeCoverage.Core.Initialization.ZippedTools;
 
 namespace FineCodeCoverage.Engine.MsTestPlatform
 {
     [Export(typeof(IMsTestPlatformUtil))]
-	internal class MsTestPlatformUtil:IMsTestPlatformUtil
+	[Export(typeof(IRequireToolUnzipping))]
+	internal class MsTestPlatformUtil : IMsTestPlatformUtil, IRequireToolUnzipping
 	{
 		public string MsTestPlatformExePath { get; private set; }
-        private readonly IToolFolder toolFolder;
-        private readonly IToolZipProvider toolZipProvider;
-		private const string zipPrefix = "microsoft.testplatform";
-		private const string zipDirectoryName = "msTestPlatform";
-
-		[ImportingConstructor]
-		public MsTestPlatformUtil(IToolFolder toolFolder, IToolZipProvider toolZipProvider)
+		public string ZipDirectoryName { get; } = "msTestPlatform";
+		public string ZipPrefix { get; } = "microsoft.testplatform";
+		
+        public void SetZipDestination(string zipDestination)
         {
-            this.toolFolder = toolFolder;
-            this.toolZipProvider = toolZipProvider;
-        }
-		public void Initialize(string appDataFolder, CancellationToken cancellationToken)
-		{
-			var zipDestination = toolFolder.EnsureUnzipped(appDataFolder, zipDirectoryName, toolZipProvider.ProvideZip(zipPrefix), cancellationToken);
 			MsTestPlatformExePath = Directory
 				.GetFiles(zipDestination, "vstest.console.exe", SearchOption.AllDirectories)
 				.FirstOrDefault();
 		}
-	}
+    }
 }

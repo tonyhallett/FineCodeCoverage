@@ -2,10 +2,8 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading;
     using System.Xml.XPath;
     using AutoMoq;
-    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
     using Microsoft.VisualStudio.TestWindow.Extensibility;
     using Moq;
@@ -20,6 +18,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         {
             this.autoMocker = new AutoMoqer();
             this.msCodeCoverageRunSettingsService = this.autoMocker.Create<MsCodeCoverageRunSettingsService>();
+            this.msCodeCoverageRunSettingsService.SetZipDestination("ZipDestination");
         }
 
         [Test]
@@ -93,8 +92,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             _ = mockRunSettingsConfigurationInfo.Setup(ci => ci.RequestState).Returns(RunSettingConfigurationInfoState.Execution);
             var runSettingsConfigurationInfo = mockRunSettingsConfigurationInfo.Object;
 
-            var fccMsTestAdapter = this.GetFCCMsTestAdapterPath();
-
             // IsCollecting would set this
             var userRunSettingsProjectDetailsLookup = new Dictionary<string, IUserRunSettingsProjectDetails>
             {
@@ -106,11 +103,12 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 
             var mockUserRunSettingsService = this.autoMocker.GetMock<IUserRunSettingsService>();
             var fccRunSettingDocument = new Mock<IXPathNavigable>().Object;
+            var expectedFccMsTestAdapter = Path.Combine("ZipDestination", "build", "netstandard1.0");
             var addFCCRunSettingsSetup = mockUserRunSettingsService.Setup(userRunSettingsService => userRunSettingsService.AddFCCRunSettings(
                 inputRunSettingDocument,
                 runSettingsConfigurationInfo,
                 It.IsAny<Dictionary<string, IUserRunSettingsProjectDetails>>(),
-                fccMsTestAdapter)
+                expectedFccMsTestAdapter)
             ).Returns(fccRunSettingDocument);
 
             Assert.That(this.msCodeCoverageRunSettingsService.AddRunSettings(inputRunSettingDocument, mockRunSettingsConfigurationInfo.Object, null), Is.SameAs(fccRunSettingDocument));
@@ -118,22 +116,5 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             var addFCCRunSettingsInvocation = mockUserRunSettingsService.Invocations[0];
             Assert.That(addFCCRunSettingsInvocation.Arguments[2], Is.SameAs(userRunSettingsProjectDetailsLookup));
         }
-
-        private string GetFCCMsTestAdapterPath()
-        {
-            _ = this.autoMocker.GetMock<IToolFolder>()
-                .Setup(
-                    toolFolder => toolFolder.EnsureUnzipped(
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        It.IsAny<ZipDetails>(),
-                        It.IsAny<CancellationToken>())
-                )
-                .Returns("ZipDestination");
-
-            this.msCodeCoverageRunSettingsService.Initialize(null, null, CancellationToken.None);
-            return Path.Combine("ZipDestination", "build", "netstandard1.0");
-        }
-
     }
 }

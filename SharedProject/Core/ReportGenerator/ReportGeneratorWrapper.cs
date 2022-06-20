@@ -10,7 +10,7 @@ namespace FineCodeCoverage.Core.ReportGenerator
     [Export(typeof(IReportGenerator))]
     internal class ReportGeneratorWrapper : IReportGenerator
     {
-        private Generator generator = new Generator();
+        private readonly Generator generator = new Generator();
 
         public bool GenerateReport(IReportConfiguration reportConfiguration, Settings settings, RiskHotspotsAnalysisThresholds riskHotspotsAnalysisThresholds)
         {

@@ -1,10 +1,8 @@
-﻿using FineCodeCoverage.Core.ReportGenerator;
+﻿using FineCodeCoverage.Core.Initialization;
+using FineCodeCoverage.Core.ReportGenerator;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine.Cobertura;
 using FineCodeCoverage.Engine.Model;
-using FineCodeCoverage.Engine.MsTestPlatform;
-using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
-using FineCodeCoverage.Impl;
 using FineCodeCoverage.Logging;
 using FineCodeCoverage.Options;
 using FineCodeCoverage.Output.JsMessages;
@@ -17,7 +15,6 @@ using System.Threading.Tasks;
 
 namespace FineCodeCoverage.Engine
 {
-
     [Export(typeof(IFCCEngine))]
     internal class FCCEngine : IFCCEngine
     {
@@ -31,31 +28,25 @@ namespace FineCodeCoverage.Engine
         internal CancellationTokenSource cancellationTokenSource; 
         internal Task reloadCoverageTask;
 
-        public string AppDataFolderPath { get; private set; }
-        
-        private readonly ICoverageUtilManager coverageUtilManager;
         private readonly ICoberturaUtil coberturaUtil;        
-        private readonly IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService;
-        private readonly IMsTestPlatformUtil msTestPlatformUtil;
         private readonly IReportGeneratorUtil reportGeneratorUtil;
         private readonly ILogger logger;
         private readonly ICoverageToolOutputManager coverageOutputManager;
         private readonly IEventAggregator eventAggregator;
         private readonly IDisposeAwareTaskRunner disposeAwareTaskRunner;
         private readonly IExecutionTimer executionTimer;
-        private readonly IAppDataFolder appDataFolder;
-        private IInitializeStatusProvider initializeStatusProvider;
+        private readonly Lazy<IInitializeStatusProvider> lazyInitializeStatusProvider;
 
         [ImportingConstructor]
         public FCCEngine(
-            ICoverageUtilManager coverageUtilManager,
             ICoberturaUtil coberturaUtil,
-            IMsTestPlatformUtil msTestPlatformUtil,            
             IReportGeneratorUtil reportGeneratorUtil,
             ILogger logger,
-            IAppDataFolder appDataFolder,
+            /*
+                due to circular import - could go Lazy on MsCodeCoverageRunSettingsService
+            */
+            Lazy<IInitializeStatusProvider> initializeStatusProvider,
             ICoverageToolOutputManager coverageOutputManager,
-            IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService,
             ISolutionEvents solutionEvents,
             IAppOptionsProvider appOptionsProvider,
             IEventAggregator eventAggregator,
@@ -67,13 +58,10 @@ namespace FineCodeCoverage.Engine
             this.disposeAwareTaskRunner = disposeAwareTaskRunner;
             this.executionTimer = executionTimer;
             this.coverageOutputManager = coverageOutputManager;
-            this.coverageUtilManager = coverageUtilManager;
             this.coberturaUtil = coberturaUtil;
-            this.msTestPlatformUtil = msTestPlatformUtil;
             this.reportGeneratorUtil = reportGeneratorUtil;
             this.logger = logger;
-            this.appDataFolder = appDataFolder;
-            this.msCodeCoverageRunSettingsService = msCodeCoverageRunSettingsService;
+            this.lazyInitializeStatusProvider = initializeStatusProvider;
 
             solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
             appOptionsProvider.OptionsChanged += AppOptionsProvider_OptionsChanged;
@@ -91,18 +79,6 @@ namespace FineCodeCoverage.Engine
             {
                 ClearUI();
             }
-        }
-
-        public void Initialize(IInitializeStatusProvider initializeStatusProvider, CancellationToken cancellationToken)
-        {
-            this.initializeStatusProvider = initializeStatusProvider;
-
-            appDataFolder.Initialize(cancellationToken);
-            AppDataFolderPath = appDataFolder.DirectoryPath;
-
-            msTestPlatformUtil.Initialize(AppDataFolderPath, cancellationToken);
-            coverageUtilManager.Initialize(AppDataFolderPath, cancellationToken);
-            msCodeCoverageRunSettingsService.Initialize(AppDataFolderPath, this,cancellationToken);
         }
 
         public void ClearUI()
@@ -273,7 +249,7 @@ namespace FineCodeCoverage.Engine
             {
                 reloadCoverageTask = Task.Run(async () =>
                 {
-                    await initializeStatusProvider.WaitForInitializedAsync(vsShutdownLinkedCancellationToken);
+                    await lazyInitializeStatusProvider.Value.WaitForInitializedAsync(vsShutdownLinkedCancellationToken);
                     var result = await reportResultProvider(vsShutdownLinkedCancellationToken);
                     return result;
 

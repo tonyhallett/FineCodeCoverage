@@ -21,15 +21,6 @@ namespace FineCodeCoverageTests.Coverlet_Tests
         }
 
         [Test]
-        public void Should_Initialize_The_GlobalTool_And_DataCollector()
-        {
-            var ct = CancellationToken.None;
-            this.coverletUtil.Initialize("folder path", ct);
-            this.mocker.Verify<ICoverletConsoleUtil>(g => g.Initialize("folder path", ct));
-            this.mocker.Verify<ICoverletDataCollectorUtil>(dc => dc.Initialize("folder path", ct));
-        }
-
-        [Test]
         public async Task Should_Use_The_DataCollector_If_Possible_Async()
         {
             var ct = CancellationToken.None;

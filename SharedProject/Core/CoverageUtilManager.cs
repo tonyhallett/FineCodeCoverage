@@ -27,11 +27,11 @@ namespace FineCodeCoverage.Engine
             return project.IsDotNetSdkStyle() ? "Coverlet" : "OpenCover";
         }
 
-        public void Initialize(string appDataFolder, CancellationToken cancellationToken)
-        {
-            openCoverUtil.Initialize(appDataFolder, cancellationToken);
-            coverletUtil.Initialize(appDataFolder, cancellationToken);
-        }
+        //public void Initialize(string appDataFolder, CancellationToken cancellationToken)
+        //{
+        //    openCoverUtil.Initialize(appDataFolder, cancellationToken);
+        //    coverletUtil.Initialize(appDataFolder, cancellationToken);
+        //}
 
         public async Task RunCoverageAsync(ICoverageProject project, CancellationToken cancellationToken)
         {

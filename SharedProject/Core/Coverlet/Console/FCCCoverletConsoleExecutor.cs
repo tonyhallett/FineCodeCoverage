@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using FineCodeCoverage.Core.Initialization.ZippedTools;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine.Model;
 
@@ -22,21 +22,16 @@ namespace FineCodeCoverage.Engine.Coverlet
     }
 
     [Export(typeof(IFCCCoverletConsoleExecutor))]
-    internal class FCCCoverletConsoleExecutor : IFCCCoverletConsoleExecutor
+    [Export(typeof(IRequireToolUnzipping))]
+    internal class FCCCoverletConsoleExecutor : IFCCCoverletConsoleExecutor, IRequireToolUnzipping
     {
-		[ImportingConstructor]
-		public FCCCoverletConsoleExecutor(IToolFolder toolFolder, IToolZipProvider toolZipProvider)
-        {
-            this.toolFolder = toolFolder;
-            this.toolZipProvider = toolZipProvider;
-        }
-
-        private readonly IToolFolder toolFolder;
-        private readonly IToolZipProvider toolZipProvider;
         private string coverletExePath;
-		private const string zipPrefix = "coverlet.console";
-		private const string zipDirectoryName = "coverlet";//backwards compatibility
-		public ExecuteRequest GetRequest(ICoverageProject coverageProject, string coverletSettings)
+
+        public string ZipDirectoryName => "coverlet";
+
+        public string ZipPrefix => "coverlet.console";
+
+        public ExecuteRequest GetRequest(ICoverageProject coverageProject, string coverletSettings)
         {
 			return new ExecuteRequest
 			{
@@ -47,11 +42,10 @@ namespace FineCodeCoverage.Engine.Coverlet
 
 		}
 
-		public void Initialize(string appDataFolder, CancellationToken cancellationToken)
-		{
-			var zipDestination = toolFolder.EnsureUnzipped(appDataFolder, zipDirectoryName, toolZipProvider.ProvideZip(zipPrefix), cancellationToken);
-			coverletExePath = Directory.GetFiles(zipDestination, "coverlet.exe", SearchOption.AllDirectories).FirstOrDefault()
-						   ?? Directory.GetFiles(zipDestination, "*coverlet*.exe", SearchOption.AllDirectories).FirstOrDefault();
-		}
-	}
+        public void SetZipDestination(string zipDestination)
+        {
+            coverletExePath = Directory.GetFiles(zipDestination, "coverlet.exe", SearchOption.AllDirectories).FirstOrDefault()
+                           ?? Directory.GetFiles(zipDestination, "*coverlet*.exe", SearchOption.AllDirectories).FirstOrDefault();
+        }
+    }
 }

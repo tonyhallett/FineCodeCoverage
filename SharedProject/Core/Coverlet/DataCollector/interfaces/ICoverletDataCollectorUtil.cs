@@ -9,6 +9,5 @@ namespace FineCodeCoverage.Engine.Coverlet
 		bool CanUseDataCollector(ICoverageProject coverageProject);
 		Task RunAsync(CancellationToken cancellationToken);
 
-		void Initialize(string appDataFolder, CancellationToken cancellationToken);
 	}
 }

@@ -15,6 +15,7 @@ using FineCodeCoverage.Output.JsMessages.Logging;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsMessages;
 using FineCodeCoverage.Core;
+using FineCodeCoverage.Core.Initialization;
 
 namespace FineCodeCoverage.Impl
 {

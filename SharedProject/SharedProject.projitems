@@ -9,7 +9,7 @@
     <Import_RootNamespace>FineCodeCoverage</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Core\AppDataFolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\AppDataFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Cobertura\Class.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Cobertura\Classes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Cobertura\CoberturaUtil.cs" />
@@ -64,12 +64,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\EnvironmentVariable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Engine\FCCEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\FileSynchronization\FileSynchronization.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\IAppDataFolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IAppDataFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ICoverageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ICoverageUtilManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IEnvironmentVariable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IFCCEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IMessageBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IRequireInitialization.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\ZipDetails.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IOldStyleCoverage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\MessageBoxWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Model\CoverageLine.cs" />
@@ -168,7 +170,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcessUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IResourceProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ISolutionEvents.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IZipFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\IZipFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\LinqExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\MEF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessResponseProcessor.cs" />
@@ -177,14 +179,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ResourceProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\SolutionEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\TimespanExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\IToolFolder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\IToolZipProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\ToolFolder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\ToolZipProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\IRequireToolUnzipping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\IToolFolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\IToolInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\IToolZipProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\ToolFolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\ToolInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\ToolZipProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\LinqToXmlUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Tryer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsThreading\IThreadHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ZipFileWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\ZipFileWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\GlyphMargin\RefreshCoverageGlyphsMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\MarginBase\CoverageLineTaggerBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\MarginBase\CoverageLineTaggerProviderBase.cs" />
@@ -219,18 +224,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ITestRunRequestFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\ContainerData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\IInitializer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\IInitializeStatusProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Initializer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\InitializeStatus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\IPackageInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IInitializeStatusProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\Initializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\InitializeStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\IRunCoverageConditions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ITestOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ITestOperationFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\LoggingUnsupportedProjectsTestOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\RunCoverageConditions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\TestRunRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\PackageInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\PackageInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\TestConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\TestContainerDiscoverer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\TestOperation.cs" />

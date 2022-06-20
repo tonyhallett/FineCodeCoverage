@@ -20,6 +20,7 @@ namespace FineCodeCoverageTests.Coverlet_Tests
     {
         private AutoMoqer mocker;
         private CoverletDataCollectorUtil coverletDataCollectorUtil;
+        private string expectedZipDestinationPath;
         private Mock<ICoverageProject> mockCoverageProject;
         private Mock<IRunSettingsCoverletConfiguration> mockRunSettingsCoverletConfiguration;
         private Mock<IDataCollectorSettingsBuilder> mockDataCollectorSettingsBuilder;
@@ -34,6 +35,9 @@ namespace FineCodeCoverageTests.Coverlet_Tests
                 .Returns(this.mockDataCollectorSettingsBuilder.Object);
 
             this.coverletDataCollectorUtil = this.mocker.Create<CoverletDataCollectorUtil>();
+            this.coverletDataCollectorUtil.SetZipDestination("ZipDestination");
+            var testAdapterPath = Path.Combine("ZipDestination", "build", "netstandard1.0");
+            this.expectedZipDestinationPath = $@"""{testAdapterPath}""";
 
             this.mockCoverageProject = new Mock<ICoverageProject>();
             _ = this.mockCoverageProject.Setup(cp => cp.Settings).Returns(new Mock<IAppOptions>().Object);
@@ -263,12 +267,18 @@ namespace FineCodeCoverageTests.Coverlet_Tests
             _ = this.mockCoverageProject.Setup(cp => cp.ProjectOutputFolder).Returns("projectOutputFolder");
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("");
             _ = this.mockDataCollectorSettingsBuilder.Setup(sb => sb.Build()).Returns("settings");
-            this.coverletDataCollectorUtil.TestAdapterPathArg = "testadapterpath";
 
             var ct = CancellationToken.None;
             await this.coverletDataCollectorUtil.RunAsync(ct);
 
-            this.mocker.Verify<IProcessUtil>(p => p.ExecuteAsync(It.Is<ExecuteRequest>(er => er.Arguments == @"test --collect:""XPlat Code Coverage"" settings --test-adapter-path testadapterpath" && er.FilePath == "dotnet" && er.WorkingDirectory == "projectOutputFolder"), ct));
+            this.mocker.Verify<IProcessUtil>(p => p.ExecuteAsync(
+                It.Is<ExecuteRequest>(er =>
+                    er.Arguments == $@"test --collect:""XPlat Code Coverage"" settings --test-adapter-path {this.expectedZipDestinationPath}"
+                    && er.FilePath == "dotnet"
+                    && er.WorkingDirectory == "projectOutputFolder"
+                ),
+                ct)
+            );
         }
 
         [Test]
@@ -361,7 +371,6 @@ namespace FineCodeCoverageTests.Coverlet_Tests
             _ = this.mockCoverageProject.Setup(cp => cp.CoverageOutputFolder).Returns("");
             _ = this.mockCoverageProject.Setup(cp => cp.Settings.CoverletCollectorDirectoryPath).Returns(this.tempDirectory);
             _ = this.mockDataCollectorSettingsBuilder.Setup(sb => sb.Build()).Returns("settings");
-            this.coverletDataCollectorUtil.TestAdapterPathArg = "testadapterpath";
             var ct = CancellationToken.None;
             await this.coverletDataCollectorUtil.RunAsync(ct);
             return ct;

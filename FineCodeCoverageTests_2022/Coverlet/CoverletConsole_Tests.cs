@@ -2,7 +2,6 @@ namespace FineCodeCoverageTests.Coverlet_Tests
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading;
     using AutoMoq;
     using FineCodeCoverage.Logging;
     using FineCodeCoverage.Core.Utilities;
@@ -13,24 +12,6 @@ namespace FineCodeCoverageTests.Coverlet_Tests
 
     public class CoverletConsoleUtil_Tests
     {
-        private AutoMoqer mocker;
-        private CoverletConsoleUtil coverletConsoleUtil;
-
-        [SetUp]
-        public void SetUp()
-        {
-            this.mocker = new AutoMoqer();
-            this.coverletConsoleUtil = this.mocker.Create<CoverletConsoleUtil>();
-        }
-
-        [Test]
-        public void Should_Initilize_IFCCCoverletConsoleExeProvider()
-        {
-            var ct = CancellationToken.None;
-            this.coverletConsoleUtil.Initialize("appDataFolder", ct);
-            this.mocker.Verify<IFCCCoverletConsoleExecutor>(fccExeProvider => fccExeProvider.Initialize("appDataFolder", ct));
-        }
-
         [TestCase(0)]
         [TestCase(1)]
         [TestCase(2)]

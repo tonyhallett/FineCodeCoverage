@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using FineCodeCoverage.Engine;
-using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Logging;
 
-namespace FineCodeCoverage.Impl
+namespace FineCodeCoverage.Core.Initialization
 {
     [Export(typeof(IInitializer))]
+    [Export(typeof(IInitializeStatusProvider))]
     internal class Initializer : IInitializer
     {
-        private readonly IFCCEngine fccEngine;
         private readonly ILogger logger;
-        private readonly ICoverageProjectFactory coverageProjectFactory;
-        private readonly IPackageInitializer packageInitializer;
+        private readonly IEnumerable<IRequireInitialization> requiresInitialization;
+
         internal const string initializationFailedMessagePrefix = "Initialization failed.  Please check the following error which may be resolved by reopening visual studio which will start the initialization process again.";
         internal int initializeWait = 5000;
 
@@ -24,28 +24,24 @@ namespace FineCodeCoverage.Impl
 
         [ImportingConstructor]
         public Initializer(
-            IFCCEngine fccEngine, 
-            ILogger logger, 
-            ICoverageProjectFactory coverageProjectFactory,
-            IPackageInitializer packageInitializer
+            [ImportMany]
+            IEnumerable<IRequireInitialization> requiresInitialization,
+            ILogger logger
         )
         {
-            this.fccEngine = fccEngine;
             this.logger = logger;
-            this.coverageProjectFactory = coverageProjectFactory;
-            this.packageInitializer = packageInitializer;
+            this.requiresInitialization = requiresInitialization;
         }
 
         private async Task DoInitializeAsync(CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             logger.Log($"Initializing");
 
-            cancellationToken.ThrowIfCancellationRequested();
-            coverageProjectFactory.Initialize();
-
-            fccEngine.Initialize(this, cancellationToken);
-            await packageInitializer.InitializeAsync(cancellationToken);
+            foreach(var requireInitialization in requiresInitialization)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                await requireInitialization.InitializeAsync(cancellationToken);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
             

@@ -1,4 +1,7 @@
-﻿namespace FineCodeCoverage.Core.Utilities
+﻿using System.Collections.Generic;
+using System.IO;
+
+namespace FineCodeCoverage.Core.Utilities
 {
     internal interface IFileUtil
     {
@@ -9,9 +12,11 @@
         void TryEmptyDirectory(string directory);
         string EnsureAbsolute(string directory, string possiblyRelativeTo);
         string FileDirectoryPath(string filePath);
-        void TryDeleteDirectory(string directory);
+        bool TryDeleteDirectory(string directory);
         bool Exists(string filePath);
         void Copy(string source, string destination);
         string DirectoryParentPath(string directoryPath);
+        DirectoryInfo CreateDirectory(string directoryPath);
+        IEnumerable<string> DirectoryGetFiles(string folder, string searchPattern);
     }
 }

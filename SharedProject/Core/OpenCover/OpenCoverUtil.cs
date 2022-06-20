@@ -9,39 +9,37 @@ using System.Threading.Tasks;
 using System.ComponentModel.Composition;
 using FineCodeCoverage.Core.Utilities;
 using System.Threading;
+using FineCodeCoverage.Core.Initialization.ZippedTools;
 
 namespace FineCodeCoverage.Engine.OpenCover
 {
     [Export(typeof(IOpenCoverUtil))]
-	internal class OpenCoverUtil:IOpenCoverUtil
+	[Export(typeof(IRequireToolUnzipping))]
+	internal class OpenCoverUtil : IOpenCoverUtil, IRequireToolUnzipping
 	{
 		private string openCoverExePath;
         private readonly IMsTestPlatformUtil msTestPlatformUtil;
         private readonly IProcessUtil processUtil;
         private readonly ILogger logger;
-        private readonly IToolFolder toolFolder;
-        private readonly IToolZipProvider toolZipProvider;
-		private const string zipPrefix = "openCover";
-		private const string zipDirectoryName = "openCover";
 
-		[ImportingConstructor]
+        public string ZipDirectoryName => "openCover";
+
+        public string ZipPrefix => "openCover";
+
+        [ImportingConstructor]
 		public OpenCoverUtil(
 			IMsTestPlatformUtil msTestPlatformUtil,
 			IProcessUtil processUtil, 
-			ILogger logger, 
-			IToolFolder toolFolder, 
-			IToolZipProvider toolZipProvider)
+			ILogger logger
+		)
         {
             this.msTestPlatformUtil = msTestPlatformUtil;
             this.processUtil = processUtil;
             this.logger = logger;
-            this.toolFolder = toolFolder;
-            this.toolZipProvider = toolZipProvider;
         }
 
-		public void Initialize(string appDataFolder, CancellationToken cancellationToken)
+		public void SetZipDestination(string zipDestination)
 		{
-			var zipDestination = toolFolder.EnsureUnzipped(appDataFolder, zipDirectoryName, toolZipProvider.ProvideZip(zipPrefix),cancellationToken);
 			openCoverExePath = Directory
 				.GetFiles(zipDestination, "OpenCover.Console.exe", SearchOption.AllDirectories)
 				.FirstOrDefault();
@@ -214,5 +212,6 @@ namespace FineCodeCoverage.Engine.OpenCover
 
 			logger.Log(title, result.Output);
 		}
-	}
+
+    }
 }

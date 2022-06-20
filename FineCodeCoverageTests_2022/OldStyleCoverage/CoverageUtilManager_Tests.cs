@@ -16,18 +16,6 @@ namespace FineCodeCoverageTests.OldStyleCoverage_Tests
         [SetUp]
         public void SetUp() => this.mocker = new AutoMoqer();
 
-        [Test]
-        public void Initialize_Should_Initialize_The_Coverage_Utils()
-        {
-            var coverageUtilManager = this.mocker.Create<CoverageUtilManager>();
-
-            var ct = CancellationToken.None;
-            coverageUtilManager.Initialize("AppDataFolder", ct);
-
-            this.mocker.Verify<ICoverletUtil>(coverletUtil => coverletUtil.Initialize("AppDataFolder", ct));
-            this.mocker.Verify<IOpenCoverUtil>(coverletUtil => coverletUtil.Initialize("AppDataFolder", ct));
-        }
-
         [TestCase(true)]
         [TestCase(false)]
         public async Task Should_Run_The_Appropriate_Cover_Tool_Based_On_IsDotNetSdkStyle_Async(bool isDotNetSdkStyle)

@@ -4,6 +4,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
+    using FineCodeCoverage.Core.Initialization;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Impl;
     using Moq;

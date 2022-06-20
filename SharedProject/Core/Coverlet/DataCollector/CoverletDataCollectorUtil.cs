@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 using FineCodeCoverage.Core.Coverlet;
+using FineCodeCoverage.Core.Initialization.ZippedTools;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Core.Utilities.VsThreading;
 using FineCodeCoverage.Engine.Model;
@@ -14,9 +15,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Engine.Coverlet
 {
-
     [Export(typeof(ICoverletDataCollectorUtil))]
-    internal class CoverletDataCollectorUtil : ICoverletDataCollectorUtil
+    [Export(typeof(IRequireToolUnzipping))]
+    internal class CoverletDataCollectorUtil : ICoverletDataCollectorUtil, IRequireToolUnzipping
     {
         private readonly IFileUtil fileUtil;
         private readonly IRunSettingsCoverletConfigurationFactory runSettingsCoverletConfigurationFactory;
@@ -25,8 +26,6 @@ namespace FineCodeCoverage.Engine.Coverlet
         private readonly IDataCollectorSettingsBuilderFactory dataCollectorSettingsBuilderFactory;
         private readonly ICoverletDataCollectorGeneratedCobertura coverletDataCollectorGeneratedCobertura;
         private readonly IProcessResponseProcessor processResponseProcessor;
-        private readonly IToolZipProvider toolZipProvider;
-        private readonly IToolFolder toolFolder;
         private readonly IVsBuildFCCSettingsProvider vsBuildFCCSettingsProvider;
 
 
@@ -34,7 +33,12 @@ namespace FineCodeCoverage.Engine.Coverlet
         internal IRunSettingsCoverletConfiguration runSettingsCoverletConfiguration;
         internal ICoverageProject coverageProject;
         private const string LogPrefix = "Coverlet Collector Run";
-        internal string TestAdapterPathArg { get; set; }
+        private string testAdapterPathArg;
+
+        public string ZipDirectoryName => "coverletCollector";
+
+        public string ZipPrefix => "coverlet.collector";
+
         internal const string zipPrefix = "coverlet.collector";
         internal const string zipDirectoryName = "coverletCollector";
 
@@ -49,10 +53,8 @@ namespace FineCodeCoverage.Engine.Coverlet
             IDataCollectorSettingsBuilderFactory dataCollectorSettingsBuilderFactory,
             ICoverletDataCollectorGeneratedCobertura coverletDataCollectorGeneratedCobertura,
             IProcessResponseProcessor processResponseProcessor,
-            IToolZipProvider toolZipProvider,
-            IToolFolder toolFolder,
             IVsBuildFCCSettingsProvider vsBuildFCCSettingsProvider
-            )
+        )
         {
             this.fileUtil = fileUtil;
             this.runSettingsCoverletConfigurationFactory = runSettingsCoverletConfigurationFactory;
@@ -61,8 +63,6 @@ namespace FineCodeCoverage.Engine.Coverlet
             this.dataCollectorSettingsBuilderFactory = dataCollectorSettingsBuilderFactory;
             this.coverletDataCollectorGeneratedCobertura = coverletDataCollectorGeneratedCobertura;
             this.processResponseProcessor = processResponseProcessor;
-            this.toolZipProvider = toolZipProvider;
-            this.toolFolder = toolFolder;
             this.vsBuildFCCSettingsProvider = vsBuildFCCSettingsProvider;
         }
         
@@ -223,7 +223,7 @@ namespace FineCodeCoverage.Engine.Coverlet
                     return $@"""{directoryPath}""";
                 }
             }
-            return TestAdapterPathArg;
+            return testAdapterPathArg;
         }
 
         public async Task RunAsync(CancellationToken cancellationToken)
@@ -269,11 +269,10 @@ namespace FineCodeCoverage.Engine.Coverlet
             logger.Log(LogRunMessage(coverletSettings));
         }
 
-        public void Initialize(string appDataFolder,CancellationToken cancellationToken)
+        public void SetZipDestination(string zipDestination)
         {
-            var zipDestination = toolFolder.EnsureUnzipped(appDataFolder, zipDirectoryName,toolZipProvider.ProvideZip(zipPrefix),cancellationToken);
             var testAdapterPath = Path.Combine(zipDestination, "build", "netstandard1.0");
-            TestAdapterPathArg = $@"""{testAdapterPath}""";
+            testAdapterPathArg = $@"""{testAdapterPath}""";
         }
     }
 }

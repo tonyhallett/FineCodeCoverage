@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.Initializer_Tests
+namespace FineCodeCoverageTests.Initialization_Tests
 {
     using System;
     using System.Collections.Generic;
@@ -7,21 +7,46 @@ namespace FineCodeCoverageTests.Initializer_Tests
     using AutoMoq;
     using FineCodeCoverage.Logging;
     using FineCodeCoverage.Engine;
-    using FineCodeCoverage.Engine.Model;
-    using FineCodeCoverage.Impl;
     using Moq;
     using NUnit.Framework;
+    using FineCodeCoverage.Core.Initialization;
 
     public class Initializer_Tests
     {
         private AutoMoqer mocker;
         private Initializer initializer;
+        private List<Mock<IRequireInitialization>> mocksRequireInitialization;
 
         [SetUp]
         public void SetUp()
         {
             this.mocker = new AutoMoqer();
+            var mockRequiresInitialization1 = new Mock<IRequireInitialization>();
+            var mockRequiresInitialization2 = new Mock<IRequireInitialization>();
+            var requiresInitialization = new List<IRequireInitialization>
+            {
+                mockRequiresInitialization1.Object,
+                mockRequiresInitialization2.Object
+
+            };
+            this.mocksRequireInitialization = new List<Mock<IRequireInitialization>>
+            {
+                mockRequiresInitialization1,mockRequiresInitialization2
+            };
+            this.mocker.SetInstance<IEnumerable<IRequireInitialization>>(requiresInitialization);
             this.initializer = this.mocker.Create<Initializer>();
+        }
+
+        private Task InitializeWithExceptionAsync(Action<Exception> exceptionCallback = null)
+        {
+            var exception = new Exception("initialize exception");
+            exceptionCallback?.Invoke(exception);
+            var cancellationToken = CancellationToken.None;
+            _ = this.mocksRequireInitialization[0].Setup(
+                requiresInitialization => requiresInitialization.InitializeAsync(cancellationToken)
+            ).ThrowsAsync(exception);
+
+            return this.initializer.InitializeAsync(cancellationToken);
         }
 
         [Test]
@@ -39,6 +64,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
         public async Task Should_Set_InitializeStatus_To_Error_If_Exception_When_Initialize_Async()
         {
             await this.InitializeWithExceptionAsync();
+
             Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Error));
         }
 
@@ -46,6 +72,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
         public async Task Should_Set_InitializeExceptionMessage_If_Exception_When_Initialize_Async()
         {
             await this.InitializeWithExceptionAsync();
+
             Assert.That(this.initializer.InitializeExceptionMessage, Is.EqualTo("initialize exception"));
         }
 
@@ -54,13 +81,28 @@ namespace FineCodeCoverageTests.Initializer_Tests
         {
             Exception initializeException = null;
             await this.InitializeWithExceptionAsync(exc => initializeException = exc);
+
             this.mocker.Verify<ILogger>(l => l.Log("Failed Initialization", initializeException));
+        }
+
+        [Test]
+        public async Task Should_Initialize_All_That_IRequireInitialization_Async()
+        {
+            var cancellationToken = CancellationToken.None;
+            await this.initializer.InitializeAsync(cancellationToken);
+
+            this.mocksRequireInitialization.ForEach(
+                mockRequireInitialization => mockRequireInitialization.Verify(
+                    requireInitialization => requireInitialization.InitializeAsync(cancellationToken)
+                )
+            );
         }
 
         [Test]
         public async Task Should_Not_Log_Failed_Initialization_When_Initialize_Cancelled_Async()
         {
             await this.initializer.InitializeAsync(CancellationTokenHelper.GetCancelledCancellationToken());
+
             this.mocker.Verify<ILogger>(l => l.Log("Failed Initialization", It.IsAny<Exception>()), Times.Never());
         }
 
@@ -68,6 +110,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
         public async Task Should_Set_InitializeStatus_To_Initialized_When_Successfully_Completed_Async()
         {
             await this.initializer.InitializeAsync(CancellationToken.None);
+
             Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Initialized));
         }
 
@@ -75,32 +118,8 @@ namespace FineCodeCoverageTests.Initializer_Tests
         public async Task Should_Log_Initialized_When_Successfully_Completed_Async()
         {
             await this.initializer.InitializeAsync(CancellationToken.None);
+
             this.mocker.Verify<ILogger>(l => l.Log("Initialized"));
-        }
-
-        [Test]
-        public async Task Should_Initialize_Dependencies_In_Order_Async()
-        {
-            var disposalToken = CancellationToken.None;
-            var callOrder = new List<int>();
-            _ = this.mocker.GetMock<ICoverageProjectFactory>().Setup(cp => cp.Initialize()).Callback(() => callOrder.Add(1));
-            _ = this.mocker.GetMock<IFCCEngine>().Setup(engine => engine.Initialize(this.initializer, disposalToken))
-                .Callback(() => callOrder.Add(2));
-
-            _ = this.mocker.GetMock<IPackageInitializer>().Setup(p => p.InitializeAsync(disposalToken))
-                .Callback(() => callOrder.Add(3));
-
-            await this.initializer.InitializeAsync(disposalToken);
-
-            Assert.That(callOrder, Is.EqualTo(new List<int> { 1, 2, 3 }));
-        }
-
-        [Test]
-        public async Task Should_Pass_Itself_To_FCCEngine_For_InitializeStatus_Async()
-        {
-            var disposalToken = CancellationToken.None;
-            await this.initializer.InitializeAsync(disposalToken);
-            this.mocker.Verify<IFCCEngine>(engine => engine.Initialize(this.initializer, disposalToken));
         }
 
         [Test]
@@ -117,12 +136,7 @@ namespace FineCodeCoverageTests.Initializer_Tests
         [Test]
         public async Task Should_Throw_If_InitializationFailed_When_WaitForInitialized_Async()
         {
-            var mockCoverageProjectFactory = this.mocker.GetMock<ICoverageProjectFactory>();
-            _ = mockCoverageProjectFactory.Setup(
-                coverageProjectFactory => coverageProjectFactory.Initialize()
-                ).Throws(new Exception("The exception message"));
-
-            await this.initializer.InitializeAsync(CancellationToken.None);
+            await this.InitializeWithExceptionAsync();
 
             _ = Assert.ThrowsAsync<Exception>(
                 async () => await this.initializer.WaitForInitializedAsync(CancellationToken.None),
@@ -146,16 +160,6 @@ namespace FineCodeCoverageTests.Initializer_Tests
             await Task.WhenAll(waitForInitializedTask, setInitializedTask);
 
             this.mocker.Verify<ILogger>(l => l.Log(CoverageStatus.Initializing.Message()), Times.AtLeast(times));
-        }
-
-        private async Task InitializeWithExceptionAsync(Action<Exception> callback = null)
-        {
-            var initializeException = new Exception("initialize exception");
-            _ = this.mocker.Setup<ICoverageProjectFactory>(a => a.Initialize()).Throws(initializeException);
-
-            await this.initializer.InitializeAsync(CancellationToken.None);
-            callback?.Invoke(initializeException);
-
         }
 
     }

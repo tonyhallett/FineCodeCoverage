@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverage.Core.Utilities
+﻿namespace FineCodeCoverage.Core.Initialization.ZippedTools
 {
     internal interface IZipFile
     {

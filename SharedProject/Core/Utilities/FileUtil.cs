@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -16,9 +17,11 @@ namespace FineCodeCoverage.Core.Utilities
         }
 
         [ExcludeFromCodeCoverage]
-        public void TryDeleteDirectory(string directory)
+        public bool TryDeleteDirectory(string directory)
         {
-            new DirectoryInfo(directory).TryDelete();
+            var success = true;
+            new DirectoryInfo(directory).TryDelete(true,(_) => success = false);
+            return success;
         }
 
         [ExcludeFromCodeCoverage]
@@ -91,6 +94,18 @@ namespace FineCodeCoverage.Core.Utilities
                 return null;
             }
             return parentDirectory.FullName;
+        }
+
+        [ExcludeFromCodeCoverage]
+        public DirectoryInfo CreateDirectory(string directoryPath)
+        {
+            return Directory.CreateDirectory(directoryPath);
+        }
+
+        [ExcludeFromCodeCoverage]
+        public IEnumerable<string> DirectoryGetFiles(string folder, string searchPattern)
+        {
+            return Directory.GetFiles(folder, searchPattern);
         }
     }
 }

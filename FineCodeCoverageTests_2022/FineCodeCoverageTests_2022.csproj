@@ -79,7 +79,6 @@
     <Compile Include="Coverlet\CoverletConsole_Tests.cs" />
     <Compile Include="Coverlet\CoverletDataCollectorGeneratedCobertura_Tests.cs" />
     <Compile Include="Coverlet\CoverletDataCollectorUtil_CanUseDataCollector_Tests.cs" />
-    <Compile Include="Coverlet\CoverletDataCollectorUtil_Initialize_Tests.cs" />
     <Compile Include="Coverlet\CoverletDataCollectorUtil_RunAsync_Tests.cs" />
     <Compile Include="Coverlet\CoverletUtil_Tests.cs" />
     <Compile Include="Coverlet\DataCollectorSettingsBuilder_Tests.cs" />
@@ -87,7 +86,6 @@
     <Compile Include="Coverlet\RunSettingsCoverletConfiguration_Tests.cs" />
     <Compile Include="DotNetTool\DotNetToolList_Tests.cs" />
     <Compile Include="FCCEngine\FCCEngine_CancellationToken_Tests.cs" />
-    <Compile Include="FCCEngine\FCCEngine_Initialize_Tests.cs" />
     <Compile Include="FCCEngine\FCCEngine_RunAndProcessReport_Tests.cs" />
     <Compile Include="FCCEngine\FCCEngine_RunCancellableCoverageTask_Error.cs" />
     <Compile Include="FCCEngine\FCCEngine_RunCancellableCoverageTask_Success.cs" />
@@ -97,12 +95,13 @@
     <Compile Include="HostObjects\SourceFileOpenerHostObject_Tests.cs" />
     <Compile Include="HostObjects\FCCOutputPaneHostObject_Tests.cs" />
     <Compile Include="HostObjects\FCCResourcesNavigatorHostObject_Tests.cs" />
-    <Compile Include="Initializer_Tests.cs" />
+    <Compile Include="Initialization\AppDataFolder_Tests.cs" />
+    <Compile Include="Initialization\Initializer_Tests.cs" />
+    <Compile Include="Initialization\ToolInitializer_Tests.cs" />
     <Compile Include="MsCodeCoverage\CustomRunSettingsTemplateProvider_Tests.cs" />
     <Compile Include="MsCodeCoverage\Helpers\XmlHelper.cs" />
     <Compile Include="MsCodeCoverage\Implementations\RunSettingsTemplateReplacements.cs" />
     <Compile Include="MsCodeCoverage\MsCodeCoverageRunSettingsService_Collect_Tests.cs" />
-    <Compile Include="MsCodeCoverage\MsCodeCoverageRunSettingsService_Initialize_Tests.cs" />
     <Compile Include="MsCodeCoverage\MsCodeCoverageRunSettingsService_IRunSettingsService_Tests.cs" />
     <Compile Include="MsCodeCoverage\MsCodeCoverageRunSettingsService_IsCollecting_Tests.cs" />
     <Compile Include="MsCodeCoverage\ProjectRunSettingsGenerator_Tests.cs" />
@@ -157,7 +156,7 @@
     <Compile Include="TestContainerDiscoverer_Tests\TestOperation_Tests.cs" />
     <Compile Include="TestContainerDiscoverer_Tests\TestRunRequestFactory_Tests.cs" />
     <Compile Include="Tagging\Tagging_Tests.cs" />
-    <Compile Include="Tools\ToolZipProvider_Tests.cs" />
+    <Compile Include="Initialization\ToolZipProvider_Tests.cs" />
     <Compile Include="WebView\WebViewController_ProcessFailed_Test.cs" />
   </ItemGroup>
   <ItemGroup>

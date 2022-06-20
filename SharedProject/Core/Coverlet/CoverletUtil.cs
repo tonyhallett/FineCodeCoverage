@@ -10,19 +10,19 @@ namespace FineCodeCoverage.Engine.Coverlet
     internal class CoverletUtil:ICoverletUtil
 	{
         private readonly ICoverletDataCollectorUtil coverletDataCollectorUtil;
-        private readonly ICoverletConsoleUtil coverletGlobalUtil;
+        private readonly ICoverletConsoleUtil coverletConsoleUtil;
 
         [ImportingConstructor]
-		public CoverletUtil(ICoverletDataCollectorUtil coverletDataCollectorUtil, ICoverletConsoleUtil coverletGlobalUtil)
+		public CoverletUtil(ICoverletDataCollectorUtil coverletDataCollectorUtil, ICoverletConsoleUtil coverletConsoleUtil)
         {
             this.coverletDataCollectorUtil = coverletDataCollectorUtil;
-            this.coverletGlobalUtil = coverletGlobalUtil;
+            this.coverletConsoleUtil = coverletConsoleUtil;
         }
-		public void Initialize(string appDataFolder,CancellationToken cancellationToken)
-		{
-			coverletGlobalUtil.Initialize(appDataFolder, cancellationToken);
-			coverletDataCollectorUtil.Initialize(appDataFolder, cancellationToken);
-		}
+		//public void Initialize(string appDataFolder,CancellationToken cancellationToken)
+		//{
+		//	coverletGlobalUtil.Initialize(appDataFolder, cancellationToken);
+		//	coverletDataCollectorUtil.Initialize(appDataFolder, cancellationToken);
+		//}
 
 		
 		public Task RunCoverletAsync(ICoverageProject project, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ namespace FineCodeCoverage.Engine.Coverlet
             {
 				return coverletDataCollectorUtil.RunAsync(cancellationToken);
             }
-			return coverletGlobalUtil.RunAsync(project, cancellationToken);
+			return coverletConsoleUtil.RunAsync(project, cancellationToken);
 		}
 	}
 }

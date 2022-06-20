@@ -2,7 +2,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -17,6 +16,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
     using FineCodeCoverage.Output.JsMessages.Logging;
     using Moq;
     using NUnit.Framework;
+    using System.IO;
 
     internal class MsCodeCoverageRunSettingsService_StopCoverage_Test
     {
@@ -24,17 +24,11 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         public void Should_StopCoverage_On_FCCEngine()
         {
             var autoMocker = new AutoMoqer();
-
-            var mockToolFolder = autoMocker.GetMock<IToolFolder>();
-            _ = mockToolFolder.Setup(tf => tf.EnsureUnzipped(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ZipDetails>(), It.IsAny<CancellationToken>())).Returns("ZipDestination");
-
             var msCodeCoverageRunSettingsService = autoMocker.Create<MsCodeCoverageRunSettingsService>();
-            var mockFccEngine = new Mock<IFCCEngine>();
-
-            msCodeCoverageRunSettingsService.Initialize(null, mockFccEngine.Object, CancellationToken.None);
 
             msCodeCoverageRunSettingsService.StopCoverage();
-            mockFccEngine.Verify(fccEngine => fccEngine.StopCoverage());
+
+            autoMocker.Verify<IFCCEngine>(fccEngine => fccEngine.StopCoverage());
         }
     }
 
@@ -58,6 +52,8 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
     {
         private AutoMoqer autoMocker;
         private MsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService;
+        private string expectedFccMsTestAdapterPath;
+        private string expectedShimPath;
         private const string SolutionDirectory = "SolutionDirectory";
 
         private class ExceptionReason : IExceptionReason
@@ -81,6 +77,9 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             this.autoMocker = new AutoMoqer();
             this.msCodeCoverageRunSettingsService = this.autoMocker.Create<MsCodeCoverageRunSettingsService>();
             this.msCodeCoverageRunSettingsService.threadHelper = new TestThreadHelper();
+            this.msCodeCoverageRunSettingsService.SetZipDestination("ZipDestination");
+            this.expectedFccMsTestAdapterPath = Path.Combine("ZipDestination", "build", "netstandard1.0");
+            this.expectedShimPath = Path.Combine("ZipDestination", "build", "netstandard1.0", "CodeCoverage", "coreclr", "Microsoft.VisualStudio.CodeCoverage.Shim.dll");
             this.SetupAppOptionsProvider(RunMsCodeCoverage.Yes);
         }
 
@@ -101,8 +100,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             var runMsCodeCoverage = useMsCodeCoverageOption ? RunMsCodeCoverage.Yes : RunMsCodeCoverage.IfInRunSettings;
             this.SetupAppOptionsProvider(runMsCodeCoverage);
 
-            var fccMsTestAdapterPath = this.InitializeFCCMsTestAdapterPath();
-
             var coverageProjectWithRunSettings = this.CreateCoverageProject(".runsettings");
             var templatedCoverageProject = this.CreateCoverageProject(null);
             var coverageProjects = new List<ICoverageProject> { coverageProjectWithRunSettings, templatedCoverageProject };
@@ -114,7 +111,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
                 userRunSettingsService => userRunSettingsService.Analyse(
                     new List<ICoverageProject> { coverageProjectWithRunSettings },
                     useMsCodeCoverageOption,
-                    fccMsTestAdapterPath)
+                    this.expectedFccMsTestAdapterPath)
                 );
 
         }
@@ -333,8 +330,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
         [Test]
         public async Task Should_Shim_Copy_From_RunSettingsProjects_And_Template_Projects_That_Require_It_Async()
         {
-            var shimPath = this.InitializeShimPath();
-
             var runSettingsProjectsForShim = new List<ICoverageProject>
             {
                 this.CreateCoverageProject(".runsettings")
@@ -369,7 +364,9 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
 
             var expectedCoverageProjectsForShimCopy = runSettingsProjectsForShim;
             expectedCoverageProjectsForShimCopy.AddRange(templateProjectsForShim);
-            this.autoMocker.Verify<IShimCopier>(shimCopier => shimCopier.Copy(shimPath, expectedCoverageProjectsForShimCopy));
+            this.autoMocker.Verify<IShimCopier>(
+                shimCopier => shimCopier.Copy(this.expectedShimPath, expectedCoverageProjectsForShimCopy)
+            );
         }
 
         private Task<MsCodeCoverageCollectionStatus> IsCollecting_With_Suitable_RunSettings_Only_Async()
@@ -385,8 +382,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             this.SetupAppOptionsProvider(runMsCodeCoverage);
             _ = this.SetupIUserRunSettingsServiceAnalyseAny().Returns(new UserRunSettingsAnalysisResult(true, runSettingsSpecifiedMsCodeCoverage));
 
-            var fccMsTestAdapterPath = this.InitializeFCCMsTestAdapterPath();
-
             var templateCoverageProject = this.CreateCoverageProject(null);
             var coverageProjects = new List<ICoverageProject>
             {
@@ -399,7 +394,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             _ = mockTemplatedRunSettingsService.Setup(templatedRunSettingsService => templatedRunSettingsService.GenerateAsync(
                       new List<ICoverageProject> { templateCoverageProject },
                       SolutionDirectory,
-                      fccMsTestAdapterPath
+                      this.expectedFccMsTestAdapterPath
                   )).ReturnsAsync(
                 new ProjectRunSettingsFromTemplateResult()
             );
@@ -503,25 +498,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
             this.autoMocker.Verify<ILogger>(l => l.Log(reason, exception.ToString()));
             var mockEventAggregator = this.autoMocker.GetMock<IEventAggregator>();
             mockEventAggregator.AssertSimpleSingleLog(reason, MessageContext.Error);
-        }
-
-        private string InitializeFCCMsTestAdapterPath()
-        {
-            this.InitializeZipDestination();
-            return Path.Combine("ZipDestination", "build", "netstandard1.0");
-        }
-
-        private string InitializeShimPath()
-        {
-            this.InitializeZipDestination();
-            return Path.Combine("ZipDestination", "build", "netstandard1.0", "CodeCoverage", "coreclr", "Microsoft.VisualStudio.CodeCoverage.Shim.dll");
-        }
-
-        private void InitializeZipDestination()
-        {
-            var mockToolFolder = this.autoMocker.GetMock<IToolFolder>();
-            _ = mockToolFolder.Setup(tf => tf.EnsureUnzipped(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<ZipDetails>(), It.IsAny<CancellationToken>())).Returns("ZipDestination");
-            this.msCodeCoverageRunSettingsService.Initialize(null, null, CancellationToken.None);
         }
 
         private ICoverageProject CreateCoverageProject(

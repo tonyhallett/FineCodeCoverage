@@ -18,12 +18,18 @@ using FineCodeCoverage.Output.JsMessages.Logging;
 using FineCodeCoverage.Core.ReportGenerator;
 using FineCodeCoverage.Core;
 using ILogger = FineCodeCoverage.Logging.ILogger;
+using FineCodeCoverage.Core.Initialization.ZippedTools;
 
 namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
 {
     [Export(typeof(IMsCodeCoverageRunSettingsService))]
     [Export(typeof(IRunSettingsService))]
-    internal class MsCodeCoverageRunSettingsService : IMsCodeCoverageRunSettingsService, IRunSettingsService, ICoverageService
+    [Export(typeof(IRequireToolUnzipping))]
+    internal class MsCodeCoverageRunSettingsService : 
+        IMsCodeCoverageRunSettingsService, 
+        IRunSettingsService, 
+        ICoverageService,
+        IRequireToolUnzipping
     {
         public string Name => "Fine Code Coverage MsCodeCoverageRunSettingsService";
 
@@ -60,18 +66,13 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             }
         }
 
-        private readonly IToolFolder toolFolder;
-        private readonly IToolZipProvider toolZipProvider;
         private readonly IAppOptionsProvider appOptionsProvider;
         private readonly ICoverageToolOutputManager coverageOutputManager;
         private readonly IShimCopier shimCopier;
         private readonly ILogger logger;
         private readonly IReportGeneratorUtil reportGeneratorUtil;
         private readonly IEventAggregator eventAggregator;
-        private IFCCEngine fccEngine;
-
-        private const string zipPrefix = "microsoft.codecoverage";
-        private const string zipDirectoryName = "msCodeCoverage";
+        private readonly IFCCEngine fccEngine;
 
         private const string msCodeCoverage = "Ms code coverage";
         internal Dictionary<string, IUserRunSettingsProjectDetails> userRunSettingsProjectDetailsLookup; // for tests
@@ -91,12 +92,15 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
 
         private bool IsCollecting => collectionStatus == MsCodeCoverageCollectionStatus.Collecting;
 
+        public string ZipDirectoryName => "msCodeCoverage";
+
+        public string ZipPrefix => "microsoft.codecoverage";
+
         internal IThreadHelper threadHelper = new VsThreadHelper();
 
         [ImportingConstructor]
         public MsCodeCoverageRunSettingsService(
-            IToolFolder toolFolder, 
-            IToolZipProvider toolZipProvider, 
+            IFCCEngine fccEngine,
             IAppOptionsProvider appOptionsProvider,
             ICoverageToolOutputManager coverageOutputManager,
             IUserRunSettingsService userRunSettingsService,
@@ -107,8 +111,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             IEventAggregator eventAggregator
             )
         {
-            this.toolFolder = toolFolder;
-            this.toolZipProvider = toolZipProvider;
+            this.fccEngine = fccEngine;
             this.appOptionsProvider = appOptionsProvider;
             this.coverageOutputManager = coverageOutputManager;
             this.shimCopier = shimCopier;
@@ -119,10 +122,8 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             this.templatedRunSettingsService = templatedRunSettingsService;
         }
 
-        public void Initialize(string appDataFolder, IFCCEngine fccEngine, CancellationToken cancellationToken)
+        public void SetZipDestination(string zipDestination)
         {
-            this.fccEngine = fccEngine;
-            var zipDestination = toolFolder.EnsureUnzipped(appDataFolder, zipDirectoryName, toolZipProvider.ProvideZip(zipPrefix), cancellationToken);
             fccMsTestAdapterPath = Path.Combine(zipDestination, "build", "netstandard1.0");
             shimPath = Path.Combine(zipDestination, "build", "netstandard1.0", "CodeCoverage", "coreclr", "Microsoft.VisualStudio.CodeCoverage.Shim.dll");
         }
@@ -360,12 +361,6 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             }
         }
 
-        
-
-        
-
-        
-        
         #endregion
 
         #region IRunSettingsService
@@ -405,7 +400,6 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             var completedMessage = $"{msCodeCoverage} completed - duration {duration.ToStringHoursMinutesSeconds()}";
 
             return CombinedLogAsync(completedMessage, MessageContext.CoverageToolCompleted);
-
         }
 
         private string[] GetCoberturaFiles(IOperation operation)
@@ -425,7 +419,6 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             fccEngine.StopCoverage();
         }
 
-        
         public Task TestExecutionNotFinishedAsync(ITestOperation testOperation)
         {
             return CleanUpAsync(testOperation);

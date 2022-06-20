@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using System.IO.Compression;
 
-namespace FineCodeCoverage.Core.Utilities
+namespace FineCodeCoverage.Core.Initialization.ZippedTools
 {
     [Export(typeof(IZipFile))]
     internal class ZipFileWrapper : IZipFile

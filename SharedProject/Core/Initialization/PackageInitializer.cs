@@ -8,22 +8,23 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
-namespace FineCodeCoverage.Impl
+namespace FineCodeCoverage.Core.Initialization
 {
-    [Export(typeof(IPackageInitializer))]
-    internal class PackageInitializer : IPackageInitializer
+    [Export(typeof(IRequireInitialization))]
+    internal class PackageInitializer : IRequireInitialization
     {
-        private readonly IFCCEngine fccEngine;
         private readonly IServiceProvider serviceProvider;
+        private readonly IAppDataFolder appDataFolder;
 
         [ImportingConstructor]
         public PackageInitializer(
-            IFCCEngine fccEngine, 
             [Import(typeof(SVsServiceProvider))]
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IAppDataFolder appDataFolder
+        )
         {
-            this.fccEngine = fccEngine;
             this.serviceProvider = serviceProvider;
+            this.appDataFolder = appDataFolder;
         }
 
         public async Task InitializeAsync(CancellationToken cancellationToken)
@@ -35,8 +36,8 @@ namespace FineCodeCoverage.Impl
             {
                 var packageToBeLoadedGuid = new Guid(OutputToolWindowPackage.PackageGuidString);
                 shell.LoadPackage(ref packageToBeLoadedGuid, out var _);
-
-                var outputWindowInitializedFile = Path.Combine(fccEngine.AppDataFolderPath, "outputWindowInitialized");
+                
+                var outputWindowInitializedFile = Path.Combine(appDataFolder.GetDirectoryPath(), "outputWindowInitialized");
 
                 if (File.Exists(outputWindowInitializedFile))
                 {

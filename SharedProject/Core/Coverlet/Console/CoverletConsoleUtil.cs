@@ -15,7 +15,6 @@ namespace FineCodeCoverage.Engine.Coverlet
 	{
 		private readonly IProcessUtil processUtil;
 		private readonly ILogger logger;
-        private readonly IFCCCoverletConsoleExecutor fccExecutor;
 		private readonly List<ICoverletConsoleExecutor> executors;
 
 		[ImportingConstructor]
@@ -42,12 +41,7 @@ namespace FineCodeCoverage.Engine.Coverlet
                 fccExecutor
             };
 
-            this.fccExecutor = fccExecutor;
         }
-		public void Initialize(string appDataFolder, CancellationToken cancellationToken)
-		{
-			fccExecutor.Initialize(appDataFolder, cancellationToken);
-		}
 
 		// for now FCCCoverletConsoleExeProvider can return null for exe path
 
