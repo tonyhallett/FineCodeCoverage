@@ -29,10 +29,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
             this.TestContainerDiscoverer.RunAsync = (asyncMethod) => asyncMethod().Wait();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
             this.SetUpOptions();
-            this.AdditionalSetup();
         }
-
-        protected virtual void AdditionalSetup() { }
 
         protected void SetUpOptions(Action<Mock<IAppOptions>> setupAppOptions = null)
         {

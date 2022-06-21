@@ -10,4 +10,7 @@
   <PropertyGroup />
   <Import Project="SharedProject.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>$(SolutionDir)/FCCPreBuild/bin/$(ConfigurationName)/net6.0/FCCPreBuild.exe $(SolutionDir)</PreBuildEvent>
+  </PropertyGroup>
 </Project>

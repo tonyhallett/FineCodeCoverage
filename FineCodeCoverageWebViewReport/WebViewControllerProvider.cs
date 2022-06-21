@@ -1,4 +1,6 @@
-﻿using FineCodeCoverage.Output.HostObjects;
+﻿using FineCodeCoverage.Core.Initialization;
+using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsPosting;
 using FineCodeCoverage.Output.JsSerialization;
 using FineCodeCoverage.Output.WebView;
@@ -34,11 +36,20 @@ namespace FineCodeCoverageWebViewReport
                 logJsonPosterRegistration
             };
 
+            var noLogginglogger = new FileLogger();
+            var fileUtil = new FileUtil();
             var webViewController = new WebViewController(
                 webViewHostRegistrations,
                 jsonPosters,
                 new PayloadSerializer(),
-                new FileLogger()
+                noLogginglogger,
+                new AppDataFolder(
+                    noLogginglogger, 
+                    new NoEnvironmentVariable(),
+                    new NoToolsDirectoryAppOptionsProvider(),
+                    fileUtil
+                ),
+                fileUtil
             );
 
             webViewController.ExecuteOnMainThreadAsync = (action) =>

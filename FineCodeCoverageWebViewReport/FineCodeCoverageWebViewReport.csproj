@@ -75,6 +75,8 @@
     <Compile Include="JsonPosterRegistration\LogJsonPosterRegistration.cs" />
     <Compile Include="JsonPosterRegistration\ReportJsonPosterRegistration.cs" />
     <Compile Include="JsonPosterRegistration\StylingJsonPosterRegistration.cs" />
+    <Compile Include="NoEnvironmentVariable.cs" />
+    <Compile Include="NoToolsDirectoryAppOptionsProvider.cs" />
     <Compile Include="WebViewControllerProvider.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

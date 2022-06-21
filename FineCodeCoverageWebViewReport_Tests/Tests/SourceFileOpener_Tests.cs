@@ -9,11 +9,10 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 
     public class SourceFileOpener_Tests : Readied_TestsBase
     {
-        protected override void FurtherSetup()
-        {
-            base.FurtherSetup();
-            this.EdgeDriver.ExecutePostBack(ReportJsonPosterRegistration.RegistrationName, PostObjects.Report);
-        }
+        [SetUp]
+        public void PostReport() => this.EdgeDriver.ExecutePostBack(
+            ReportJsonPosterRegistration.RegistrationName, PostObjects.Report
+        );
 
         private IWebElement FindClassOpenerButton(IWebElement coverageTabPanel, int rowIndex)
         {

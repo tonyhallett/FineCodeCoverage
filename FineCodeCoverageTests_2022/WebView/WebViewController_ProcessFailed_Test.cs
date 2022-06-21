@@ -1,11 +1,11 @@
-﻿namespace FineCodeCoverageTests.WebView_Tests
+namespace FineCodeCoverageTests.WebView_Tests
 {
     using System.Linq;
+    using AutoMoq;
     using FineCodeCoverage.Logging;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.WebView;
-    using Moq;
     using NUnit.Framework;
 
     internal class WebViewController_ProcessFailed_Test
@@ -18,20 +18,15 @@
         [Test]
         public void Should_Log_ProcessFailed_Exception()
         {
-
-            var mockLogger = new Mock<ILogger>();
-
-            var webViewController = new WebViewController(
-                Enumerable.Empty<IWebViewHostObjectRegistration>(),
-                Enumerable.Empty<IPostJson>(),
-                null,
-                mockLogger.Object
-            );
+            var mocker = new AutoMoqer();
+            mocker.SetInstance(Enumerable.Empty<IWebViewHostObjectRegistration>());
+            mocker.SetInstance(Enumerable.Empty<IPostJson>());
+            var webViewController = mocker.Create<WebViewController>();
 
             var coreWebView2ProcessFailedEventArgs = new CoreWebView2ProcessFailedEventArgs();
             webViewController.ProcessFailed(coreWebView2ProcessFailedEventArgs);
 
-            mockLogger.Verify(logger => logger.Log("WebView2 Process failed :", coreWebView2ProcessFailedEventArgs));
+            mocker.Verify<ILogger>(logger => logger.Log("WebView2 Process failed :", coreWebView2ProcessFailedEventArgs));
         }
     }
 }

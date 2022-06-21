@@ -12,7 +12,8 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     {
         private readonly Exception exception = new Exception("an exception");
 
-        protected override void AdditionalSetup()
+        [SetUp]
+        public void SetupForException()
         {
             var mockCoverageService = new Mock<ICoverageService>();
             _ = mockCoverageService.Setup(coverageService => coverageService.StopCoverage()).Throws(this.exception);

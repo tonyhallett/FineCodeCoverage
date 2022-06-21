@@ -30,7 +30,7 @@ namespace FineCodeCoverage.Core.Initialization.ZippedTools
             var toolFolderPath = Path.Combine(appDataFolder, toolFolderName);
             var zipDestination = Path.Combine(toolFolderPath, zipDetails.Version);
 
-            if (!fileUtil.Exists(zipDestination))
+            if (!fileUtil.DirectoryExists(zipDestination))
             {
                 DeleteOldVersions(toolFolderPath);
                 Unzip(cancellationToken, zipDestination, zipDetails.Path);

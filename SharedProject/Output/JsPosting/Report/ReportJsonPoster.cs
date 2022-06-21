@@ -50,20 +50,9 @@ namespace FineCodeCoverage.Output.JsPosting
 				message.SummaryResult
 			);
 
-			//GenerateStandaloneReport(message.ReportFilePath, report);
 			PostReport();
 		}
-		//this should definitely not be in here
-		//private void GenerateStandaloneReport(string reportPath, Report report)
-		//{
-		//	var reportJson = JsonConvert.SerializeObject(report);
-		//	HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
-		//	document.Load(standaloneReportPath);
-		//	var script = document.CreateElement("script");
-		//	script.InnerHtml = $"var report={reportJson}";
-		//	document.DocumentNode.AppendChild(script); // todo ok ?
-		//	document.Save(reportPath);
-		//}
+		
 	}
 
 }

@@ -1,0 +1,58 @@
+{
+  "name": "fccreport",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fluentui/react": "^8.67.2",
+    "@fluentui/react-icons-mdl2": "^1.3.8",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/user-event": "^14.0.0",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^16.11.27",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typescript": "^4.6.3"
+  },
+  "scripts": {
+    "start": "rimraf dist/serve&& parcel src/html/debug/parcel-dev.index.html --dist-dir dist/serve",
+    "build-prod": "parcel build src/html/build/index.html --dist-dir dist/build",
+    "build-dev": "rimraf dist/debug/*&&set REACT_PROFILING=true&& parcel build src/html/debug/index.html --dist-dir dist/debug&& npm run build-dev-completed",
+    "build": "npm run build-dev && npm run build-prod",
+    "build-dev-completed": "ts-node scripts/dev-build-completed-notification.ts",
+    "test": "jest",
+    "check": "tsc --noEmit",
+    "debug-parcel-nocache": "set REACT_PROFILING=true&& set PARCEL_WORKERS=0&& set PARCEL_MAX_CONCURRENT_CALLS=1&& node --inspect ./node_modules/parcel/lib/cli.js build --log-level verbose --no-cache  src/html/debug/index.html --dist-dir dist/debug",
+    "debug-parcel-cache": "set REACT_PROFILING=true&& set PARCEL_WORKERS=0&& set PARCEL_MAX_CONCURRENT_CALLS=1&& node --inspect ./node_modules/parcel/lib/cli.js build --log-level verbose  src/html/debug/index.html --dist-dir dist/debug"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "parcel": "^2.5.0",
+    "parcel-resolver-react-profiling-alias": "file:packages/parcel-resolver-react-profiling-alias",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

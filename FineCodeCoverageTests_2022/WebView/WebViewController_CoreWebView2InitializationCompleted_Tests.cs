@@ -1,7 +1,9 @@
-﻿namespace FineCodeCoverageTests.WebView_Tests
+namespace FineCodeCoverageTests.WebView_Tests
 {
     using System.Collections.Generic;
     using System.Linq;
+    using AutoMoq;
+    using FineCodeCoverage.Core.Initialization;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.WebView;
@@ -40,15 +42,15 @@
 
         private void Initialize()
         {
-            this.webViewController = new WebViewController(
-                new List<IWebViewHostObjectRegistration> {
-                    this.hostObjectRegistration1,
-                    this.hostObjectRegistration2
-                },
-                Enumerable.Empty<IPostJson>(),
-                null,
-                null
-            );
+            var mocker = new AutoMoqer();
+            IEnumerable<IWebViewHostObjectRegistration> hostObjectRegistrations = new List<IWebViewHostObjectRegistration> {
+                this.hostObjectRegistration1,
+                this.hostObjectRegistration2
+            };
+            mocker.SetInstance(hostObjectRegistrations);
+            mocker.SetInstance(Enumerable.Empty<IPostJson>());
+            _ = mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath()).Returns("");
+            this.webViewController = mocker.Create<WebViewController>();
 
             this.mockWebView = new Mock<IWebView>();
             this.webViewController.Initialize(this.mockWebView.Object);

@@ -1,7 +1,11 @@
 namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
+    using NUnit.Framework;
+
     public abstract class Readied_TestsBase : TestsBase
     {
-        protected override void FurtherSetup() => PostStylingWaitForContent.Do(this.EdgeDriver);
+        [SetUp]
+        public void Ready() => PostStylingWaitForContent.Do(this.EdgeDriver);
+
     }
 }

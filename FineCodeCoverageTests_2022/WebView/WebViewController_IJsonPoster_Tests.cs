@@ -3,6 +3,8 @@ namespace FineCodeCoverageTests.WebView_Tests
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMoq;
+    using FineCodeCoverage.Core.Initialization;
     using FineCodeCoverage.Logging;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
@@ -13,29 +15,27 @@ namespace FineCodeCoverageTests.WebView_Tests
 
     internal class WebViewController_IJsonPoster_Tests
     {
-        private Mock<ILogger> mockLogger;
         private bool executedOnMainThread;
+        private AutoMoqer mocker;
 
         private async Task PostJsonAsync(Mock<IWebView> mockWebView)
         {
-            var mockPayloadSerializer = new Mock<IPayloadSerializer>();
-            _ = mockPayloadSerializer.Setup(payloadSerializer => payloadSerializer.Serialize("type", "message"))
-                .Returns("payload_serialized");
+            this.mocker = new AutoMoqer();
+            this.mocker.SetInstance(Enumerable.Empty<IWebViewHostObjectRegistration>());
+            this.mocker.SetInstance(Enumerable.Empty<IPostJson>());
 
-            this.mockLogger = new Mock<ILogger>();
-            var webViewController = new WebViewController(
-                Enumerable.Empty<IWebViewHostObjectRegistration>(),
-                Enumerable.Empty<IPostJson>(),
-                mockPayloadSerializer.Object,
-                this.mockLogger.Object
-            )
+            _ = this.mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath())
+                .Returns("");
+            _ = this.mocker.GetMock<IPayloadSerializer>().Setup(
+                payloadSerializer => payloadSerializer.Serialize("type", "message")
+            ).Returns("payload_serialized");
+
+            var webViewController = this.mocker.Create<WebViewController>();
+            webViewController.ExecuteOnMainThreadAsync = (action) =>
             {
-                ExecuteOnMainThreadAsync = (action) =>
-                {
-                    this.executedOnMainThread = true;
-                    action();
-                    return Task.CompletedTask;
-                }
+                this.executedOnMainThread = true;
+                action();
+                return Task.CompletedTask;
             };
 
             webViewController.Initialize(mockWebView.Object);
@@ -66,7 +66,7 @@ namespace FineCodeCoverageTests.WebView_Tests
 
             await this.PostJsonAsync(mockWebView);
 
-            this.mockLogger.VerifyNoOtherCalls();
+            this.mocker.GetMock<ILogger>().VerifyNoOtherCalls();
 
         }
 
@@ -80,7 +80,7 @@ namespace FineCodeCoverageTests.WebView_Tests
 
             await this.PostJsonAsync(mockWebView);
 
-            this.mockLogger.Verify(logger => logger.LogWithoutTitle("Exception posting web message of type - type", exception));
+            this.mocker.Verify<ILogger>(logger => logger.LogWithoutTitle("Exception posting web message of type - type", exception));
         }
     }
 }

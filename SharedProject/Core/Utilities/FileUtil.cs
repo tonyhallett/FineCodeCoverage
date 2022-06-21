@@ -107,5 +107,10 @@ namespace FineCodeCoverage.Core.Utilities
         {
             return Directory.GetFiles(folder, searchPattern);
         }
+
+        public IFileSystemWatcher CreateFileSystemWatcher(string path, string filter)
+        {
+            return new FileSystemWatcherWrapper(path, filter);
+        }
     }
 }

@@ -148,6 +148,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\ReportGeneratorUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\Colours\Vs\Reflection\ThemeResourceKeyProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\Colours\Vs\VsColorThemeWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\StandaloneReportGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\AssemblyUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ComparableFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\DisposeAwareTaskRunner.cs" />
@@ -321,6 +322,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\ReportPaths.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewController.cs" />
   </ItemGroup>
   <ItemGroup>

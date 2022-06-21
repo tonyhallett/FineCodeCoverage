@@ -1,4 +1,6 @@
-﻿using FineCodeCoverage.Logging;
+﻿using FineCodeCoverage.Core.Initialization;
+using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Logging;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsPosting;
 using FineCodeCoverage.Output.JsSerialization;
@@ -14,72 +16,102 @@ using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Output.WebView
 {
+	internal interface IWebViewSettings
+    {
+		bool IsGeneralAutofillEnabled { get; }
+		bool IsPasswordAutosaveEnabled { get; }
+		bool IsStatusBarEnabled { get; }
+		bool AreDefaultContextMenusEnabled { get; }
+		bool AreDevToolsEnabled { get; }
+	}
+
+	internal interface IStandaloneReportPathProvider
+    {
+		string Path { get; }
+    }
+
 	[Export(typeof(IWebViewController))]
-	internal class WebViewController : IWebViewController, IJsonPoster
+	[Export(typeof(IStandaloneReportPathProvider))]
+	internal class WebViewController : IWebViewController, IJsonPoster, IStandaloneReportPathProvider
 	{
+		private class WebView2Settings : IWebViewSettings
+        {
+            public bool IsGeneralAutofillEnabled => false;
+
+            public bool IsPasswordAutosaveEnabled => false;
+
+            public bool IsStatusBarEnabled => true;
+
+            public bool AreDefaultContextMenusEnabled => false;
+			public bool AreDevToolsEnabled => true;
+		}
+		private class HtmlPathInfo
+        {
+			public string StandalonePath { get; set; }
+			public string NavigationPath { get; set; }
+			public bool ShouldWatch { get; set; }
+        }
+
 		private readonly IEnumerable<IWebViewHostObjectRegistration> webViewHostObjectRegistrations;
         private readonly IPayloadSerializer payloadSerializer;
         private readonly ILogger logger;
+        private readonly IAppDataFolder appDataFolder;
+        private readonly IFileUtil fileUtil;
         private readonly List<IPostJson> jsonPosters;
 
         private IWebView webView;
 		private bool debugRefreshed;
-		private readonly string standaloneReportPath = @"C:/Users/tonyh/source/repos/WebView2Demo/my-app/dist/build/index.html";
-		private readonly string htmlPath;
-		private const string debugDomain = "debug";
-		//private const int remoteDebuggingPort = 9222;
-		private readonly string debugDirectory;
-		internal Task postJsonTask;
 		//private FileSystemWatcher debugHtmlWatcher;
+
+		// todo - this will be a project asset
+		private readonly string htmlPath;
+		private const string fccDomain = "fcc";
+		private readonly string htmlDirectory;
+		private const int remoteDebuggingPort = 9222;
+		internal Task postJsonTask;
+		
 #if DEBUG
 		internal bool debug = true;
 #else
 		internal bool debug = false;
 #endif
 
-		[ImportingConstructor]
+		public IWebViewSettings WebViewSettings => new WebView2Settings();
+
+		public string UserDataFolder { get; private set; }
+
+		public string AdditionalBrowserArguments => $"--remote-debugging-port={remoteDebuggingPort}";
+
+		// todo - this will be a project asset
+		private readonly string standaloneReportpath;
+		string IStandaloneReportPathProvider.Path => standaloneReportpath;
+
+        [ImportingConstructor]
 		public WebViewController(
 			[ImportMany]
 			IEnumerable<IWebViewHostObjectRegistration> webViewHostObjectRegistrations,
 			[ImportMany]
 			IEnumerable<IPostJson> jsonPosters,
 			IPayloadSerializer payloadSerializer,
-			ILogger logger
+			ILogger logger,
+			IAppDataFolder appDataFolder,
+			IFileUtil fileUtil
 		)
 		{
 			this.webViewHostObjectRegistrations = webViewHostObjectRegistrations;
             this.payloadSerializer = payloadSerializer;
             this.logger = logger;
+            this.appDataFolder = appDataFolder;
+            this.fileUtil = fileUtil;
             this.jsonPosters = jsonPosters.ToList();
-            htmlPath = $"file:///{standaloneReportPath}";
-			if (debug)
-			{
-				//if (false)
-				//{
-				//	var watchFile = "watch.txt";
-				//	// todo refactor to interface
-				//	debugHtmlWatcher = new FileSystemWatcher(debugDirectory, watchFile);
-				//	// todo - just the filters necessary
-				//	debugHtmlWatcher.IncludeSubdirectories = false;
-				//	debugHtmlWatcher.NotifyFilter = NotifyFilters.Attributes
-				//					 | NotifyFilters.CreationTime
-				//					 | NotifyFilters.DirectoryName
-				//					 | NotifyFilters.FileName
-				//					 | NotifyFilters.LastAccess
-				//					 | NotifyFilters.LastWrite
-				//					 | NotifyFilters.Security
-				//					 | NotifyFilters.Size;
-				//	debugHtmlWatcher.EnableRaisingEvents = true;
-				//	debugHtmlWatcher.Created += DebugHtmlWatcher_Created;
-				//	// disposal
-				//}
 
-				debugDirectory = @"C:/Users/tonyh/source/repos/WebView2Demo/my-app/dist/debug/";
-				htmlPath = $"https://{debugDomain}/index.html";
-			}
+			var htmlPathInfo = InitializeReport();
+			htmlDirectory = Path.GetDirectoryName(htmlPathInfo.NavigationPath);
+			htmlPath = $"https://{fccDomain}/{Path.GetFileName(htmlPathInfo.NavigationPath)}";
+			standaloneReportpath = htmlPathInfo.StandalonePath;
 		}
 
-		private void DebugHtmlWatcher_Created(object sender, FileSystemEventArgs e)
+		private void HtmlWatcher_Created(object sender, FileSystemEventArgs e)
 		{
 			_ = ExecuteOnMainThreadAsync(() =>
 			{
@@ -87,7 +119,44 @@ namespace FineCodeCoverage.Output.WebView
 				webView.Reload();
 			});
 		}
+		
+		private HtmlPathInfo InitializeReport()
+        {
+			var htmlPathInfo = GetHtmlPathInfo();
+			if (htmlPathInfo.ShouldWatch)
+			{
+                var watchFile = "watch.txt";
+                var htmlWatcher = fileUtil.CreateFileSystemWatcher(
+					Path.GetDirectoryName(htmlPathInfo.NavigationPath), 
+					watchFile
+				);
+                // todo - just the filters necessary
+                htmlWatcher.IncludeSubdirectories = false;
+				htmlWatcher.NotifyFilter = NotifyFilters.Attributes
+                                 | NotifyFilters.CreationTime
+                                 | NotifyFilters.DirectoryName
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.Security
+                                 | NotifyFilters.Size;
+				htmlWatcher.EnableRaisingEvents = true;
+				htmlWatcher.Created += HtmlWatcher_Created;
+            }
 
+			return htmlPathInfo;
+
+		}
+		private HtmlPathInfo GetHtmlPathInfo()
+        {
+			// todo checking AppOptions / Getting the path as an asset
+			return new HtmlPathInfo
+			{
+				NavigationPath = debug ? ReportPaths.DebugPath : "",
+				StandalonePath = @"C:\Users\tonyh\source\repos\FineCodeCoverage\FCCReport\dist\build\index.html",
+				ShouldWatch = debug
+			};
+        }
 		public void Initialize(IWebView webView)
 		{
 			this.webView = webView;
@@ -95,7 +164,15 @@ namespace FineCodeCoverage.Output.WebView
 			webView.SetHorizontalAlignment(HorizontalAlignment.Stretch);
 			webView.SetVisibility(Visibility.Hidden);
 			webView.DomContentLoaded += WebView_DomContentLoaded;
+
+			EnsureUserDataDirectory();
 		}
+
+		private void EnsureUserDataDirectory()
+        {
+			UserDataFolder = Path.Combine(appDataFolder.GetDirectoryPath(), "webview2");
+			fileUtil.CreateDirectory(UserDataFolder);
+        }
 
 		private void WebView_DomContentLoaded(object sender, EventArgs e)
 		{
@@ -164,12 +241,12 @@ namespace FineCodeCoverage.Output.WebView
 				webView.AddHostObjectToScript(webViewHostObjectRegistration.Name, webViewHostObjectRegistration.HostObject);
 			});
 
-			if (debug)
-			{
+			//if (debug)
+			//{
 				webView.SetVirtualHostNameToFolderMapping(
-					debugDomain, debugDirectory, CoreWebView2HostResourceAccessKind.Deny
+					fccDomain, htmlDirectory, CoreWebView2HostResourceAccessKind.Deny
 				);
-			}
+			//}
 
 			webView.Navigate(htmlPath);
 		}

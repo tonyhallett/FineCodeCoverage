@@ -28,11 +28,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             this.EdgeDriver = new EdgeDriver(edgeOptions);
 
             Thread.Sleep(3000);
-
-            this.FurtherSetup();
         }
-
-        protected virtual void FurtherSetup() { }
 
         [TearDown]
         public void TearDown() => this.EdgeDriver.Quit();

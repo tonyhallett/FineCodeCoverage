@@ -97,6 +97,7 @@
     <Compile Include="HostObjects\FCCResourcesNavigatorHostObject_Tests.cs" />
     <Compile Include="Initialization\AppDataFolder_Tests.cs" />
     <Compile Include="Initialization\Initializer_Tests.cs" />
+    <Compile Include="Initialization\ToolFolder_Tests.cs" />
     <Compile Include="Initialization\ToolInitializer_Tests.cs" />
     <Compile Include="MsCodeCoverage\CustomRunSettingsTemplateProvider_Tests.cs" />
     <Compile Include="MsCodeCoverage\Helpers\XmlHelper.cs" />
