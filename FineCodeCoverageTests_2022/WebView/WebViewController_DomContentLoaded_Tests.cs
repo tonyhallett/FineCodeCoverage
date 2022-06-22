@@ -6,6 +6,7 @@ namespace FineCodeCoverageTests.WebView_Tests
     using System.Windows;
     using AutoMoq;
     using FineCodeCoverage.Core.Initialization;
+    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.WebView;
@@ -34,6 +35,9 @@ namespace FineCodeCoverageTests.WebView_Tests
             };
             mocker.SetInstance(postJsons);
             _ = mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath()).Returns("");
+            _ = mocker.GetMock<IFileUtil>().Setup(
+               fileUtil => fileUtil.CreateFileSystemWatcher(It.IsAny<string>(), It.IsAny<string>())
+           ).Returns(new Mock<IFileSystemWatcher>().Object);
             this.webViewController = mocker.Create<WebViewController>();
 
             this.mockWebView = new Mock<IWebView>();

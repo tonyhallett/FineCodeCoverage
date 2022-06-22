@@ -4,9 +4,11 @@ namespace FineCodeCoverageTests.WebView_Tests
     using System.Linq;
     using AutoMoq;
     using FineCodeCoverage.Core.Initialization;
+    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.WebView;
+    using Microsoft.Web.WebView2.Core;
     using Moq;
     using NUnit.Framework;
 
@@ -49,6 +51,9 @@ namespace FineCodeCoverageTests.WebView_Tests
             };
             mocker.SetInstance(hostObjectRegistrations);
             mocker.SetInstance(Enumerable.Empty<IPostJson>());
+            mocker.GetMock<IFileUtil>().Setup(
+                fileUtil => fileUtil.CreateFileSystemWatcher(It.IsAny<string>(), It.IsAny<string>())
+            ).Returns(new Mock<IFileSystemWatcher>().Object);
             _ = mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath()).Returns("");
             this.webViewController = mocker.Create<WebViewController>();
 
@@ -74,23 +79,13 @@ namespace FineCodeCoverageTests.WebView_Tests
         public void Should_Navigate_To_The_Js_Report() =>
             this.mockWebView.Verify(webView => webView.Navigate(It.IsAny<string>()));
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Should_SetVirtualHostNameToFolderMapping_When_Debug(bool debug)
-        {
-            this.Initialize();
-            this.webViewController.debug = debug;
-
-            this.webViewController.CoreWebView2InitializationCompleted();
-
-            this.mockWebView.Verify(
+        [Test]
+        public void Should_SetVirtualHostNameToFolderMapping() => this.mockWebView.Verify(
                 webView => webView.SetVirtualHostNameToFolderMapping(
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Deny
-                ),
-                debug ? Times.Once() : Times.Never()
+                    It.IsAny<CoreWebView2HostResourceAccessKind>() // todo 
+                )
             );
-        }
     }
 }

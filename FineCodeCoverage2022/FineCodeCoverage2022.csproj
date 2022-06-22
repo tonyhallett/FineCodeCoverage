@@ -65,12 +65,8 @@
       <Link>Resources\preview-coverage.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\Shared Files\Resources\dummyReportToProcess.html">
-      <Link>Resources\dummyReportToProcess.html</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\Shared Files\Resources\reportparts.xml">
-      <Link>Resources\reportparts.xml</Link>
+    <Content Include="..\FCCReport\dist\build\index.html">
+      <Link>Resources\index.html</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="..\Shared Files\ZippedTools\coverlet.collector.3.0.3.zip">

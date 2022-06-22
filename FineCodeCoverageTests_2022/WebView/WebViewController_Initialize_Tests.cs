@@ -26,6 +26,9 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.mocker.SetInstance(Enumerable.Empty<IPostJson>());
             _ = this.mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath())
                 .Returns("FCCAppDataPath");
+            _ = this.mocker.GetMock<IFileUtil>().Setup(
+                fileUtil => fileUtil.CreateFileSystemWatcher(It.IsAny<string>(), It.IsAny<string>())
+            ).Returns(new Mock<IFileSystemWatcher>().Object);
             this.webViewController = this.mocker.Create<WebViewController>();
 
             this.mockWebView = new Mock<IWebView>();

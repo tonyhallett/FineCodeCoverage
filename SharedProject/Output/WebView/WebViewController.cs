@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using Task = System.Threading.Tasks.Task;
 
@@ -60,8 +61,9 @@ namespace FineCodeCoverage.Output.WebView
         private readonly List<IPostJson> jsonPosters;
 
         private IWebView webView;
-		private bool debugRefreshed;
-		//private FileSystemWatcher debugHtmlWatcher;
+		private bool navigated;
+		private bool watcherRefreshed;
+		private IFileSystemWatcher htmlWatcher;
 
 		// todo - this will be a project asset
 		private readonly string htmlPath;
@@ -113,11 +115,14 @@ namespace FineCodeCoverage.Output.WebView
 
 		private void HtmlWatcher_Created(object sender, FileSystemEventArgs e)
 		{
-			_ = ExecuteOnMainThreadAsync(() =>
-			{
-				debugRefreshed = true;
-				webView.Reload();
-			});
+            if (navigated)
+            {
+				_ = ExecuteOnMainThreadAsync(() =>
+				{
+					watcherRefreshed = true;
+					webView.Reload();
+				});
+			}
 		}
 		
 		private HtmlPathInfo InitializeReport()
@@ -126,7 +131,7 @@ namespace FineCodeCoverage.Output.WebView
 			if (htmlPathInfo.ShouldWatch)
 			{
                 var watchFile = "watch.txt";
-                var htmlWatcher = fileUtil.CreateFileSystemWatcher(
+                htmlWatcher = fileUtil.CreateFileSystemWatcher(
 					Path.GetDirectoryName(htmlPathInfo.NavigationPath), 
 					watchFile
 				);
@@ -147,16 +152,26 @@ namespace FineCodeCoverage.Output.WebView
 			return htmlPathInfo;
 
 		}
+		
 		private HtmlPathInfo GetHtmlPathInfo()
         {
-			// todo checking AppOptions / Getting the path as an asset
+			// todo checking AppOptions
+			var standalonePath = GetStandalonePath();
 			return new HtmlPathInfo
 			{
-				NavigationPath = debug ? ReportPaths.DebugPath : "",
-				StandalonePath = @"C:\Users\tonyh\source\repos\FineCodeCoverage\FCCReport\dist\build\index.html",
+				NavigationPath = debug ? ReportPaths.DebugPath : standalonePath,
+				StandalonePath = standalonePath,
 				ShouldWatch = debug
 			};
         }
+
+		private string GetStandalonePath()
+        {
+			var fccExtensionDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			var fccResourcesDirectory = Path.Combine(fccExtensionDirectory, "Resources");
+			return Path.Combine(fccResourcesDirectory, "index.html");
+		}
+		
 		public void Initialize(IWebView webView)
 		{
 			this.webView = webView;
@@ -176,9 +191,10 @@ namespace FineCodeCoverage.Output.WebView
 
 		private void WebView_DomContentLoaded(object sender, EventArgs e)
 		{
-			if (debugRefreshed)
+			if (watcherRefreshed)
 			{
 				RefreshJson();
+				watcherRefreshed = false;
 			}
 			else
 			{
@@ -192,8 +208,8 @@ namespace FineCodeCoverage.Output.WebView
 			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 			action();
 		};
-
-		private async Task PostJsonAsync<T>(string type, T data)
+        
+        private async Task PostJsonAsync<T>(string type, T data)
 		{
             try
             {
@@ -231,7 +247,6 @@ namespace FineCodeCoverage.Output.WebView
 		private void RefreshJson()
 		{
 			jsonPosters.ForEach(jsonPoster => jsonPoster.Refresh());
-			debugRefreshed = false;
 		}
 
 		public void CoreWebView2InitializationCompleted()
@@ -241,14 +256,12 @@ namespace FineCodeCoverage.Output.WebView
 				webView.AddHostObjectToScript(webViewHostObjectRegistration.Name, webViewHostObjectRegistration.HostObject);
 			});
 
-			//if (debug)
-			//{
-				webView.SetVirtualHostNameToFolderMapping(
-					fccDomain, htmlDirectory, CoreWebView2HostResourceAccessKind.Deny
-				);
-			//}
+			webView.SetVirtualHostNameToFolderMapping(
+				fccDomain, htmlDirectory, CoreWebView2HostResourceAccessKind.Deny
+			);
 
 			webView.Navigate(htmlPath);
+			navigated = true;
 		}
 
         public void ProcessFailed(object coreWebView2ProcessFailedEventArgs)

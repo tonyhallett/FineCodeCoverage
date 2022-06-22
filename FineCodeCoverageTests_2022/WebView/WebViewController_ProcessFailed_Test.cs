@@ -2,10 +2,12 @@ namespace FineCodeCoverageTests.WebView_Tests
 {
     using System.Linq;
     using AutoMoq;
+    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Logging;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.WebView;
+    using Moq;
     using NUnit.Framework;
 
     internal class WebViewController_ProcessFailed_Test
@@ -21,6 +23,9 @@ namespace FineCodeCoverageTests.WebView_Tests
             var mocker = new AutoMoqer();
             mocker.SetInstance(Enumerable.Empty<IWebViewHostObjectRegistration>());
             mocker.SetInstance(Enumerable.Empty<IPostJson>());
+            mocker.GetMock<IFileUtil>().Setup(
+                fileUtil => fileUtil.CreateFileSystemWatcher(It.IsAny<string>(), It.IsAny<string>())
+            ).Returns(new Mock<IFileSystemWatcher>().Object);
             var webViewController = mocker.Create<WebViewController>();
 
             var coreWebView2ProcessFailedEventArgs = new CoreWebView2ProcessFailedEventArgs();
