@@ -1,13 +1,14 @@
 namespace FineCodeCoverageTests.WebView_Tests
 {
     using System.Collections.Generic;
-    using System.Linq;
+    using System.IO;
     using AutoMoq;
     using FineCodeCoverage.Core.Initialization;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.WebView;
+    using FineCodeCoverageTests.Test_helpers;
     using Microsoft.Web.WebView2.Core;
     using Moq;
     using NUnit.Framework;
@@ -16,6 +17,7 @@ namespace FineCodeCoverageTests.WebView_Tests
     {
         private WebViewController webViewController;
         private Mock<IWebView> mockWebView;
+        private AutoMoqer mocker;
 
         private class HostObjectRegistration1 : IWebViewHostObjectRegistration
         {
@@ -37,33 +39,35 @@ namespace FineCodeCoverageTests.WebView_Tests
         [SetUp]
         public void SetUp()
         {
-            this.Initialize();
-
-            this.webViewController.CoreWebView2InitializationCompleted();
-        }
-
-        private void Initialize()
-        {
-            var mocker = new AutoMoqer();
+            this.mocker = new AutoMoqer();
             IEnumerable<IWebViewHostObjectRegistration> hostObjectRegistrations = new List<IWebViewHostObjectRegistration> {
                 this.hostObjectRegistration1,
                 this.hostObjectRegistration2
             };
-            mocker.SetInstance(hostObjectRegistrations);
-            mocker.SetInstance(Enumerable.Empty<IPostJson>());
-            mocker.GetMock<IFileUtil>().Setup(
+            this.mocker.SetInstance(hostObjectRegistrations);
+            this.mocker.SetEmptyEnumerable<IPostJson>();
+            _ = this.mocker.GetMock<IFileUtil>().Setup(
                 fileUtil => fileUtil.CreateFileSystemWatcher(It.IsAny<string>(), It.IsAny<string>())
             ).Returns(new Mock<IFileSystemWatcher>().Object);
-            _ = mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath()).Returns("");
-            this.webViewController = mocker.Create<WebViewController>();
-
+            _ = this.mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath()).Returns("");
+            _ = this.mocker.GetMock<IReportPathsProvider>()
+                .Setup(reportPathsProvider => reportPathsProvider.Provide())
+                .Returns(new Mock<IReportPaths>().Object);
             this.mockWebView = new Mock<IWebView>();
+        }
+
+        private void InitializeWebViewController_CoreWebView2InitializationCompleted()
+        {
+            this.webViewController = this.mocker.Create<WebViewController>();
             this.webViewController.Initialize(this.mockWebView.Object);
+            this.webViewController.CoreWebView2InitializationCompleted();
         }
 
         [Test]
         public void Should_Register_Host_Objects()
         {
+            this.InitializeWebViewController_CoreWebView2InitializationCompleted();
+
             this.mockWebView.Verify(
                 webView => webView.AddHostObjectToScript(this.hostObjectRegistration1.Name, this.hostObjectRegistration1)
             );
@@ -72,20 +76,35 @@ namespace FineCodeCoverageTests.WebView_Tests
             );
         }
 
-        // todo
-        // these should be in sequence...
-        // path to be determined
         [Test]
-        public void Should_Navigate_To_The_Js_Report() =>
-            this.mockWebView.Verify(webView => webView.Navigate(It.IsAny<string>()));
+        public void Should_Navigate_To_The_Virtual_Host_Navigation_Path()
+        {
+            var mockReportPaths = new Mock<IReportPaths>();
+            var navigationPath = @"C:\Users\user\Html\index.html";
+            _ = mockReportPaths.SetupGet(reportPaths => reportPaths.NavigationPath).Returns(navigationPath);
+            _ = this.mocker.GetMock<IReportPathsProvider>()
+                .Setup(reportPathsProvider => reportPathsProvider.Provide())
+                .Returns(mockReportPaths.Object);
 
-        [Test]
-        public void Should_SetVirtualHostNameToFolderMapping() => this.mockWebView.Verify(
-                webView => webView.SetVirtualHostNameToFolderMapping(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<CoreWebView2HostResourceAccessKind>() // todo 
-                )
-            );
+            var expectedHtmlDirectory = Path.GetDirectoryName(navigationPath);
+            var expectedHtmlPath = $"https://fcc/{Path.GetFileName(navigationPath)}";
+
+            var navigated = false;
+            _ = this.mockWebView.Setup(webView => webView.SetVirtualHostNameToFolderMapping(
+                  "fcc",
+                  expectedHtmlDirectory,
+                  It.IsAny<CoreWebView2HostResourceAccessKind>() // todo 
+              )).Callback(() => Assert.That(navigated, Is.False));
+            _ = this.mockWebView.Setup(webView => webView.Navigate(expectedHtmlPath))
+                .Callback(() => navigated = true);
+
+            this.InitializeWebViewController_CoreWebView2InitializationCompleted();
+
+            this.mockWebView.VerifyAll();
+
+
+
+        }
+
     }
 }

@@ -4,7 +4,6 @@ namespace FineCodeCoverageTests.ReportTests
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Threading;
     using ILogger = FineCodeCoverage.Logging.ILogger;
     using FineCodeCoverage.Core.ReportGenerator;
@@ -239,13 +238,13 @@ namespace FineCodeCoverageTests.ReportTests
         public void Should_Send_NewReportMessage_With_Captured_SummaryResult_And_RiskHotspotAnalysisResult()
         {
             var summaryResult = new SummaryResult(
-                Enumerable.Empty<Assembly>().ToList().AsReadOnly(),
+                EmptyReadOnlyCollection.Of<Assembly>(),
                 "",
                 false,
-                Enumerable.Empty<string>().ToList().AsReadOnly()
+                EmptyReadOnlyCollection.Of<string>()
             );
             var riskHotspotAnalysisResult = new RiskHotspotAnalysisResult(
-                Enumerable.Empty<RiskHotspot>().ToList().AsReadOnly(),
+                EmptyReadOnlyCollection.Of<RiskHotspot>(),
                 false
             );
             CapturingReportBuilder.SummaryResult = summaryResult;

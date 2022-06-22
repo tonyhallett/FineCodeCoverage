@@ -34,3 +34,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("FineCodeCoverageTests_2022")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("FineCodeCoverageWebViewReport")]
+[assembly: InternalsVisibleTo("FineCodeCoverageWebViewReport_Tests")]

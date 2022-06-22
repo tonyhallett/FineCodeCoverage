@@ -2,14 +2,19 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
     using NUnit.Framework;
     using OpenQA.Selenium.Edge;
+    using System.IO;
+    using System.Reflection;
     using System.Threading;
 
     public abstract class TestsBase
     {
         protected EdgeDriver EdgeDriver { get; private set; }
 
-        // if not getting expected results set to true, debug FineCodeCoverageWebViewReport in another vs instance then start the test
-        private readonly bool attach = false;
+        private readonly string[] fineCodeCoverageWebViewReportArguments;
+
+        public TestsBase() { }
+        public TestsBase(params string[] fineCodeCoverageWebViewReportArguments) =>
+            this.fineCodeCoverageWebViewReportArguments = fineCodeCoverageWebViewReportArguments;
 
         [SetUp]
         public void Setup()
@@ -17,18 +22,36 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             var edgeOptions = new EdgeOptions
             {
                 UseWebView = true,
-                BinaryLocation = @"C:\Users\tonyh\source\repos\FineCodeCoverage\FineCodeCoverageWebViewReport\bin\Debug\FineCodeCoverageWebViewReport.exe",
+                BinaryLocation = this.GetFineCodeCoverageWebViewReportExeLocation(),
             };
 
-            if (this.attach)
+            if (this.fineCodeCoverageWebViewReportArguments != null)
             {
-                edgeOptions.DebuggerAddress = "localhost:9222";
+                edgeOptions.AddArguments(this.fineCodeCoverageWebViewReportArguments);
             }
 
+            // how to increase the page load timeout ?
             this.EdgeDriver = new EdgeDriver(edgeOptions);
 
             Thread.Sleep(3000);
         }
+
+        private string GetFineCodeCoverageWebViewReportExeLocation()
+        {
+            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            var fccSolutionDirectory = new DirectoryInfo(Path.GetDirectoryName(assemblyLocation));
+            while (true)
+            {
+                fccSolutionDirectory = fccSolutionDirectory.Parent;
+                if (fccSolutionDirectory.Name == "FineCodeCoverage")
+                {
+                    break;
+                }
+            }
+            return Path.Combine(fccSolutionDirectory.FullName, "FineCodeCoverageWebViewReport", "bin", "Debug", "FineCodeCoverageWebViewReport.exe");
+
+        }
+
 
         [TearDown]
         public void TearDown() => this.EdgeDriver.Quit();

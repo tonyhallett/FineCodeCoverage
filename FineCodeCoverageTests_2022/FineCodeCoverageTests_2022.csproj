@@ -115,6 +115,7 @@
     <Compile Include="MsCodeCoverage\UserRunSettingsService_Analysis_Tests.cs" />
     <Compile Include="OldStyleCoverage\CoverageUtilManager_Tests.cs" />
     <Compile Include="OldStyleCoverage\OldStyleCoverage_Tests.cs" />
+    <Compile Include="Test helpers\AutoMoqExtensions.cs" />
     <Compile Include="Test helpers\EmptyReadOnlyCollections.cs" />
     <Compile Include="Test helpers\MoqExtensions.cs" />
     <Compile Include="Test helpers\MoqNUnit\Parameter.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="WebView\ReportJsonPoster_Tests.cs" />
     <Compile Include="WebView\ReportOptionsJsonPoster_Tests.cs" />
     <Compile Include="WebView\ReportOptionsProvider_Tests.cs" />
+    <Compile Include="WebView\ReportPathsProvider_Tests.cs" />
     <Compile Include="WebView\StylingJsonPoster_Tests.cs" />
     <Compile Include="WebView\WebViewController_CoreWebView2InitializationCompleted_Tests.cs" />
     <Compile Include="WebView\WebViewController_DomContentLoaded_Tests.cs" />

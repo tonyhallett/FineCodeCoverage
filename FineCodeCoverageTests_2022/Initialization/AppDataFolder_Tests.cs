@@ -26,8 +26,8 @@
         private void SetUpToolsDirectoryOption(string toolsDirectory)
         {
             var mockAppOptions = new Mock<IAppOptions>();
-            mockAppOptions.SetupGet(appOptions => appOptions.ToolsDirectory).Returns(toolsDirectory);
-            this.mocker.GetMock<IAppOptionsProvider>()
+            _ = mockAppOptions.SetupGet(appOptions => appOptions.ToolsDirectory).Returns(toolsDirectory);
+            _ = this.mocker.GetMock<IAppOptionsProvider>()
                 .Setup(appOptionsProvider => appOptionsProvider.Provide())
                 .Returns(mockAppOptions.Object);
         }
@@ -38,7 +38,7 @@
             this.SetUpToolsDirectoryOption("ToolsDirectory");
 
             var mockFileUtil = this.mocker.GetMock<IFileUtil>();
-            mockFileUtil.Setup(fileUtil => fileUtil.DirectoryExists("ToolsDirectory"))
+            _ = mockFileUtil.Setup(fileUtil => fileUtil.DirectoryExists("ToolsDirectory"))
                 .Returns(true);
 
             var expectedFCCDirectory = Path.Combine("ToolsDirectory", "FineCodeCoverage");
@@ -68,7 +68,7 @@
         private void SetUpFCCDebugCleanInstall()
         {
             this.SetUpToolsDirectoryOption(null);
-            this.mocker.GetMock<IEnvironmentVariable>()
+            _ = this.mocker.GetMock<IEnvironmentVariable>()
                 .Setup(environmentVariable => environmentVariable.Get("FCCDebugCleanInstall"))
                 .Returns("Yes");
         }
@@ -103,7 +103,7 @@
                "FineCodeCoverage");
 
             var mockFileUtil = this.mocker.GetMock<IFileUtil>();
-            mockFileUtil.Setup(fileUtil => fileUtil.DirectoryExists(expectedFCCDirectory)).Returns(true);
+            _ = mockFileUtil.Setup(fileUtil => fileUtil.DirectoryExists(expectedFCCDirectory)).Returns(true);
 
             _ = this.appDataFolder.GetDirectoryPath();
 
@@ -121,8 +121,8 @@
                "FineCodeCoverage");
 
             var mockFileUtil = this.mocker.GetMock<IFileUtil>();
-            mockFileUtil.Setup(fileUtil => fileUtil.DirectoryExists(expectedFCCDirectory)).Returns(true);
-            mockFileUtil.Setup(fileUtil => fileUtil.TryDeleteDirectory(expectedFCCDirectory)).Returns(successfullyDeletes);
+            _ = mockFileUtil.Setup(fileUtil => fileUtil.DirectoryExists(expectedFCCDirectory)).Returns(true);
+            _ = mockFileUtil.Setup(fileUtil => fileUtil.TryDeleteDirectory(expectedFCCDirectory)).Returns(successfullyDeletes);
 
             _ = this.appDataFolder.GetDirectoryPath();
 

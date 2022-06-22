@@ -8,13 +8,15 @@ using FineCodeCoverageWebViewReport.InvocationsRecordingRegistration;
 using FineCodeCoverageWebViewReport.JsonPosterRegistration;
 using FineCodeCoverageWebViewReport.WebViewControllerDependencies;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FineCodeCoverageWebViewReport
 {
     internal static class WebViewControllerProvider
     {
-        public static IWebViewController Provide()
+        public static IWebViewController Provide(string[] arguments)
         {
             var stylingJsonPosterRegistration = new StylingJsonPosterRegistration();
             var reportJsonPosterRegistration = new ReportJsonPosterRegistration();
@@ -38,6 +40,27 @@ namespace FineCodeCoverageWebViewReport
 
             var noLogginglogger = new FileLogger();
             var fileUtil = new FileUtil();
+
+            IReportPathsProvider reportPathsProvider = null;
+            if (arguments.Length > 0)
+            {
+                var reportPathsProviderConfigurationArgument = arguments[0].Substring(2);
+                var debugParseSuccess = bool.TryParse(reportPathsProviderConfigurationArgument, out var debug);
+                if (debugParseSuccess)
+                {
+                    reportPathsProvider = new ReportPathsProvider() { debug = debug };
+                }
+                else
+                {
+                    var serializedReportPaths = File.ReadAllText(reportPathsProviderConfigurationArgument);
+                    reportPathsProvider = new ControlledReportPathsProvider(ReportPaths.Deserialize(serializedReportPaths));
+                }
+            }
+            else
+            {
+                reportPathsProvider = new ReportPathsProvider() { debug = false };
+            }
+
             var webViewController = new WebViewController(
                 webViewHostRegistrations,
                 jsonPosters,
@@ -49,12 +72,13 @@ namespace FineCodeCoverageWebViewReport
                     new NoToolsDirectoryAppOptionsProvider(),
                     fileUtil
                 ),
-                fileUtil
+                fileUtil,
+                reportPathsProvider
             );
 
             webViewController.ExecuteOnMainThreadAsync = (action) =>
             {
-                action();
+                Application.Current.Dispatcher.Invoke(action);
                 return Task.CompletedTask;
             };
 

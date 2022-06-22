@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            GenerateReportPaths(args[0]);
+            GenerateDebugReportPath(args[0]);
         }
 
         // todo find dist folder so not dependent upon on the project folder name
@@ -13,31 +13,31 @@
             return Path.Combine(solutionDirectory, "FCCReport", "dist", "debug", "index.html");
         }
 
-        static string GetReportPathsPath(string solutionDirectory)
+        static string GetDebugReportPathPath(string solutionDirectory)
         {
             var shprojFile = Directory.GetFiles(solutionDirectory, "*.shproj", SearchOption.AllDirectories)[0];
             var sharedProjectDirectory = new FileInfo(shprojFile).Directory;
             return sharedProjectDirectory!.GetFiles(
-                "ReportPaths.cs", SearchOption.AllDirectories
+                "DebugReportPath.cs", SearchOption.AllDirectories
             )[0].FullName;
         }
 
-        static void GenerateReportPaths(string solutionDirectory)
+        static void GenerateDebugReportPath(string solutionDirectory)
         {
-            Write(GetReportPathsPath(solutionDirectory),GetDebugPath(solutionDirectory));
+            Write(GetDebugReportPathPath(solutionDirectory),GetDebugPath(solutionDirectory));
         }
 
-        static void Write(string reportPathsPath, string debugPath)
+        static void Write(string debugReportPathPath, string debugPath)
         {
-            var reportPaths = $@"namespace {GetNamespace(reportPathsPath)}
+            var reportPaths = $@"namespace {GetNamespace(debugReportPathPath)}
 {{
-    internal class ReportPaths
+    internal class DebugReportPath
     {{
         // this will be populated in a prebuild step
-        public const string DebugPath = @""{debugPath}"";
+        public const string Path = @""{debugPath}"";
     }}
 }}";
-            File.WriteAllText(reportPathsPath, reportPaths);
+            File.WriteAllText(debugReportPathPath, reportPaths);
         }
 
         static string GetNamespace(string reportPathsPath)

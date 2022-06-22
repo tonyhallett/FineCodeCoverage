@@ -1,16 +1,15 @@
 namespace FineCodeCoverageTests.WebView_Tests
 {
     using System;
-    using System.Linq;
     using System.Threading.Tasks;
     using AutoMoq;
     using FineCodeCoverage.Core.Initialization;
-    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Logging;
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.JsSerialization;
     using FineCodeCoverage.Output.WebView;
+    using FineCodeCoverageTests.Test_helpers;
     using Moq;
     using NUnit.Framework;
 
@@ -22,17 +21,17 @@ namespace FineCodeCoverageTests.WebView_Tests
         private async Task PostJsonAsync(Mock<IWebView> mockWebView)
         {
             this.mocker = new AutoMoqer();
-            this.mocker.SetInstance(Enumerable.Empty<IWebViewHostObjectRegistration>());
-            this.mocker.SetInstance(Enumerable.Empty<IPostJson>());
+            this.mocker.SetEmptyEnumerable<IWebViewHostObjectRegistration>();
+            this.mocker.SetEmptyEnumerable<IPostJson>();
 
             _ = this.mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath())
                 .Returns("");
             _ = this.mocker.GetMock<IPayloadSerializer>().Setup(
                 payloadSerializer => payloadSerializer.Serialize("type", "message")
             ).Returns("payload_serialized");
-            _ = this.mocker.GetMock<IFileUtil>().Setup(
-               fileUtil => fileUtil.CreateFileSystemWatcher(It.IsAny<string>(), It.IsAny<string>())
-           ).Returns(new Mock<IFileSystemWatcher>().Object);
+            _ = this.mocker.GetMock<IReportPathsProvider>()
+                 .Setup(reportPathsProvider => reportPathsProvider.Provide())
+                 .Returns(new Mock<IReportPaths>().Object);
             var webViewController = this.mocker.Create<WebViewController>();
             webViewController.ExecuteOnMainThreadAsync = (action) =>
             {

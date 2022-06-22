@@ -1,11 +1,4 @@
-﻿using FineCodeCoverage.Core.ReportGenerator.Colours;
-using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Options;
-using FineCodeCoverage.Output;
-using FineCodeCoverage.Output.EnvironmentFont;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using FineCodeCoverage.Output;
 using System.Windows;
 
 namespace FineCodeCoverageWebViewReport
@@ -15,12 +8,12 @@ namespace FineCodeCoverageWebViewReport
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(string[] arguments)
         {
             InitializeComponent();
 
             var outputToolWindowControl = new OutputToolWindowControl(
-                WebViewControllerProvider.Provide()
+                WebViewControllerProvider.Provide(arguments)
             );
 
             this.Content = outputToolWindowControl;

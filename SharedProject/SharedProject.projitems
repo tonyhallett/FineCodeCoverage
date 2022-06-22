@@ -163,9 +163,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCGithub.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileSystemInfoDeleteExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileSystemWatcherWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IAssemblyUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IExecutionTimer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IFileSystemWatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IFileUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcessResponseProcessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcessUtil.cs" />
@@ -277,6 +279,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\IReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\IReportFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\ReportFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IReportPaths.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IReportPathsProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewController.cs" />
@@ -317,12 +321,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OutputToolWindowCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewImpl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\OutputToolWindowControl.xaml.cs">
       <DependentUpon>OutputToolWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessWrapper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\ReportPaths.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\DebugReportPath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\ReportPathsProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewController.cs" />
   </ItemGroup>
   <ItemGroup>

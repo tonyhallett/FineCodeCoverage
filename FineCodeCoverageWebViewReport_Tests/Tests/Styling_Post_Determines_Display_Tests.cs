@@ -3,7 +3,6 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using NUnit.Framework;
     using OpenQA.Selenium;
-
     public class Styling_Post_Determines_Display_Tests : TestsBase
     {
         [Test]

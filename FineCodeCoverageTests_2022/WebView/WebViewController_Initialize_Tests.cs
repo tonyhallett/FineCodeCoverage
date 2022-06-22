@@ -1,7 +1,6 @@
 namespace FineCodeCoverageTests.WebView_Tests
 {
     using System.IO;
-    using System.Linq;
     using System.Windows;
     using AutoMoq;
     using FineCodeCoverage.Core.Initialization;
@@ -9,6 +8,7 @@ namespace FineCodeCoverageTests.WebView_Tests
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsPosting;
     using FineCodeCoverage.Output.WebView;
+    using FineCodeCoverageTests.Test_helpers;
     using Moq;
     using NUnit.Framework;
 
@@ -22,13 +22,13 @@ namespace FineCodeCoverageTests.WebView_Tests
         public void SetUp()
         {
             this.mocker = new AutoMoqer();
-            this.mocker.SetInstance(Enumerable.Empty<IWebViewHostObjectRegistration>());
-            this.mocker.SetInstance(Enumerable.Empty<IPostJson>());
+            this.mocker.SetEmptyEnumerable<IWebViewHostObjectRegistration>();
+            this.mocker.SetEmptyEnumerable<IPostJson>();
             _ = this.mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath())
                 .Returns("FCCAppDataPath");
-            _ = this.mocker.GetMock<IFileUtil>().Setup(
-                fileUtil => fileUtil.CreateFileSystemWatcher(It.IsAny<string>(), It.IsAny<string>())
-            ).Returns(new Mock<IFileSystemWatcher>().Object);
+            _ = this.mocker.GetMock<IReportPathsProvider>()
+                .Setup(reportPathsProvider => reportPathsProvider.Provide())
+                .Returns(new Mock<IReportPaths>().Object);
             this.webViewController = this.mocker.Create<WebViewController>();
 
             this.mockWebView = new Mock<IWebView>();

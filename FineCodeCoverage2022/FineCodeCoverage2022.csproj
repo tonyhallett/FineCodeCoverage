@@ -68,6 +68,7 @@
     <Content Include="..\FCCReport\dist\build\index.html">
       <Link>Resources\index.html</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\Shared Files\ZippedTools\coverlet.collector.3.0.3.zip">
       <Link>ZippedTools\coverlet.collector.3.0.3.zip</Link>

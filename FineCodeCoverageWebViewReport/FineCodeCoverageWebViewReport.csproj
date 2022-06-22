@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ControlledReportPathsProvider.cs" />
     <Compile Include="FileLogger.cs" />
     <Compile Include="InvocationsRecordingRegistration\FCCOutputPaneInvocationsHostObject.cs" />
     <Compile Include="InvocationsRecordingRegistration\FCCOutputPaneInvocationsRecordingRegistration.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="JsonPosterRegistration\StylingJsonPosterRegistration.cs" />
     <Compile Include="NoEnvironmentVariable.cs" />
     <Compile Include="NoToolsDirectoryAppOptionsProvider.cs" />
+    <Compile Include="ReportPaths.cs" />
     <Compile Include="WebViewControllerProvider.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

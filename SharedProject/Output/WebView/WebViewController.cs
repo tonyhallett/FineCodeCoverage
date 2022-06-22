@@ -11,29 +11,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Output.WebView
 {
-	internal interface IWebViewSettings
-    {
-		bool IsGeneralAutofillEnabled { get; }
-		bool IsPasswordAutosaveEnabled { get; }
-		bool IsStatusBarEnabled { get; }
-		bool AreDefaultContextMenusEnabled { get; }
-		bool AreDevToolsEnabled { get; }
-	}
-
-	internal interface IStandaloneReportPathProvider
-    {
-		string Path { get; }
-    }
-
-	[Export(typeof(IWebViewController))]
-	[Export(typeof(IStandaloneReportPathProvider))]
-	internal class WebViewController : IWebViewController, IJsonPoster, IStandaloneReportPathProvider
+    [Export(typeof(IWebViewController))]
+	internal class WebViewController : IWebViewController, IJsonPoster
 	{
 		private class WebView2Settings : IWebViewSettings
         {
@@ -46,12 +30,6 @@ namespace FineCodeCoverage.Output.WebView
             public bool AreDefaultContextMenusEnabled => false;
 			public bool AreDevToolsEnabled => true;
 		}
-		private class HtmlPathInfo
-        {
-			public string StandalonePath { get; set; }
-			public string NavigationPath { get; set; }
-			public bool ShouldWatch { get; set; }
-        }
 
 		private readonly IEnumerable<IWebViewHostObjectRegistration> webViewHostObjectRegistrations;
         private readonly IPayloadSerializer payloadSerializer;
@@ -65,28 +43,18 @@ namespace FineCodeCoverage.Output.WebView
 		private bool watcherRefreshed;
 		private IFileSystemWatcher htmlWatcher;
 
-		// todo - this will be a project asset
-		private readonly string htmlPath;
-		private const string fccDomain = "fcc";
-		private readonly string htmlDirectory;
 		private const int remoteDebuggingPort = 9222;
-		internal Task postJsonTask;
+		private const string fccDomain = "fcc";
+		private readonly string htmlPath;
+		private readonly string htmlDirectory;
 		
-#if DEBUG
-		internal bool debug = true;
-#else
-		internal bool debug = false;
-#endif
+		internal Task postJsonTask;
 
 		public IWebViewSettings WebViewSettings => new WebView2Settings();
 
 		public string UserDataFolder { get; private set; }
 
 		public string AdditionalBrowserArguments => $"--remote-debugging-port={remoteDebuggingPort}";
-
-		// todo - this will be a project asset
-		private readonly string standaloneReportpath;
-		string IStandaloneReportPathProvider.Path => standaloneReportpath;
 
         [ImportingConstructor]
 		public WebViewController(
@@ -97,7 +65,8 @@ namespace FineCodeCoverage.Output.WebView
 			IPayloadSerializer payloadSerializer,
 			ILogger logger,
 			IAppDataFolder appDataFolder,
-			IFileUtil fileUtil
+			IFileUtil fileUtil,
+			IReportPathsProvider reportPathsProvider
 		)
 		{
 			this.webViewHostObjectRegistrations = webViewHostObjectRegistrations;
@@ -107,10 +76,13 @@ namespace FineCodeCoverage.Output.WebView
             this.fileUtil = fileUtil;
             this.jsonPosters = jsonPosters.ToList();
 
-			var htmlPathInfo = InitializeReport();
-			htmlDirectory = Path.GetDirectoryName(htmlPathInfo.NavigationPath);
-			htmlPath = $"https://{fccDomain}/{Path.GetFileName(htmlPathInfo.NavigationPath)}";
-			standaloneReportpath = htmlPathInfo.StandalonePath;
+			var reportPaths = reportPathsProvider.Provide();
+            if (reportPaths.ShouldWatch)
+            {
+				Watch(reportPaths.NavigationPath);
+            }
+			htmlDirectory = Path.GetDirectoryName(reportPaths.NavigationPath);
+			htmlPath = $"https://{fccDomain}/{Path.GetFileName(reportPaths.NavigationPath)}";
 		}
 
 		private void HtmlWatcher_Created(object sender, FileSystemEventArgs e)
@@ -125,51 +97,25 @@ namespace FineCodeCoverage.Output.WebView
 			}
 		}
 		
-		private HtmlPathInfo InitializeReport()
+		private void Watch(string htmlPath)
         {
-			var htmlPathInfo = GetHtmlPathInfo();
-			if (htmlPathInfo.ShouldWatch)
-			{
-                var watchFile = "watch.txt";
-                htmlWatcher = fileUtil.CreateFileSystemWatcher(
-					Path.GetDirectoryName(htmlPathInfo.NavigationPath), 
-					watchFile
-				);
-                // todo - just the filters necessary
-                htmlWatcher.IncludeSubdirectories = false;
-				htmlWatcher.NotifyFilter = NotifyFilters.Attributes
-                                 | NotifyFilters.CreationTime
-                                 | NotifyFilters.DirectoryName
-                                 | NotifyFilters.FileName
-                                 | NotifyFilters.LastAccess
-                                 | NotifyFilters.LastWrite
-                                 | NotifyFilters.Security
-                                 | NotifyFilters.Size;
-				htmlWatcher.EnableRaisingEvents = true;
-				htmlWatcher.Created += HtmlWatcher_Created;
-            }
-
-			return htmlPathInfo;
-
-		}
-		
-		private HtmlPathInfo GetHtmlPathInfo()
-        {
-			// todo checking AppOptions
-			var standalonePath = GetStandalonePath();
-			return new HtmlPathInfo
-			{
-				NavigationPath = debug ? ReportPaths.DebugPath : standalonePath,
-				StandalonePath = standalonePath,
-				ShouldWatch = debug
-			};
-        }
-
-		private string GetStandalonePath()
-        {
-			var fccExtensionDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			var fccResourcesDirectory = Path.Combine(fccExtensionDirectory, "Resources");
-			return Path.Combine(fccResourcesDirectory, "index.html");
+            var watchFile = "watch.txt";
+            htmlWatcher = fileUtil.CreateFileSystemWatcher(
+				Path.GetDirectoryName(htmlPath), 
+				watchFile
+			);
+            // todo - just the filters necessary
+            htmlWatcher.IncludeSubdirectories = false;
+			htmlWatcher.NotifyFilter = NotifyFilters.Attributes
+                                | NotifyFilters.CreationTime
+                                | NotifyFilters.DirectoryName
+                                | NotifyFilters.FileName
+                                | NotifyFilters.LastAccess
+                                | NotifyFilters.LastWrite
+                                | NotifyFilters.Security
+                                | NotifyFilters.Size;
+			htmlWatcher.EnableRaisingEvents = true;
+			htmlWatcher.Created += HtmlWatcher_Created;
 		}
 		
 		public void Initialize(IWebView webView)

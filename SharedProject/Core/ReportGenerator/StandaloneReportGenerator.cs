@@ -36,10 +36,10 @@ namespace FineCodeCoverage.Core.ReportGenerator
         public StandaloneReportGenerator(
             IEventAggregator eventAggregator, 
             IReportFactory reportFactory,
-            IStandaloneReportPathProvider standaloneReportPathProvider
+            IReportPathsProvider reportPathsProvider
         )
         {
-            standaloneReportPath = standaloneReportPathProvider.Path;
+            standaloneReportPath = reportPathsProvider.Provide().StandalonePath;
             eventAggregator.AddListener(this);
             this.reportFactory = reportFactory;
         }

@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverageTests.Initialization_Tests
+namespace FineCodeCoverageTests.Initialization_Tests
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -37,7 +37,7 @@
                 requireToolUnzipping1, requireToolUnzipping2
             });
 
-            mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath())
+            _ = mocker.GetMock<IAppDataFolder>().Setup(appDataFolder => appDataFolder.GetDirectoryPath())
                 .Returns("FCCAppDataFolder");
 
             var cancellationToken = CancellationToken.None;
@@ -50,13 +50,13 @@
             {
                 Path = "Path2"
             };
-            mockToolZipProvider.Setup(toolZipProvider => toolZipProvider.ProvideZip("Prefix1")).Returns(zipDetails1);
-            mockToolZipProvider.Setup(toolZipProvider => toolZipProvider.ProvideZip("Prefix2")).Returns(zipDetails2);
+            _ = mockToolZipProvider.Setup(toolZipProvider => toolZipProvider.ProvideZip("Prefix1")).Returns(zipDetails1);
+            _ = mockToolZipProvider.Setup(toolZipProvider => toolZipProvider.ProvideZip("Prefix2")).Returns(zipDetails2);
 
-            mocker.GetMock<IToolFolder>().Setup(
+            _ = mocker.GetMock<IToolFolder>().Setup(
                 toolFolder => toolFolder.EnsureUnzipped("FCCAppDataFolder", "Dir1", zipDetails1, cancellationToken)
             ).Returns("ZipDestination1");
-            mocker.GetMock<IToolFolder>().Setup(
+            _ = mocker.GetMock<IToolFolder>().Setup(
                 toolFolder => toolFolder.EnsureUnzipped("FCCAppDataFolder", "Dir2", zipDetails2, cancellationToken)
             ).Returns("ZipDestination2");
 

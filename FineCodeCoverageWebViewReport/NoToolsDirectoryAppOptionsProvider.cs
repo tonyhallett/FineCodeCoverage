@@ -5,7 +5,9 @@ namespace FineCodeCoverageWebViewReport
 {
     internal class NoToolsDirectoryAppOptionsProvider : IAppOptionsProvider
     {
+#pragma warning disable 67
         public event Action<IAppOptions> OptionsChanged;
+#pragma warning restore 67
 
         public IAppOptions Provide()
         {

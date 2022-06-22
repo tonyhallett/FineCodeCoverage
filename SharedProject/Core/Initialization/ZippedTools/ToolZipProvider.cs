@@ -16,7 +16,7 @@ namespace FineCodeCoverage.Core.Initialization.ZippedTools
         [ImportingConstructor]
         public ToolZipProvider(IFileUtil fileUtil)
         {
-            var extensionDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var extensionDirectory = Path.GetDirectoryName(this.GetType().Assembly.Location);
             zipFolder = Path.Combine(extensionDirectory, ZippedToolsDirectoryName);
             this.fileUtil = fileUtil;
         }
