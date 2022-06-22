@@ -41,25 +41,7 @@ namespace FineCodeCoverageWebViewReport
             var noLogginglogger = new FileLogger();
             var fileUtil = new FileUtil();
 
-            IReportPathsProvider reportPathsProvider = null;
-            if (arguments.Length > 0)
-            {
-                var reportPathsProviderConfigurationArgument = arguments[0].Substring(2);
-                var debugParseSuccess = bool.TryParse(reportPathsProviderConfigurationArgument, out var debug);
-                if (debugParseSuccess)
-                {
-                    reportPathsProvider = new ReportPathsProvider() { debug = debug };
-                }
-                else
-                {
-                    var serializedReportPaths = File.ReadAllText(reportPathsProviderConfigurationArgument);
-                    reportPathsProvider = new ControlledReportPathsProvider(ReportPaths.Deserialize(serializedReportPaths));
-                }
-            }
-            else
-            {
-                reportPathsProvider = new ReportPathsProvider() { debug = false };
-            }
+            IReportPathsProvider reportPathsProvider = GetReportPathsProvider(arguments);
 
             var webViewController = new WebViewController(
                 webViewHostRegistrations,
@@ -83,6 +65,31 @@ namespace FineCodeCoverageWebViewReport
             };
 
             return webViewController;
+        }
+
+        private static IReportPathsProvider GetReportPathsProvider(string[] arguments)
+        {
+            IReportPathsProvider reportPathsProvider = null;
+            if (arguments.Length > 0)
+            {
+                var reportPathsProviderConfigurationArgument = arguments[0].Substring(2);
+                var debugParseSuccess = bool.TryParse(reportPathsProviderConfigurationArgument, out var debug);
+                if (debugParseSuccess)
+                {
+                    reportPathsProvider = new ReportPathsProvider() { debug = debug };
+                }
+                else
+                {
+                    var serializedReportPaths = File.ReadAllText(reportPathsProviderConfigurationArgument);
+                    reportPathsProvider = new ControlledReportPathsProvider(ReportPaths.Deserialize(serializedReportPaths));
+                }
+            }
+            else
+            {
+                reportPathsProvider = new ReportPathsProvider() { debug = false };
+            }
+
+            return reportPathsProvider;
         }
     }
 }

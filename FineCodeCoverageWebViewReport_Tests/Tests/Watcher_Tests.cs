@@ -1,35 +1,44 @@
 namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
-    using System.Collections.Generic;
     using System.IO;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverageWebViewReport;
     using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using NUnit.Framework;
 
-    [TestFixtureSource(nameof(FixtureArgs))]
     public class Watcher_Tests : Readied_TestsBase
     {
-        private static string navigationPath;
         private static string tempDirectory;
         private static readonly FileUtil FileUtil = new FileUtil();
-        public static List<TestFixtureData> FixtureArgs()
+
+        private static string SetupReportPaths()
         {
             tempDirectory = FileUtil.CreateTempDirectory();
-            navigationPath = Path.Combine(tempDirectory, "index.html");
-            File.WriteAllText(navigationPath, FirstHtml);
+            var navigationPath = WriteNavigation(FirstHtml);
+            return WriteSerializedReportPaths(navigationPath);
+        }
+
+        private static string WriteSerializedReportPaths(string navigationPath)
+        {
             var reportPaths = new ReportPaths
             {
                 ShouldWatch = true,
                 NavigationPath = navigationPath
             };
             var reportPathsSerialized = reportPaths.Serialize();
-            var serializedPath = Path.Combine(tempDirectory, "ReportPaths.json");
-            File.WriteAllText(serializedPath, reportPathsSerialized);
-            return new List<TestFixtureData> { new TestFixtureData(new object[] { serializedPath }) { TestName = "Watcher!" } };
+            return Write(reportPathsSerialized, "ReportPaths.json");
         }
 
-        private static readonly string FirstHtml = @"
+        private static string WriteNavigation(string html) => Write(html, "index.html");
+
+        private static string Write(string text, string fileName)
+        {
+            var path = Path.Combine(tempDirectory, fileName);
+            File.WriteAllText(path, text);
+            return path;
+        }
+
+        private const string FirstHtml = @"
 <!DOCTYPE html>
 <html lang='en'>
     <head><meta charset='utf-8'></head>
@@ -40,8 +49,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     </body>
 <html>
 ";
-        // todo use js to capture the repost
-        private readonly string secondHtml = @"
+        private const string SecondHtml = @"
 <!DOCTYPE html>
 <html lang='en'>
     <head><meta charset='utf-8'></head>
@@ -52,19 +60,11 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     </body>
 <html>
 ";
-        public Watcher_Tests(string serializedReportPaths) : base(serializedReportPaths) { }
+
+        public Watcher_Tests() : base(SetupReportPaths()) { }
 
         [SetUp]
-        public void SetUp() { } // to satisfy NUnit
-
-        private void WriteNavigation(string html) => this.Write(html, "index.html");
-
-        private string Write(string text, string fileName)
-        {
-            var path = Path.Combine(tempDirectory, fileName);
-            File.WriteAllText(path, text);
-            return path;
-        }
+        public void NoSetUp() { } // to satisfy NUnit
 
         [TearDown]
         public void DeleteNavigation()
@@ -80,8 +80,8 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
         {
             _ = this.EdgeDriver.FindElementByText("First");
 
-            this.WriteNavigation(this.secondHtml);
-            _ = this.Write("", "watch.txt");
+            WriteNavigation(SecondHtml);
+            _ = Write("", "watch.txt");
 
             _ = this.EdgeDriver.WaitUntil(() => this.EdgeDriver.FindElementByText("Second"));
         }

@@ -30,7 +30,6 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
                 edgeOptions.AddArguments(this.fineCodeCoverageWebViewReportArguments);
             }
 
-            // how to increase the page load timeout ?
             this.EdgeDriver = new EdgeDriver(edgeOptions);
 
             Thread.Sleep(3000);
