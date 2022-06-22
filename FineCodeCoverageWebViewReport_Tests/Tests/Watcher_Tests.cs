@@ -71,7 +71,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
         {
             if (Directory.Exists(tempDirectory))
             {
-                FileUtil.TryDeleteDirectory(tempDirectory);
+                _ = FileUtil.TryDeleteDirectory(tempDirectory);
             }
         }
 
@@ -80,7 +80,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
         {
             _ = this.EdgeDriver.FindElementByText("First");
 
-            WriteNavigation(SecondHtml);
+            _ = WriteNavigation(SecondHtml);
             _ = Write("", "watch.txt");
 
             _ = this.EdgeDriver.WaitUntil(() => this.EdgeDriver.FindElementByText("Second"));

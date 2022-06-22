@@ -69,7 +69,7 @@ namespace FineCodeCoverageWebViewReport
 
         private static IReportPathsProvider GetReportPathsProvider(string[] arguments)
         {
-            IReportPathsProvider reportPathsProvider = null;
+            IReportPathsProvider reportPathsProvider;
             if (arguments.Length > 0)
             {
                 var reportPathsProviderConfigurationArgument = arguments[0].Substring(2);
