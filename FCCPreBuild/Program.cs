@@ -1,16 +1,42 @@
-﻿namespace HelloWorld
+﻿using System.Diagnostics;
+
+namespace HelloWorld
 {
     class Program
     {
         static void Main(string[] args)
         {
-            GenerateDebugReportPath(args[0]);
+            var solutionDirectory = args[0];
+            BuildFCCReport(solutionDirectory);
+            GenerateDebugReportPath(solutionDirectory);
         }
 
-        // todo find dist folder so not dependent upon on the project folder name
+        private static void BuildFCCReport(string solutionDirectory)
+        {
+            var process = new Process();
+            var startInfo = new ProcessStartInfo();
+            startInfo.WorkingDirectory = GetFCCReportPath(solutionDirectory);
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = "/C npm run build";
+            process.StartInfo = startInfo;
+            process.Start();
+            process.WaitForExit();
+            
+            if(process.ExitCode != 0)
+            {
+                throw new Exception();
+            }
+            process.Close();
+        }
+
+        private static string GetFCCReportPath(string solutionDirectory)
+        {
+            return Path.Combine(solutionDirectory, "FCCReport");
+        }
+
         static string GetDebugPath(string solutionDirectory)
         {
-            return Path.Combine(solutionDirectory, "FCCReport", "dist", "debug", "index.html");
+            return Path.Combine(GetFCCReportPath(solutionDirectory), "dist", "debug", "index.html");
         }
 
         static string GetDebugReportPathPath(string solutionDirectory)
