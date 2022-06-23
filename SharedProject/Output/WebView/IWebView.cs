@@ -1,8 +1,7 @@
-﻿namespace FineCodeCoverage.Output.WebView
+﻿using System.Threading.Tasks;
+
+namespace FineCodeCoverage.Output.WebView
 {
-    internal interface IWebView : IWebViewControl, IWebViewImpl
-    {
-        
-    }
+    internal interface IWebView : IWebViewControl, IWebViewImpl { }
 
 }

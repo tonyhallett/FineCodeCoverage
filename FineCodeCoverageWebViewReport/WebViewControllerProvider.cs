@@ -72,15 +72,16 @@ namespace FineCodeCoverageWebViewReport
             IReportPathsProvider reportPathsProvider;
             if (arguments.Length > 0)
             {
-                var reportPathsProviderConfigurationArgument = arguments[0].Substring(2);
-                var debugParseSuccess = bool.TryParse(reportPathsProviderConfigurationArgument, out var debug);
-                if (debugParseSuccess)
+                var namedArguments = NamedArguments.Get(arguments);
+                var hasReportPathsDebug = namedArguments.TryGetValue(NamedArguments.ReportPathsDebug, out var reportPathsDebug);
+                if (hasReportPathsDebug)
                 {
-                    reportPathsProvider = new ReportPathsProvider() { debug = debug };
+                    reportPathsProvider = new ReportPathsProvider() { debug = bool.Parse(reportPathsDebug) };
                 }
                 else
                 {
-                    var serializedReportPaths = File.ReadAllText(reportPathsProviderConfigurationArgument);
+                    var reportPathsPath = namedArguments[NamedArguments.ReportPathsPath];
+                    var serializedReportPaths = File.ReadAllText(reportPathsPath);
                     reportPathsProvider = new ControlledReportPathsProvider(ReportPaths.Deserialize(serializedReportPaths));
                 }
             }

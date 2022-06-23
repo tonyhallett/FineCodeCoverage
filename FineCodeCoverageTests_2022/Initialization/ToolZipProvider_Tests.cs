@@ -26,8 +26,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
 
         private ZipDetails ProvideZip(IEnumerable<string> zipFiles)
         {
-            var extensionDirectory = Path.GetDirectoryName(typeof(IFileUtil).Assembly.Location);
-            var expectedSearchFolder = Path.Combine(extensionDirectory, "ZippedTools");
+            var expectedSearchFolder = Path.Combine(FCCExtension.Directory, "ZippedTools");
             _ = this.mockFileUtil.Setup(fileUtil => fileUtil.DirectoryGetFiles(expectedSearchFolder, $"sometool.*.zip"))
                 .Returns(zipFiles);
 

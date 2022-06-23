@@ -2,6 +2,7 @@ namespace FineCodeCoverageTests.WebView_Tests
 {
     using System.IO;
     using AutoMoq;
+    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.WebView;
     using NUnit.Framework;
 
@@ -17,8 +18,7 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.mocker = new AutoMoqer();
             this.reportPathsProvider = this.mocker.Create<ReportPathsProvider>();
 
-            var fccExtensionDirectory = Path.GetDirectoryName(typeof(ReportPathsProvider).Assembly.Location);
-            this.expectedFCCNavigationPath = Path.Combine(fccExtensionDirectory, "Resources", "index.html");
+            this.expectedFCCNavigationPath = Path.Combine(FCCExtension.Directory, "Resources", "index.html");
         }
 
         [Test]

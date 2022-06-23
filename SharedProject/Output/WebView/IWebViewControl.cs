@@ -1,5 +1,6 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace FineCodeCoverage.Output.WebView
@@ -16,5 +17,7 @@ namespace FineCodeCoverage.Output.WebView
 		void Reload();
 		void SetVirtualHostNameToFolderMapping(
 			string hostName, string folderPath, CoreWebView2HostResourceAccessKind accessKind);
+
+		void Instantiate();
 	}
 }

@@ -89,6 +89,12 @@
       <Link>Resources\OutputToolWindowCommand.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\Shared Files\WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX64.exe">
+      <Link>WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX64.exe</Link>
+    </Content>
+    <Content Include="..\Shared Files\WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX86.exe">
+      <Link>WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX86.exe</Link>
+    </Content>
     <Content Include="..\Shared Files\ZippedTools\coverlet.collector.3.0.3.zip">
       <Link>ZippedTools\coverlet.collector.3.0.3.zip</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -145,7 +151,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.1210.39</Version>
+      <Version>1.0.1245.22</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>

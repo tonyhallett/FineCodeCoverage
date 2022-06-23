@@ -36,6 +36,7 @@ namespace FineCodeCoverage.Output.WebView
         private readonly ILogger logger;
         private readonly IAppDataFolder appDataFolder;
         private readonly IFileUtil fileUtil;
+        private readonly IWebViewRuntime webViewRuntime;
         private readonly List<IPostJson> jsonPosters;
 
         private IWebView webView;
@@ -66,7 +67,8 @@ namespace FineCodeCoverage.Output.WebView
 			ILogger logger,
 			IAppDataFolder appDataFolder,
 			IFileUtil fileUtil,
-			IReportPathsProvider reportPathsProvider
+			IReportPathsProvider reportPathsProvider,
+			IWebViewRuntime webViewRuntime
 		)
 		{
 			this.webViewHostObjectRegistrations = webViewHostObjectRegistrations;
@@ -74,6 +76,7 @@ namespace FineCodeCoverage.Output.WebView
             this.logger = logger;
             this.appDataFolder = appDataFolder;
             this.fileUtil = fileUtil;
+            this.webViewRuntime = webViewRuntime;
             this.jsonPosters = jsonPosters.ToList();
 
 			var reportPaths = reportPathsProvider.Provide();
@@ -83,9 +86,10 @@ namespace FineCodeCoverage.Output.WebView
             }
 			htmlDirectory = Path.GetDirectoryName(reportPaths.NavigationPath);
 			htmlPath = $"https://{fccDomain}/{Path.GetFileName(reportPaths.NavigationPath)}";
+
 		}
 
-		private void HtmlWatcher_Created(object sender, FileSystemEventArgs e)
+		private void HtmlWatcher_CreatedOrChanged(object sender, FileSystemEventArgs e)
 		{
             if (navigated)
             {
@@ -104,29 +108,38 @@ namespace FineCodeCoverage.Output.WebView
 				Path.GetDirectoryName(htmlPath), 
 				watchFile
 			);
-            // todo - just the filters necessary
+            
             htmlWatcher.IncludeSubdirectories = false;
-			htmlWatcher.NotifyFilter = NotifyFilters.Attributes
-                                | NotifyFilters.CreationTime
-                                | NotifyFilters.DirectoryName
-                                | NotifyFilters.FileName
-                                | NotifyFilters.LastAccess
-                                | NotifyFilters.LastWrite
-                                | NotifyFilters.Security
-                                | NotifyFilters.Size;
 			htmlWatcher.EnableRaisingEvents = true;
-			htmlWatcher.Created += HtmlWatcher_Created;
+			htmlWatcher.Created += HtmlWatcher_CreatedOrChanged;
+			htmlWatcher.Changed += HtmlWatcher_CreatedOrChanged;
 		}
 		
 		public void Initialize(IWebView webView)
 		{
-			this.webView = webView;
-			webView.SetVerticalAlignment(VerticalAlignment.Stretch);
-			webView.SetHorizontalAlignment(HorizontalAlignment.Stretch);
-			webView.SetVisibility(Visibility.Hidden);
-			webView.DomContentLoaded += WebView_DomContentLoaded;
-
 			EnsureUserDataDirectory();
+			this.webView = webView;
+            if (webViewRuntime.IsInstalled)
+            {
+				InstantiateAndSetUpWebView();
+            }
+            else
+            {
+				webViewRuntime.Installed += (sender, args) => InstantiateAndSetUpWebView();
+			}
+		}
+
+		private void InstantiateAndSetUpWebView()
+        {
+			_ = ExecuteOnMainThreadAsync(() =>
+			{
+				webView.Instantiate();
+
+				webView.SetVerticalAlignment(VerticalAlignment.Stretch);
+				webView.SetHorizontalAlignment(HorizontalAlignment.Stretch);
+				webView.SetVisibility(Visibility.Hidden);
+				webView.DomContentLoaded += WebView_DomContentLoaded;
+			});
 		}
 
 		private void EnsureUserDataDirectory()

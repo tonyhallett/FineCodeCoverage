@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Composition;
+﻿using FineCodeCoverage.Core.Utilities;
+using System.ComponentModel.Composition;
 using System.IO;
 
 namespace FineCodeCoverage.Output.WebView
@@ -19,12 +20,12 @@ namespace FineCodeCoverage.Output.WebView
 		}
 
 		private IReportPaths reportPaths;
-		public IReportPaths Provide() // cache
+		public IReportPaths Provide()
 		{
 			if (reportPaths == null)
             {
 				// todo checking AppOptions
-				var standalonePath = GetStandalonePath();
+				var standalonePath = Path.Combine(FCCExtension.Directory, "Resources", "index.html");
 				reportPaths = new ReportPaths
 				{
 					NavigationPath = debug ? DebugReportPath.Path : standalonePath,
@@ -33,12 +34,6 @@ namespace FineCodeCoverage.Output.WebView
 				};
 			}
 			return reportPaths;
-		}
-
-		private string GetStandalonePath()
-		{
-			var fccExtensionDirectory = Path.GetDirectoryName(this.GetType().Assembly.Location);
-			return Path.Combine(fccExtensionDirectory, "Resources", "index.html");
 		}
 	}
 

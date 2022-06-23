@@ -19,6 +19,12 @@ using FineCodeCoverage.Core.Initialization;
 
 namespace FineCodeCoverage.Impl
 {
+
+    internal interface ITestInstantiationPathAware
+    {
+        void Notify(IOperationState operationState);
+    }
+
     [Name(Vsix.TestContainerDiscovererName)]
     // Both exports necessary !
     [Export(typeof(TestContainerDiscoverer))]
@@ -30,7 +36,6 @@ namespace FineCodeCoverage.Impl
 #pragma warning restore 67
         private readonly ITestOperationFactory testOperationFactory;
         private readonly IRunCoverageConditions runCoverageConditions;
-        private readonly IInitializer initializer;
         private readonly IAppOptionsProvider appOptionsProvider;
         private readonly IDisposeAwareTaskRunner disposeAwareTaskRunner;
         private readonly ILogger logger;
@@ -73,15 +78,19 @@ namespace FineCodeCoverage.Impl
             IOperationState operationState,
             ITestOperationFactory testOperationFactory,
             IRunCoverageConditions runCoverageConditions,
-            IInitializer initializer,
+            [ImportMany]
+            IEnumerable<ITestInstantiationPathAware> testInstantionPathAwares,
             IAppOptionsProvider appOptionsProvider,
-            IDisposeAwareTaskRunner disposeAwareTaskRunner,
+            //IDisposeAwareTaskRunner disposeAwareTaskRunner,
             IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService,
             IOldStyleCoverage oldStyleCoverage,
             IEventAggregator eventAggregator,
             ILogger logger
         )
         {
+            testInstantionPathAwares.ToList().ForEach(testInstantionPathAware =>
+                testInstantionPathAware.Notify(operationState)
+            );
             this.msCodeCoverageRunSettingsService = msCodeCoverageRunSettingsService;
             this.oldStyleCoverage = oldStyleCoverage;
 
@@ -89,9 +98,8 @@ namespace FineCodeCoverage.Impl
             this.logger = logger;
             this.testOperationFactory = testOperationFactory;
             this.runCoverageConditions = runCoverageConditions;
-            this.initializer = initializer;
             this.appOptionsProvider = appOptionsProvider;
-            this.disposeAwareTaskRunner = disposeAwareTaskRunner;
+            //this.disposeAwareTaskRunner = disposeAwareTaskRunner;
             appOptionsProvider.OptionsChanged += AppOptionsProvider_OptionsChanged;
             testOperationStateChangeHandlers = new Dictionary<TestOperationStates, Func<IOperation, Task>>
             {
@@ -102,21 +110,21 @@ namespace FineCodeCoverage.Impl
                 { TestOperationStates.OperationSetFinished, OperationSetFinishedAsync }
             };
 
-            disposeAwareTaskRunner.RunAsync(RunInitializeTaskAsync);
+            //disposeAwareTaskRunner.RunAsync(RunInitializeTaskAsync);
 
             operationState.StateChanged += OperationState_StateChanged;
         }
 
-        private Task RunInitializeTaskAsync()
-        {
-            initializeTask = Task.Run(InitializeAsync);
-            return initializeTask;
-        }
+        //private Task RunInitializeTaskAsync()
+        //{
+        //    initializeTask = Task.Run(InitializeAsync);
+        //    return initializeTask;
+        //}
 
-        private Task InitializeAsync()
-        {
-            return initializer.InitializeAsync(disposeAwareTaskRunner.DisposalToken);
-        }
+        //private Task InitializeAsync()
+        //{
+        //    return initializer.InitializeAsync(disposeAwareTaskRunner.DisposalToken);
+        //}
 
         private void AppOptionsProvider_OptionsChanged(IAppOptions newSettings)
         {

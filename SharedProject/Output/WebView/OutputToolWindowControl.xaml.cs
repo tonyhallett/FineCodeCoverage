@@ -27,21 +27,19 @@ namespace FineCodeCoverage.Output
 		{
             this.webViewController = webViewController;
             InitializeComponent();
-            _ = InitializeWebViewAsync();
+			webViewController.Initialize(this);
 		}
 
-		private async Task InitializeWebViewAsync()
+		public void Instantiate()
         {
 			_webView2 = new WebView2();
-			webViewController.Initialize(this);
 			this.AddChild(_webView2); // needs to be in the tree before 
 
 			_webView2.CoreWebView2InitializationCompleted += Webview2_CoreWebView2InitializationCompleted;
-			await InitializeWebViewEnvironmentAsync();
+			 _ = InitializeWebViewEnvironmentAsync();
 		}
 
-
-        private async Task InitializeWebViewEnvironmentAsync()
+		private async Task InitializeWebViewEnvironmentAsync()
 		{
 			CoreWebView2EnvironmentOptions options = new CoreWebView2EnvironmentOptions(
 				webViewController.AdditionalBrowserArguments
@@ -98,11 +96,8 @@ namespace FineCodeCoverage.Output
 		#region IWebView
 		public FrameworkElement FrameworkElement => _webView2;
 		public event EventHandler DomContentLoaded;
-		public void PostWebMessageAsJson(string webMessage)
-        {
-			_webView2.CoreWebView2.PostWebMessageAsJson(webMessage);
-        }
 
+        #region control properties
         public void SetVisibility(Visibility visibility)
         {
 			_webView2.Visibility = visibility;
@@ -117,8 +112,14 @@ namespace FineCodeCoverage.Output
         {
 			_webView2.HorizontalAlignment = horizontalAlignment;
         }
+		#endregion
+		#region CoreWebView2
+		public void PostWebMessageAsJson(string webMessage)
+		{
+			_webView2.CoreWebView2.PostWebMessageAsJson(webMessage);
+		}
 
-        public void AddHostObjectToScript(string name, object rawObject)
+		public void AddHostObjectToScript(string name, object rawObject)
         {
             _webView2.CoreWebView2.AddHostObjectToScript(name, rawObject);
         }
@@ -137,6 +138,7 @@ namespace FineCodeCoverage.Output
         {
 			_webView2.CoreWebView2.SetVirtualHostNameToFolderMapping(hostName, folderPath, accessKind);
         }
+		#endregion
 		#endregion
 	}
 }

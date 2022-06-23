@@ -129,6 +129,7 @@
     <Compile Include="WebView\StylingJsonPoster_Tests.cs" />
     <Compile Include="WebView\WebViewController_CoreWebView2InitializationCompleted_Tests.cs" />
     <Compile Include="WebView\WebViewController_DomContentLoaded_Tests.cs" />
+    <Compile Include="WebView\WebViewController_DomContentLoaded_Watcher_Refresh_Tests.cs" />
     <Compile Include="WebView\WebViewController_Initialize_Tests.cs" />
     <Compile Include="WebView\WebViewController_IJsonPoster_Tests.cs" />
     <Compile Include="ProcessResponseProcessor_Tests.cs" />
@@ -161,6 +162,7 @@
     <Compile Include="Tagging\Tagging_Tests.cs" />
     <Compile Include="Initialization\ToolZipProvider_Tests.cs" />
     <Compile Include="WebView\WebViewController_ProcessFailed_Test.cs" />
+    <Compile Include="WebView\WebViewRuntime_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FineCodeCoverage2022\FineCodeCoverage2022.csproj">

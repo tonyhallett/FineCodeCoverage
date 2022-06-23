@@ -2,7 +2,6 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace FineCodeCoverage.Core.Initialization.ZippedTools
 {
@@ -16,8 +15,7 @@ namespace FineCodeCoverage.Core.Initialization.ZippedTools
         [ImportingConstructor]
         public ToolZipProvider(IFileUtil fileUtil)
         {
-            var extensionDirectory = Path.GetDirectoryName(this.GetType().Assembly.Location);
-            zipFolder = Path.Combine(extensionDirectory, ZippedToolsDirectoryName);
+            zipFolder = Path.Combine(FCCExtension.Directory, ZippedToolsDirectoryName);
             this.fileUtil = fileUtil;
         }
 

@@ -11,11 +11,7 @@ namespace FineCodeCoverage.Core.Utilities
             get => fileSystemWatcher.IncludeSubdirectories;
             set => fileSystemWatcher.IncludeSubdirectories = value;
         }
-        public NotifyFilters NotifyFilter
-        {
-            get => fileSystemWatcher.NotifyFilter;
-            set => fileSystemWatcher.NotifyFilter = value;
-        }
+        
         public bool EnableRaisingEvents
         {
             get => fileSystemWatcher.EnableRaisingEvents;
@@ -37,6 +33,19 @@ namespace FineCodeCoverage.Core.Utilities
             remove
             {
                 fileSystemWatcher.Created -= value;
+            }
+        }
+
+        event FileSystemEventHandler IFileSystemWatcher.Changed
+        {
+            add
+            {
+                fileSystemWatcher.Changed += value;
+            }
+
+            remove
+            {
+                fileSystemWatcher.Changed -= value;
             }
         }
     }

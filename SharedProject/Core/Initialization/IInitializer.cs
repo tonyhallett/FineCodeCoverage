@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 
 namespace FineCodeCoverage.Core.Initialization
 {
-    internal interface IInitializer : IInitializeStatusProvider
-    {
-        Task InitializeAsync(CancellationToken cancellationToken);
-    }
+    //internal interface IInitializer : IInitializeStatusProvider
+    //{
+    //    Task InitializeAsync(CancellationToken cancellationToken);
+    //}
 
 }
 

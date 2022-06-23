@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine;
+using FineCodeCoverage.Impl;
 using FineCodeCoverage.Logging;
+using Microsoft.VisualStudio.TestWindow.Extensibility;
 
 namespace FineCodeCoverage.Core.Initialization
 {
-    [Export(typeof(IInitializer))]
+    [Export(typeof(ITestInstantiationPathAware))]
     [Export(typeof(IInitializeStatusProvider))]
-    internal class Initializer : IInitializer
+    internal class Initializer : IInitializeStatusProvider, ITestInstantiationPathAware
     {
         private readonly ILogger logger;
+        private readonly IDisposeAwareTaskRunner disposeAwareTaskRunner;
         private readonly IEnumerable<IRequireInitialization> requiresInitialization;
 
         internal const string initializationFailedMessagePrefix = "Initialization failed.  Please check the following error which may be resolved by reopening visual studio which will start the initialization process again.";
         internal int initializeWait = 5000;
+        private Task initializeTask;
 
         public InitializeStatus InitializeStatus { get; set; } = InitializeStatus.Initializing;
         private bool Initialized => InitializeStatus == InitializeStatus.Initialized;
@@ -26,10 +31,12 @@ namespace FineCodeCoverage.Core.Initialization
         public Initializer(
             [ImportMany]
             IEnumerable<IRequireInitialization> requiresInitialization,
-            ILogger logger
+            ILogger logger,
+            IDisposeAwareTaskRunner disposeAwareTaskRunner
         )
         {
             this.logger = logger;
+            this.disposeAwareTaskRunner = disposeAwareTaskRunner;
             this.requiresInitialization = requiresInitialization;
         }
 
@@ -93,6 +100,22 @@ namespace FineCodeCoverage.Core.Initialization
                 }
                 await WaitForInitializationAsync();
             }
+        }
+
+        public void Notify(IOperationState operationState)
+        {
+            disposeAwareTaskRunner.RunAsync(RunInitializeTaskAsync);
+        }
+
+        private Task RunInitializeTaskAsync()
+        {
+            initializeTask = Task.Run(InitializeAsync);
+            return initializeTask;
+        }
+
+        private Task InitializeAsync()
+        {
+            return InitializeAsync(disposeAwareTaskRunner.DisposalToken);
         }
     }
 

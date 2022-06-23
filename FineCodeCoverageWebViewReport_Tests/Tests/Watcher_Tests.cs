@@ -14,8 +14,9 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
         private static string SetupReportPaths()
         {
             tempDirectory = FileUtil.CreateTempDirectory();
-            var navigationPath = WriteNavigation(FirstHtml);
-            return WriteSerializedReportPaths(navigationPath);
+            var navigationPath = WriteNavigation(GetHtml("First"));
+            var reportPathsPath = WriteSerializedReportPaths(navigationPath);
+            return NamedArguments.GetNamedArgument(NamedArguments.ReportPathsPath, reportPathsPath);
         }
 
         private static string WriteSerializedReportPaths(string navigationPath)
@@ -38,24 +39,13 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             return path;
         }
 
-        private const string FirstHtml = @"
+        private static string GetHtml(string text) => $@"
 <!DOCTYPE html>
 <html lang='en'>
     <head><meta charset='utf-8'></head>
     <body>
         <div id='root'>
-            <div>First</div>
-        </div>
-    </body>
-<html>
-";
-        private const string SecondHtml = @"
-<!DOCTYPE html>
-<html lang='en'>
-    <head><meta charset='utf-8'></head>
-    <body>
-        <div id='root'>
-            <div>Second</div>
+            <div>{text}</div>
         </div>
     </body>
 <html>
@@ -75,15 +65,22 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             }
         }
 
+        private void ChangeHtmlNotifyWatcherAndWait(string text)
+        {
+            _ = WriteNavigation(GetHtml(text));
+            _ = Write("", "watch.txt");
+
+            _ = this.EdgeDriver.WaitUntil(() => this.EdgeDriver.FindElementByText(text));
+        }
+
         [Test]
-        public void Should_Reload_With_Changed_Html()
+        public void Should_Reload_With_Created_And_Changed_Html()
         {
             _ = this.EdgeDriver.FindElementByText("First");
 
-            _ = WriteNavigation(SecondHtml);
-            _ = Write("", "watch.txt");
+            this.ChangeHtmlNotifyWatcherAndWait("Second");
 
-            _ = this.EdgeDriver.WaitUntil(() => this.EdgeDriver.FindElementByText("Second"));
+            this.ChangeHtmlNotifyWatcherAndWait("Third");
         }
     }
 
