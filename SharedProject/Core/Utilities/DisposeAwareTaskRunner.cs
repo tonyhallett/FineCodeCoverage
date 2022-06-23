@@ -7,18 +7,6 @@ using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Core.Utilities
 {
-    internal interface IDisposeAwareTaskRunner
-    {
-#pragma warning disable VSTHRD200 // Use "Async" suffix for async methods
-        void RunAsync(Func<Task> taskProvider);
-#pragma warning restore VSTHRD200 // Use "Async" suffix for async methods
-        CancellationToken DisposalToken { get; }
-
-        CancellationTokenSource CreateLinkedCancellationTokenSource();
-
-        bool IsVsShutdown { get; }
-    }
-
     [Export(typeof(IDisposeAwareTaskRunner))]
     internal class DisposeAwareTaskRunner : IDisposable, IDisposeAwareTaskRunner
     {

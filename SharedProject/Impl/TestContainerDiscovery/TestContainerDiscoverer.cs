@@ -15,15 +15,9 @@ using FineCodeCoverage.Output.JsMessages.Logging;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsMessages;
 using FineCodeCoverage.Core;
-using FineCodeCoverage.Core.Initialization;
 
 namespace FineCodeCoverage.Impl
 {
-
-    internal interface ITestInstantiationPathAware
-    {
-        void Notify(IOperationState operationState);
-    }
 
     [Name(Vsix.TestContainerDiscovererName)]
     // Both exports necessary !
@@ -37,7 +31,6 @@ namespace FineCodeCoverage.Impl
         private readonly ITestOperationFactory testOperationFactory;
         private readonly IRunCoverageConditions runCoverageConditions;
         private readonly IAppOptionsProvider appOptionsProvider;
-        private readonly IDisposeAwareTaskRunner disposeAwareTaskRunner;
         private readonly ILogger logger;
         private readonly IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService;
         private readonly IOldStyleCoverage oldStyleCoverage;
@@ -81,7 +74,6 @@ namespace FineCodeCoverage.Impl
             [ImportMany]
             IEnumerable<ITestInstantiationPathAware> testInstantionPathAwares,
             IAppOptionsProvider appOptionsProvider,
-            //IDisposeAwareTaskRunner disposeAwareTaskRunner,
             IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService,
             IOldStyleCoverage oldStyleCoverage,
             IEventAggregator eventAggregator,
@@ -99,7 +91,6 @@ namespace FineCodeCoverage.Impl
             this.testOperationFactory = testOperationFactory;
             this.runCoverageConditions = runCoverageConditions;
             this.appOptionsProvider = appOptionsProvider;
-            //this.disposeAwareTaskRunner = disposeAwareTaskRunner;
             appOptionsProvider.OptionsChanged += AppOptionsProvider_OptionsChanged;
             testOperationStateChangeHandlers = new Dictionary<TestOperationStates, Func<IOperation, Task>>
             {
@@ -110,21 +101,8 @@ namespace FineCodeCoverage.Impl
                 { TestOperationStates.OperationSetFinished, OperationSetFinishedAsync }
             };
 
-            //disposeAwareTaskRunner.RunAsync(RunInitializeTaskAsync);
-
             operationState.StateChanged += OperationState_StateChanged;
         }
-
-        //private Task RunInitializeTaskAsync()
-        //{
-        //    initializeTask = Task.Run(InitializeAsync);
-        //    return initializeTask;
-        //}
-
-        //private Task InitializeAsync()
-        //{
-        //    return initializer.InitializeAsync(disposeAwareTaskRunner.DisposalToken);
-        //}
 
         private void AppOptionsProvider_OptionsChanged(IAppOptions newSettings)
         {

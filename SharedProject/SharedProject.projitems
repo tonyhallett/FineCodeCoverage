@@ -168,6 +168,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileSystemWatcherWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FileUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IAssemblyUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IDisposeAwareTaskRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IEnvironment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IExecutionTimer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IFileSystemWatcher.cs" />
@@ -225,10 +226,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\OverviewMargin\PartiallyCoveredEditorFormatDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\RunSettingsRetriever.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ShowFCCOutputPaneMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ITestInstantiationPathAware.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ITestRunRequestFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\ContainerData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IInitializeStatusProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\Initializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\InitializeStatus.cs" />
@@ -275,6 +276,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObjectRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IWebViewHostObjectRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\IPackageInitializeAware.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\IPayloadSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\PayloadSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\IReport.cs" />

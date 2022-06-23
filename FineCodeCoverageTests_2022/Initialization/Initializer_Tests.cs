@@ -10,30 +10,61 @@ namespace FineCodeCoverageTests.Initialization_Tests
     using Moq;
     using NUnit.Framework;
     using FineCodeCoverage.Core.Initialization;
+    using FineCodeCoverage.Impl;
+    using FineCodeCoverage.Output;
+    using System.Linq;
+    using FineCodeCoverage.Core.Utilities;
 
+    [TestFixture(true)]
+    [TestFixture(false)]
     public class Initializer_Tests
     {
         private AutoMoqer mocker;
         private Initializer initializer;
         private List<Mock<IRequireInitialization>> mocksRequireInitialization;
+        private Mock<IDisposeAwareTaskRunner> mockDisposeAwareTaskRunner;
+        private readonly Action initializeNotify;
+        private readonly Action otherInitializeNotify;
+        public Initializer_Tests(bool testInstantiationAware)
+        {
+            if (testInstantiationAware)
+            {
+                this.initializeNotify = this.InitializeTestInstantiationPathAware;
+                this.otherInitializeNotify = this.InitializePackageInitializeAware;
+            }
+            else
+            {
+                this.initializeNotify = this.InitializePackageInitializeAware;
+                this.otherInitializeNotify = this.InitializeTestInstantiationPathAware;
+            }
+        }
+
+        private void InitializeTestInstantiationPathAware() =>
+            (this.initializer as ITestInstantiationPathAware).Notify(null);
+
+        private void InitializePackageInitializeAware() =>
+            (this.initializer as IPackageInitializeAware).Notify();
+
+        private readonly CancellationToken disposeAwareToken = CancellationToken.None;
 
         [SetUp]
         public void SetUp()
         {
             this.mocker = new AutoMoqer();
-            var mockRequiresInitialization1 = new Mock<IRequireInitialization>();
-            var mockRequiresInitialization2 = new Mock<IRequireInitialization>();
-            var requiresInitialization = new List<IRequireInitialization>
-            {
-                mockRequiresInitialization1.Object,
-                mockRequiresInitialization2.Object
-
-            };
             this.mocksRequireInitialization = new List<Mock<IRequireInitialization>>
             {
-                mockRequiresInitialization1,mockRequiresInitialization2
+                new Mock<IRequireInitialization>(),new Mock<IRequireInitialization>()
             };
-            this.mocker.SetInstance<IEnumerable<IRequireInitialization>>(requiresInitialization);
+            this.mocker.SetInstance(
+                this.mocksRequireInitialization.Select(mockRequireInitialization => mockRequireInitialization.Object)
+            );
+            this.mockDisposeAwareTaskRunner = this.mocker.GetMock<IDisposeAwareTaskRunner>();
+            _ = this.mockDisposeAwareTaskRunner.SetupGet(disposeAwareTaskRunner => disposeAwareTaskRunner.DisposalToken)
+                .Returns(this.disposeAwareToken);
+            _ = this.mockDisposeAwareTaskRunner.Setup(
+                runner => runner.RunAsync(It.IsAny<Func<Task>>())
+            ).Callback<Func<Task>>(taskProvider => taskProvider());
+
             this.initializer = this.mocker.Create<Initializer>();
         }
 
@@ -41,22 +72,50 @@ namespace FineCodeCoverageTests.Initialization_Tests
         {
             var exception = new Exception("initialize exception");
             exceptionCallback?.Invoke(exception);
-            var cancellationToken = CancellationToken.None;
             _ = this.mocksRequireInitialization[0].Setup(
-                requiresInitialization => requiresInitialization.InitializeAsync(cancellationToken)
+                requiresInitialization => requiresInitialization.InitializeAsync(this.disposeAwareToken)
             ).ThrowsAsync(exception);
 
-            return this.initializer.InitializeAsync(cancellationToken);
+            return this.InitializeAsync();
         }
 
         [Test]
         public void Should_Have_Initial_InitializeStatus_As_Initializing() =>
             Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Initializing));
 
+        private async Task InitializeAsync()
+        {
+            this.initializeNotify();
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
+            await this.initializer.initializeTask;
+#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
+        }
+
+        [Test]
+        public async Task Should_Initialize_With_The_DisposeAwareTaskRunner_Async()
+        {
+            await this.InitializeAsync();
+
+            this.mockDisposeAwareTaskRunner.VerifyAll();
+        }
+
+        [Test]
+        public async Task Should_Initialize_Once_Async()
+        {
+            await this.InitializeAsync();
+
+            this.otherInitializeNotify();
+
+            this.mockDisposeAwareTaskRunner.Verify(
+                disposeAwareTaskRunner => disposeAwareTaskRunner.RunAsync(It.IsAny<Func<Task>>()),
+                Times.Once()
+            );
+        }
+
         [Test]
         public async Task Should_Log_Initializing_When_Initialize_Async()
         {
-            await this.initializer.InitializeAsync(CancellationToken.None);
+            await this.InitializeAsync();
             this.mocker.Verify<ILogger>(l => l.Log("Initializing"));
         }
 
@@ -88,12 +147,11 @@ namespace FineCodeCoverageTests.Initialization_Tests
         [Test]
         public async Task Should_Initialize_All_That_IRequireInitialization_Async()
         {
-            var cancellationToken = CancellationToken.None;
-            await this.initializer.InitializeAsync(cancellationToken);
+            await this.InitializeAsync();
 
             this.mocksRequireInitialization.ForEach(
                 mockRequireInitialization => mockRequireInitialization.Verify(
-                    requireInitialization => requireInitialization.InitializeAsync(cancellationToken)
+                    requireInitialization => requireInitialization.InitializeAsync(this.disposeAwareToken)
                 )
             );
         }
@@ -101,7 +159,9 @@ namespace FineCodeCoverageTests.Initialization_Tests
         [Test]
         public async Task Should_Not_Log_Failed_Initialization_When_Initialize_Cancelled_Async()
         {
-            await this.initializer.InitializeAsync(CancellationTokenHelper.GetCancelledCancellationToken());
+            _ = this.mockDisposeAwareTaskRunner.SetupGet(disposeAwareTaskRunner => disposeAwareTaskRunner.DisposalToken)
+                .Returns(CancellationTokenHelper.GetCancelledCancellationToken());
+            await this.InitializeAsync();
 
             this.mocker.Verify<ILogger>(l => l.Log("Failed Initialization", It.IsAny<Exception>()), Times.Never());
         }
@@ -109,7 +169,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
         [Test]
         public async Task Should_Set_InitializeStatus_To_Initialized_When_Successfully_Completed_Async()
         {
-            await this.initializer.InitializeAsync(CancellationToken.None);
+            await this.InitializeAsync();
 
             Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Initialized));
         }
@@ -117,7 +177,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
         [Test]
         public async Task Should_Log_Initialized_When_Successfully_Completed_Async()
         {
-            await this.initializer.InitializeAsync(CancellationToken.None);
+            await this.InitializeAsync();
 
             this.mocker.Verify<ILogger>(l => l.Log("Initialized"));
         }

@@ -1,38 +1,31 @@
 namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using System.Collections.Generic;
+    using System.Linq;
     using AutoMoq;
-    using FineCodeCoverage.Core.Initialization;
-    using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Impl;
+    using Microsoft.VisualStudio.TestWindow.Extensibility;
     using Moq;
     using NUnit.Framework;
 
-    internal class TestContainerDiscoverer_Initialization
+    internal class TestContainerDiscoverer_ITestInstantiationPathAware_Notification
     {
         [Test]
-        public async Task Should_Initialize_Vs_Shutdown_Aware_Async()
+        public void Should_Occur_In_The_Constructor()
         {
             var mocker = new AutoMoqer();
-
-            var mockDisposeAwareTaskRunner = mocker.GetMock<IDisposeAwareTaskRunner>();
-            _ = mockDisposeAwareTaskRunner.Setup(
-                runner => runner.RunAsync(It.IsAny<Func<Task>>())
-            ).Callback<Func<Task>>(taskProvider => taskProvider());
-
-            var vsShutdownCancellationToken = CancellationToken.None;
-            _ = mockDisposeAwareTaskRunner.SetupGet(
-                disposeAwareTaskRunner => disposeAwareTaskRunner.DisposalToken
-            ).Returns(vsShutdownCancellationToken);
-
+            var mocks = new List<Mock<ITestInstantiationPathAware>>
+            {
+                new Mock<ITestInstantiationPathAware>(),
+                new Mock<ITestInstantiationPathAware>()
+            };
+            mocker.SetInstance(mocks.Select(mock => mock.Object));
             var testContainerDiscoverer = mocker.Create<TestContainerDiscoverer>();
-#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
-            await testContainerDiscoverer.initializeTask;
-#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
 
-            mocker.Verify<IInitializer>(i => i.InitializeAsync(vsShutdownCancellationToken));
+            var operationState = mocker.GetMock<IOperationState>().Object;
+            mocks.ForEach(mock =>
+                mock.Verify(testInstantiationPathAware => testInstantiationPathAware.Notify(operationState))
+            );
         }
 
     }

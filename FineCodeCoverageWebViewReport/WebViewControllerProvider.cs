@@ -55,7 +55,11 @@ namespace FineCodeCoverageWebViewReport
                     fileUtil
                 ),
                 fileUtil,
-                reportPathsProvider
+                reportPathsProvider,
+                new WebViewRuntime(
+                    new WebViewRuntimeInstallationChecker(), 
+                    new WebViewRuntimeInstaller(new ProcessUtil(), new EnvironmentWrapper())
+                )
             );
 
             webViewController.ExecuteOnMainThreadAsync = (action) =>

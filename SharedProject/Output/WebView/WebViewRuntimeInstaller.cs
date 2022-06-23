@@ -1,6 +1,7 @@
 ﻿using FineCodeCoverage.Core.Utilities;
 using System;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,6 +26,7 @@ namespace FineCodeCoverage.Output.WebView
         {
             var installerIdentifier = environment.Is64BitOperatingSystem ? "64" : "86";
             var installerFileName = $"MicrosoftEdgeWebView2RuntimeInstallerX{installerIdentifier}.exe";
+            var installerPath = Path.Combine(FCCExtension.Directory, "WebViewRuntimeInstaller", installerFileName);
             throw new NotImplementedException();
             // a) Check how to specify the arguments
             /*

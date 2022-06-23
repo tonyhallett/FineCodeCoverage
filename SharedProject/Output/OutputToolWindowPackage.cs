@@ -93,7 +93,8 @@ namespace FineCodeCoverage.Output
 			var sp = new ServiceProvider(_dte2 as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
 			componentModel = sp.GetService(typeof(Microsoft.VisualStudio.ComponentModelHost.SComponentModel)) as Microsoft.VisualStudio.ComponentModelHost.IComponentModel;
             Assumes.Present(componentModel);
-
+			componentModel.GetExtensions<IPackageInitializeAware>().ToList()
+				.ForEach((packageInitializeAware) => packageInitializeAware.Notify());
 			await OutputToolWindowCommand.InitializeAsync(this, componentModel.GetService<ILogger>());
 			await ClearUICommand.InitializeAsync(this, componentModel.GetService<IFCCEngine>());
 		}
