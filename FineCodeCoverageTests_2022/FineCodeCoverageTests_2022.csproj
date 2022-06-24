@@ -164,7 +164,6 @@
     <Compile Include="WebView\WebViewController_ProcessFailed_Test.cs" />
     <Compile Include="WebView\WebViewRuntimeInstaller_Tests.cs" />
     <Compile Include="WebView\WebViewRuntime_Tests.cs" />
-    <Compile Include="WebView\XXX.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FineCodeCoverage2022\FineCodeCoverage2022.csproj">

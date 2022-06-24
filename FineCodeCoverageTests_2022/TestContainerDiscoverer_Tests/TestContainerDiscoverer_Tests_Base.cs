@@ -9,6 +9,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
     using FineCodeCoverage.Impl;
     using FineCodeCoverage.Options;
+    using FineCodeCoverageTests.Test_helpers;
     using Microsoft.VisualStudio.TestWindow.Extensibility;
     using Moq;
     using NUnit.Framework;
@@ -24,6 +25,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         public void Setup()
         {
             this.Mocker = new AutoMoqer();
+            this.Mocker.SetEmptyEnumerable<ITestInstantiationPathAware>();
             this.TestContainerDiscoverer = this.Mocker.Create<TestContainerDiscoverer>();
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             this.TestContainerDiscoverer.RunAsync = (asyncMethod) => asyncMethod().Wait();

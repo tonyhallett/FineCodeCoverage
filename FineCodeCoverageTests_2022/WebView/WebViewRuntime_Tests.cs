@@ -58,12 +58,12 @@ namespace FineCodeCoverageTests.WebView_Tests
             return cancellationToken;
         }
 
-        [Test]
-        public async Task Should_Install_When_Initialize_And_Is_Not_Installed_Async()
+        [Test] // if did silently would need the FCC Tool Window to display as installation takes some time
+        public async Task Should_Install_Wth_UI_When_Initialize_And_Is_Not_Installed_Async()
         {
             var cancellationToken = await this.InitializeNotInstalledAsync();
 
-            this.mocker.Verify<IWebViewRuntimeInstaller>(webViewRuntimeInstaller => webViewRuntimeInstaller.InstallAsync(cancellationToken));
+            this.mocker.Verify<IWebViewRuntimeInstaller>(webViewRuntimeInstaller => webViewRuntimeInstaller.InstallAsync(cancellationToken, false));
         }
 
         [Test]

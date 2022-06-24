@@ -35,13 +35,13 @@ namespace FineCodeCoverage.Output.WebView
             }
             else
             {
-                await InstallAsync(cancellationToken);
+                await InstallWithUIAsync(cancellationToken);
             }
         }
 
-        private async Task InstallAsync(CancellationToken cancellationToken)
+        private async Task InstallWithUIAsync(CancellationToken cancellationToken)
         {
-            await webViewRuntimeInstaller.InstallAsync(cancellationToken);
+            await webViewRuntimeInstaller.InstallAsync(cancellationToken, false);
             RaiseIsInstalled();
         }
 

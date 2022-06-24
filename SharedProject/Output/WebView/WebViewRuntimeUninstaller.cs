@@ -34,12 +34,26 @@ namespace FineCodeCoverage.Output.WebView
             else
             {
                 var (exe, arguments) = ExtractArguments(webViewRuntimeRegistryEntries.SilentUninstallCommand);
+
                 var response = await processUtil.ExecuteAsync(new ExecuteRequest { FilePath = exe, Arguments = arguments }, cancellationToken);
-                if (response.ExitCode != 0)
+                if (!IsSuccessfulExitCode(response.ExitCode))
                 {
                     throw new Exception(response.Output);
                 }
             }
+
+            await Task.CompletedTask;
+        }
+
+        /*
+            Getting exit code 19 when run from .NET Console app -  UninstallWebView
+            with no response.Output
+            and it does uninstall....
+            https://github.com/MicrosoftEdge/WebView2Feedback/issues/2317#issuecomment-1165536731
+        */
+        private bool IsSuccessfulExitCode(int exitCode)
+        {
+            return exitCode == 0;
         }
 
         private (string exe, string arguments) ExtractArguments(string commandWithArguments)

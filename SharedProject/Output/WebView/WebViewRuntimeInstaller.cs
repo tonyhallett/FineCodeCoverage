@@ -22,13 +22,16 @@ namespace FineCodeCoverage.Output.WebView
             this.processUtil = processUtil;
             this.environment = environment;
         }
-        public async Task InstallAsync(CancellationToken cancellationToken)
+
+        public async Task InstallAsync(CancellationToken cancellationToken, bool silent)
         {
             var installerIdentifier = environment.Is64BitOperatingSystem ? "64" : "86";
             var installerFileName = $"MicrosoftEdgeWebView2RuntimeInstallerX{installerIdentifier}.exe";
             var installerPath = Path.Combine(FCCExtension.Directory, "WebViewRuntimeInstaller", installerFileName);
+
+            var arguments = $"{(silent ? "/silent " : "")}/install";
             var response = await processUtil.ExecuteAsync(
-                new ExecuteRequest { FilePath = installerPath, Arguments = "/silent /install" }, 
+                new ExecuteRequest { FilePath = installerPath, Arguments = arguments }, 
                 cancellationToken
             );
 

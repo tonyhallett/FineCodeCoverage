@@ -24,6 +24,7 @@ namespace FineCodeCoverage.Output.JsPosting
 		public void Ready(IJsonPoster jsonPoster, IWebViewImpl webViewImpl)
 		{
 			this.jsonPoster = jsonPoster;
+			PostReport();
 		}
 
 		public void Refresh()
@@ -33,7 +34,10 @@ namespace FineCodeCoverage.Output.JsPosting
 
 		private void PostReport()
 		{
-			jsonPoster.PostJson(PostType, report);
+			if (jsonPoster != null)
+			{
+				jsonPoster.PostJson(PostType, report);
+			}
 		}
 
 		public void Handle(ClearReportMessage message)

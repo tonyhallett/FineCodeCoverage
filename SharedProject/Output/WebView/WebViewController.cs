@@ -157,7 +157,7 @@ namespace FineCodeCoverage.Output.WebView
 			}
 			else
 			{
-				InitializeJson();
+				ReadyJsonPosters();
 				webView.SetVisibility(Visibility.Visible);
 			}
 		}
@@ -198,7 +198,7 @@ namespace FineCodeCoverage.Output.WebView
 			postJsonTask = PostJsonAsync(type , data);
         } 
 
-		private void InitializeJson()
+		private void ReadyJsonPosters()
         {
 			jsonPosters.ForEach(jsonPoster => jsonPoster.Ready(this, webView));
         }

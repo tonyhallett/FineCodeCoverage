@@ -24,6 +24,11 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.reportJsonPoster = this.mocker.Create<ReportJsonPoster>();
 
             this.mockJsonPoster = new Mock<IJsonPoster>();
+            
+        }
+
+        private void Ready()
+        {
             this.reportJsonPoster.Ready(this.mockJsonPoster.Object, null);
         }
 
@@ -60,16 +65,37 @@ namespace FineCodeCoverageTests.WebView_Tests
         }
 
         [Test]
-        public void Should_Post_Report_When_Receives_NewReportMessage()
+        public void Should_Post_Report_When_Receives_NewReportMessage_And_Readied()
         {
+            this.Ready();
+
             var expectedReport = this.SendNewReportMessage();
 
             this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson("report", expectedReport));
         }
 
         [Test]
-        public void Should_Post_Null_Report_When_Receives_ClearReportMessage()
+        public void Should_Not_Throw_When_Receives_NewReportMessage_And_Not_Readied()
         {
+            _ = this.SendNewReportMessage();
+        }
+
+        [Test]
+        public void Should_Early_Post_Report_When_Readied()
+        {
+            var expectedReport = this.SendNewReportMessage();
+
+            this.Ready();
+
+            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson("report", expectedReport));
+        }
+
+        [Test]
+        public void Should_Post_Null_Report_When_Receives_ClearReportMessage_And_Readied()
+        {
+            this.Ready();
+            this.mockJsonPoster.Reset();
+
             _ = this.SendNewReportMessage();
 
             this.reportJsonPoster.Handle(new ClearReportMessage());
@@ -80,6 +106,9 @@ namespace FineCodeCoverageTests.WebView_Tests
         [Test]
         public void Should_Repost_When_Refresh()
         {
+            this.Ready();
+            this.mockJsonPoster.Reset();
+
             _ = this.SendNewReportMessage();
 
             this.reportJsonPoster.Refresh();

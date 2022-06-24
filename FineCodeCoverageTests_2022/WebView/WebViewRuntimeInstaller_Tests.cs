@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverageTests.WebView_Tests
+namespace FineCodeCoverageTests.WebView_Tests
 {
     using System.IO;
     using System.Threading;
@@ -11,18 +11,25 @@
 
     internal class WebViewRuntimeInstaller_Tests
     {
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task Should_Silent_Install_From_The_WebViewRuntimeInstaller_Directory_With_Exe_Os_Determined_Async(bool is64BitOs)
+        [Test]
+        public void CheckInstallLocation()
+        {
+            var entries = new WebViewRuntimeRegistry().GetEntries();
+        }
+
+        [TestCase(true,true)]
+        [TestCase(false,false)]
+        public async Task Should_Install_From_The_WebViewRuntimeInstaller_Directory_With_Exe_Os_Determined_Async(bool is64BitOs, bool silent)
         {
             var mocker = new AutoMoqer();
             var cancellationToken = CancellationToken.None;
             var installerIdentifier = is64BitOs ? "64" : "86";
             var installerFileName = $"MicrosoftEdgeWebView2RuntimeInstallerX{installerIdentifier}.exe";
             var installerPath = Path.Combine(FCCExtension.Directory, "WebViewRuntimeInstaller", installerFileName);
+            var expectedArguments = $"{(silent ? "/silent " : "")}/install";
             var expectedExecuteRequest = new ExecuteRequest
             {
-                Arguments = "/silent /install",
+                Arguments = expectedArguments,
                 FilePath = installerPath
             };
 
@@ -36,7 +43,7 @@
                 .Returns(is64BitOs);
 
             var webViewRuntimeInstaller = mocker.Create<WebViewRuntimeInstaller>();
-            await webViewRuntimeInstaller.InstallAsync(cancellationToken);
+            await webViewRuntimeInstaller.InstallAsync(cancellationToken, silent);
 
             mockProcessUtil.VerifyAll();
         }
@@ -53,7 +60,7 @@
 
             var webViewRuntimeInstaller = mocker.Create<WebViewRuntimeInstaller>();
 
-            Assert.That(() => webViewRuntimeInstaller.InstallAsync(cancellationToken), Throws.Exception.Message.EqualTo("Error output"));
+            Assert.That(() => webViewRuntimeInstaller.InstallAsync(cancellationToken, true), Throws.Exception.Message.EqualTo("Error output"));
         }
     }
 }
