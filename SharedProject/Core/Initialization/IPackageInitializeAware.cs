@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverage.Output
+﻿namespace FineCodeCoverage.Core.Initialization
 {
     internal interface IPackageInitializeAware
     {

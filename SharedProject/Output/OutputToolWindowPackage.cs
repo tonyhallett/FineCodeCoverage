@@ -16,6 +16,7 @@ using System.Linq;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Core.ReportGenerator.Colours;
 using FineCodeCoverage.Output.WebView;
+using FineCodeCoverage.Core.Initialization;
 
 namespace FineCodeCoverage.Output
 {

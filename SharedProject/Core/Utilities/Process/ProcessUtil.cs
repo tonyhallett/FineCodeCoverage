@@ -2,7 +2,6 @@
 using CliWrap;
 using System.Linq;
 using CliWrap.Buffered;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Threading;
@@ -67,36 +66,4 @@ namespace FineCodeCoverage.Core.Utilities
 		
 	}
 
-	internal static class ProcessExtensions
-    {
-		public static string GetOutput(this Process process)
-		{
-			return string.Join(
-				Environment.NewLine,
-				new[]
-				{
-					process.StandardOutput?.ReadToEnd(),
-					process.StandardError?.ReadToEnd()
-				}
-				.Where(x => !string.IsNullOrWhiteSpace(x))
-			);
-		}
-
-	}
-
-	internal class ExecuteRequest
-	{
-		public string FilePath { get; set; }
-		public string Arguments { get; set; }
-		public string WorkingDirectory { get; set; }
-	}
-
-	internal class ExecuteResponse
-	{
-		public int ExitCode { get; set; }
-		public DateTimeOffset ExitTime { get; set; }
-		public TimeSpan RunTime { get; set; }
-		public DateTimeOffset StartTime { get; set; }
-		public string Output { get; set; }
-	}
 }

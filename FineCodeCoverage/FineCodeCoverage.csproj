@@ -89,11 +89,13 @@
       <Link>Resources\OutputToolWindowCommand.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\Shared Files\WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX64.exe">
-      <Link>WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX64.exe</Link>
+    <Content Include="..\Shared Files\WebViewRuntimeInstaller\MicrosoftEdgeWebView2RuntimeInstallerX64.exe">
+      <Link>WebViewRuntimeInstaller\MicrosoftEdgeWebView2RuntimeInstallerX64.exe</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\Shared Files\WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX86.exe">
-      <Link>WebViewInstaller\MicrosoftEdgeWebView2RuntimeInstallerX86.exe</Link>
+    <Content Include="..\Shared Files\WebViewRuntimeInstaller\MicrosoftEdgeWebView2RuntimeInstallerX86.exe">
+      <Link>WebViewRuntimeInstaller\MicrosoftEdgeWebView2RuntimeInstallerX86.exe</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="..\Shared Files\ZippedTools\coverlet.collector.3.0.3.zip">
       <Link>ZippedTools\coverlet.collector.3.0.3.zip</Link>

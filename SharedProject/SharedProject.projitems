@@ -173,14 +173,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IExecutionTimer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IFileSystemWatcher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IFileUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcessResponseProcessor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcessUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\ExecuteRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\ExecuteResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\IProcessResponseProcessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\IProcessUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ISolutionEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\IZipFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\LinqExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\MEF.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessResponseProcessor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\ProcessResponseProcessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\ProcessUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\ProcessExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ReflectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\SolutionEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\TimespanExtensions.cs" />
@@ -274,9 +277,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\ISourceFileOpenerHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObjectRegistration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\IProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IWebViewHostObjectRegistration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\IPackageInitializeAware.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IPackageInitializeAware.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\IPayloadSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\PayloadSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\IReport.cs" />
@@ -327,18 +330,23 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntimeInstallationChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntimeInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntimeRegistry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntimeRegistryEntries.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntimeUninstaller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\OutputToolWindowControl.xaml.cs">
       <DependentUpon>OutputToolWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowPackage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\ProcessWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\DebugReportPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\ReportPathsProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewRuntime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewRuntimeInstallationChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewRuntimeInstaller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewRuntimeRegistry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewRuntimeUninstaller.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Output\WebView\OutputToolWindowControl.xaml">
