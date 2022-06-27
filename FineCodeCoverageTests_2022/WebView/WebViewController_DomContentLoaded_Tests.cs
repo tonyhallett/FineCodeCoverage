@@ -54,12 +54,12 @@ namespace FineCodeCoverageTests.WebView_Tests
 
         }
 
-        [Test]
-        public void Should_Ready_Json_Posters()
-        {
-            this.mockJsonPoster1.Verify(jsonPoster1 => jsonPoster1.Ready(this.webViewController, this.mockWebView.Object));
-            this.mockJsonPoster2.Verify(jsonPoster2 => jsonPoster2.Ready(this.webViewController, this.mockWebView.Object));
-        }
+        //[Test]
+        //public void Should_Ready_Json_Posters()
+        //{
+        //    this.mockJsonPoster1.Verify(jsonPoster1 => jsonPoster1.Ready(this.webViewController, this.mockWebView.Object));
+        //    this.mockJsonPoster2.Verify(jsonPoster2 => jsonPoster2.Ready(this.webViewController, this.mockWebView.Object));
+        //}
 
         [Test]
         public void Should_Make_The_WebView_Visible() =>

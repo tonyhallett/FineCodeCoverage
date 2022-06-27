@@ -1,7 +1,9 @@
 ﻿using Microsoft.Win32;
+using System.ComponentModel.Composition;
 
 namespace FineCodeCoverage.Output.WebView
 {
+    [Export(typeof(IWebViewRuntimeRegistry))]
     internal class WebViewRuntimeRegistry : IWebViewRuntimeRegistry
     {
         private class WebViewRuntimeRegistryEntries : IWebViewRuntimeRegistryEntries

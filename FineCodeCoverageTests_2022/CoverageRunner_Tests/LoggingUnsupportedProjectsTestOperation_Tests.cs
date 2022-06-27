@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;

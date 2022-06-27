@@ -1,5 +1,4 @@
-﻿using FineCodeCoverage.Core.Initialization;
-using FineCodeCoverage.Core.ReportGenerator;
+﻿using FineCodeCoverage.Core.ReportGenerator;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine.Cobertura;
 using FineCodeCoverage.Engine.Model;
@@ -35,17 +34,12 @@ namespace FineCodeCoverage.Engine
         private readonly IEventAggregator eventAggregator;
         private readonly IDisposeAwareTaskRunner disposeAwareTaskRunner;
         private readonly IExecutionTimer executionTimer;
-        private readonly Lazy<IInitializeStatusProvider> lazyInitializeStatusProvider;
 
         [ImportingConstructor]
         public FCCEngine(
             ICoberturaUtil coberturaUtil,
             IReportGeneratorUtil reportGeneratorUtil,
             ILogger logger,
-            /*
-                due to circular import - could go Lazy on MsCodeCoverageRunSettingsService
-            */
-            Lazy<IInitializeStatusProvider> initializeStatusProvider,
             ICoverageToolOutputManager coverageOutputManager,
             ISolutionEvents solutionEvents,
             IAppOptionsProvider appOptionsProvider,
@@ -61,7 +55,6 @@ namespace FineCodeCoverage.Engine
             this.coberturaUtil = coberturaUtil;
             this.reportGeneratorUtil = reportGeneratorUtil;
             this.logger = logger;
-            this.lazyInitializeStatusProvider = initializeStatusProvider;
 
             solutionEvents.AfterClosing += SolutionEvents_AfterClosing;
             appOptionsProvider.OptionsChanged += AppOptionsProvider_OptionsChanged;
@@ -245,11 +238,10 @@ namespace FineCodeCoverage.Engine
             var vsLinkedCancellationTokenSource = Reset();
             var vsShutdownLinkedCancellationToken = vsLinkedCancellationTokenSource.Token;
 
-            disposeAwareTaskRunner.RunAsync(() =>
+            _ = disposeAwareTaskRunner.RunAsync(() =>
             {
                 reloadCoverageTask = Task.Run(async () =>
                 {
-                    await lazyInitializeStatusProvider.Value.WaitForInitializedAsync(vsShutdownLinkedCancellationToken);
                     var result = await reportResultProvider(vsShutdownLinkedCancellationToken);
                     return result;
 

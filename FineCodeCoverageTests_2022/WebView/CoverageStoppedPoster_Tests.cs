@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverageTests.WebView_Tests
+namespace FineCodeCoverageTests.WebView_Tests
 {
     using AutoMoq;
     using FineCodeCoverage.Core.Utilities;
@@ -7,7 +7,8 @@
     using Moq;
     using NUnit.Framework;
 
-    internal class CoverageStoppedPoster_Tests {
+    internal class CoverageStoppedPoster_Tests
+    {
         private AutoMoqer mocker;
         private CoverageStoppedJsonPoster coverageStoppedJsonPoster;
         private Mock<IJsonPoster> mockJsonPoster;
@@ -19,7 +20,7 @@
             this.coverageStoppedJsonPoster = this.mocker.Create<CoverageStoppedJsonPoster>();
 
             this.mockJsonPoster = new Mock<IJsonPoster>();
-            this.coverageStoppedJsonPoster.Ready(this.mockJsonPoster.Object, null);
+            this.coverageStoppedJsonPoster.Initialize(this.mockJsonPoster.Object);
         }
 
         [Test]
@@ -29,11 +30,16 @@
             );
 
         [Test]
-        public void Should_Post_When_Received_Should_Add_Itself_As_Listener_For_CoverageStoppedMessage()
+        public void Should_Have_NotReadyPostBehaviour_As_KeepAll() =>
+            Assert.That(this.coverageStoppedJsonPoster.NotReadyPostBehaviour, Is.EqualTo(NotReadyPostBehaviour.KeepAll));
+
+        [Test]
+        public void Should_Post_When_Received_CoverageStoppedMessage()
         {
             this.coverageStoppedJsonPoster.Handle(new CoverageStoppedMessage());
 
-            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson<object>("coverageStopped", null));
+            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson<object>(this.coverageStoppedJsonPoster.Type, null));
+
         }
 
         [Test]

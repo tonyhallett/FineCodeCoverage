@@ -5,7 +5,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMoq;
-    using FineCodeCoverage.Core.Initialization;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Engine;
     using FineCodeCoverage.Engine.Model;
@@ -16,15 +15,12 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
     {
         protected AutoMoqer Mocker { get; private set; }
 
-        private Mock<IInitializeStatusProvider> mockInitializeStatusProvider;
         private FCCEngine fccEngine;
 
         [SetUp]
         public void SetUp()
         {
             this.Mocker = new AutoMoqer();
-            this.mockInitializeStatusProvider = new Mock<IInitializeStatusProvider>();
-            this.Mocker.SetInstance(new Lazy<IInitializeStatusProvider>(() => this.mockInitializeStatusProvider.Object));
             this.fccEngine = this.Mocker.Create<FCCEngine>();
         }
 
@@ -36,10 +32,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
                 runner => runner.RunAsync(It.IsAny<Func<Task>>())
             )
             .Callback<Func<Task>>(taskProvider => taskProvider());
-
-            _ = this.mockInitializeStatusProvider.Setup(
-                initializeStatusProvider => initializeStatusProvider.WaitForInitializedAsync(It.IsAny<CancellationToken>())
-            ).Returns(Task.CompletedTask);
 
             this.fccEngine.RunCancellableCoverageTask(reportResultProvider, cleanUp);
 

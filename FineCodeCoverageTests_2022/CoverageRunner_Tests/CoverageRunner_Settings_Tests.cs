@@ -1,14 +1,14 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using FineCodeCoverage.Options;
     using Moq;
     using NUnit.Framework;
 
-    internal class TestContainerDiscoverer_Settings_Tests : TestContainerDiscoverer_Tests_Base
+    internal class CoverageRunner_Settings_Tests : CoverageRunner_Tests_Base
     {
         [Test]
         public void Should_Get_Settings_From_AppOptionsProvider() =>
-            Assert.That(this.TestContainerDiscoverer.Settings, Is.SameAs(this.AppOptions));
+            Assert.That(this.CoverageRunner.Settings, Is.SameAs(this.AppOptions));
 
         [Test]
         public void Should_Update_Settings_When_AppOptions_Change()
@@ -16,7 +16,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
             var newAppOptions = new Mock<IAppOptions>().Object;
             this.MockAppOptionsProvider.Raise(appOptionProvider => appOptionProvider.OptionsChanged += null, newAppOptions);
 
-            Assert.That(this.TestContainerDiscoverer.Settings, Is.SameAs(newAppOptions));
+            Assert.That(this.CoverageRunner.Settings, Is.SameAs(newAppOptions));
         }
     }
 }

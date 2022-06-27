@@ -68,9 +68,9 @@ namespace FineCodeCoverage.Core.Utilities
             }
         }
 
-        public void RunAsync(Func<Task> taskProvider)
+        public Task RunAsync(Func<Task> taskProvider)
         {
-            _ = JoinableTaskFactory.RunAsync(taskProvider);
+            return JoinableTaskFactory.RunAsync(taskProvider).Task;
         }
     }
 }

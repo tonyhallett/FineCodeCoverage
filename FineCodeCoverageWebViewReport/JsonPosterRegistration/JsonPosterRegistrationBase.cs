@@ -20,9 +20,13 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
             IHostObject.SetJsonPoster(this);
         }
 
-        public void Ready(IJsonPoster jsonPoster, IWebViewImpl webViewImpl)
+        public void Initialize(IJsonPoster jsonPoster)
         {
             this.jsonPoster = jsonPoster;
+        }
+
+        public void Ready(IWebViewImpl webViewImpl)
+        {
         }
 
         public void Refresh()

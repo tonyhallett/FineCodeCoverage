@@ -29,8 +29,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
             ).Returns(new CancellationTokenSource());
         }
 
-
-
         [Test]
         public void Should_Send_ClearReportMessage_After_Solution_Closes()
         {
@@ -106,26 +104,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
             var mockAppOptions = new Mock<IAppOptions>();
             _ = mockAppOptions.SetupGet(appOptions => appOptions.Enabled).Returns(enabled);
             mockAppOptionsProvider.Raise(appOptionsProvider => appOptionsProvider.OptionsChanged += null, mockAppOptions.Object);
-        }
-    }
-
-    internal class FCCEngine_UI_RunCancellableCoverageTask_Success : FCCEngine_RunCancellableCoverageTask_Test_Base
-    {
-        [Test]
-        public async Task Should_Send_NewCoverageLinesMessage_Async()
-        {
-            var coverageLines = new List<CoverageLine>();
-            await this.RunCancellableCoverageTaskAsync((_) => Task.FromResult(coverageLines));
-
-
-            this.Mocker.Verify<IEventAggregator>(
-                eventAggregator => eventAggregator.SendMessage(
-                    It.Is<NewCoverageLinesMessage>(
-                        newCoverageLinesMessage => newCoverageLinesMessage.CoverageLines == coverageLines
-                    ),
-                    null
-                )
-            );
         }
     }
 }

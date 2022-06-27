@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using Microsoft.VisualStudio.TestWindow.Extensibility;
     using System;
@@ -15,7 +15,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using NUnit.Framework;
 
 
-    internal class TestContainerDiscoverer_Should_Not_Collect_Tests : TestContainerDiscoverer_Tests_Base
+    internal class CoverageRunner_Should_Not_Collect_Tests : CoverageRunner_Tests_Base
     {
         private void SetFCCDisabled() => this.SetUpOptions(
             mockOptions => mockOptions.SetupGet(appOptions => appOptions.Enabled).Returns(false)
@@ -59,7 +59,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         [Test]
         public void When_Cancelling_And_TestExecutionStarting()
         {
-            this.TestContainerDiscoverer.cancelling = true;
+            this.CoverageRunner.cancelling = true;
             this.RaiseTestExecutionStarting();
 
             this.Assert_MsCodeCoverage_Asked_If_Collecting(false);
@@ -82,7 +82,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         [Test]
         public void When_Cancelling_And_TestExecutionFinished()
         {
-            this.TestContainerDiscoverer.cancelling = true;
+            this.CoverageRunner.cancelling = true;
 
             this.RaiseTestExecutionFinished();
         }

@@ -12,20 +12,16 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
     using FineCodeCoverage.Output.JsMessages.Logging;
     using Moq;
     using NUnit.Framework;
-    using FineCodeCoverage.Core.Initialization;
 
     public class FCCEngine_CancellationToken_Tests
     {
         private AutoMoqer mocker;
-        private Mock<IInitializeStatusProvider> mockInitializeStatusProvider;
         private FCCEngine fccEngine;
 
         [SetUp]
         public void SetUp()
         {
             this.mocker = new AutoMoqer();
-            this.mockInitializeStatusProvider = new Mock<IInitializeStatusProvider>();
-            this.mocker.SetInstance(new Lazy<IInitializeStatusProvider>(() => this.mockInitializeStatusProvider.Object));
             this.fccEngine = this.mocker.Create<FCCEngine>();
         }
 
@@ -105,10 +101,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
             )
             .Callback<Func<Task>>(taskProvider => taskProvider());
 
-            _ = mockInitializeStatusProvider.Setup(
-                initializeStatusProvider => initializeStatusProvider.WaitForInitializedAsync(It.IsAny<CancellationToken>())
-            ).Returns(Task.CompletedTask);
-
             var cancellableCoverageTaskCancellationToken = CancellationToken.None;
             this.fccEngine.RunCancellableCoverageTask((ct) =>
             {
@@ -121,30 +113,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
 #pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
 
             Assert.That(cancellableCoverageTaskCancellationToken, Is.EqualTo(linkedCancellationToken));
-        }
-
-        [Test]
-        public async Task Should_WaitForInitializedAsync_With_the_Vs_Linked_CancellationToken_When_RunCancellableCoverageTask_Async()
-        {
-            var vsLinkedCancellationTokenSource = new CancellationTokenSource();
-            var mockDisposeAwareTaskRunner = this.mocker.GetMock<IDisposeAwareTaskRunner>();
-            _ = mockDisposeAwareTaskRunner.Setup(runner => runner.CreateLinkedCancellationTokenSource()).Returns(vsLinkedCancellationTokenSource);
-
-            _ = mockDisposeAwareTaskRunner.Setup(
-                runner => runner.RunAsync(It.IsAny<Func<Task>>())
-            )
-            .Callback<Func<Task>>(taskProvider => taskProvider());
-
-            _ = this.mockInitializeStatusProvider.Setup(
-                initializeStatusProvider => initializeStatusProvider.WaitForInitializedAsync(vsLinkedCancellationTokenSource.Token)
-            ).Returns(Task.CompletedTask);
-
-            this.fccEngine.RunCancellableCoverageTask((_) => Task.FromResult(new List<CoverageLine>()), null);
-
-#pragma warning disable VSTHRD003 // Avoid awaiting foreign Tasks
-            await this.fccEngine.reloadCoverageTask;
-#pragma warning restore VSTHRD003 // Avoid awaiting foreign Tasks
-            this.mockInitializeStatusProvider.VerifyAll();
         }
 
         [Test]
@@ -163,10 +131,6 @@ namespace FineCodeCoverageTests.FCCEngine_Tests
                 this.fccEngine.cancellationTokenSource = laterRunCancellationTokenSource;
                 _ = taskProvider();
             });
-
-            _ = this.mockInitializeStatusProvider.Setup(
-                initializeStatusProvider => initializeStatusProvider.WaitForInitializedAsync(It.IsAny<CancellationToken>())
-            ).Returns(Task.CompletedTask);
 
             this.fccEngine.RunCancellableCoverageTask((_) => Task.FromResult(new List<CoverageLine>()), null);
 

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace FineCodeCoverage.Core.ReportGenerator
 {
-    [Export(typeof(IRequireInitialization))]
+    [Order(3, typeof(IRequireInitialization))]
     internal class StandaloneReportGenerator : IRequireInitialization, IListener<NewReportMessage>
     {
         private readonly IReportFactory reportFactory;

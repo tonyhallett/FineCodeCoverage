@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using Microsoft.VisualStudio.TestWindow.Extensibility;
     using System;
@@ -7,7 +7,6 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using ILogger = FineCodeCoverage.Logging.ILogger;
     using FineCodeCoverage.Impl;
     using NUnit.Framework;
-
     internal class TestRunRequestFactory_Tests
     {
         private class ReflectionErrorOperation : IOperation

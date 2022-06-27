@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using Microsoft.VisualStudio.TestWindow.Extensibility;
     using ILogger = FineCodeCoverage.Logging.ILogger;
@@ -10,16 +10,16 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using Moq;
     using NUnit.Framework;
 
-    internal class TestContainerDiscoverer_Cancellation_Tests : TestContainerDiscoverer_Tests_Base
+    internal class CoverageRunner_Cancellation_Tests : CoverageRunner_Tests_Base
     {
         [Test]
         public void Should_Set_Cancelling_When_TestExecutionCancelling()
         {
-            Assert.That(this.TestContainerDiscoverer.cancelling, Is.False);
+            Assert.That(this.CoverageRunner.cancelling, Is.False);
 
             this.RaiseTestExecutionCancelling();
 
-            Assert.That(this.TestContainerDiscoverer.cancelling);
+            Assert.That(this.CoverageRunner.cancelling);
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         [TestCase(false)]
         public void Should_Log_When_TestExecutionCancelAndFinished_And_Not_Cancelling(bool cancelling)
         {
-            this.TestContainerDiscoverer.cancelling = cancelling;
+            this.CoverageRunner.cancelling = cancelling;
             this.RaiseTestExecutionCancelAndFinished();
 
             var times = cancelling ? Times.Never() : Times.Once();
@@ -58,7 +58,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         [TestCase(false)]
         public void Should_Contextual_Log_To_The_ToolWindow_When_TestExecutionCancelAndFinished_And_Not_Cancelling(bool cancelling)
         {
-            this.TestContainerDiscoverer.cancelling = cancelling;
+            this.CoverageRunner.cancelling = cancelling;
             this.RaiseTestExecutionCancelAndFinished();
 
             this.Mocker.GetMock<IEventAggregator>().AssertHasSimpleLogMessage(!cancelling,
@@ -71,7 +71,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         public void Should_StopCoverage_When_TestExecutionCanceling()
         {
             var mockCoverageService = new Mock<ICoverageService>();
-            this.TestContainerDiscoverer.coverageService = mockCoverageService.Object;
+            this.CoverageRunner.coverageService = mockCoverageService.Object;
 
             this.RaiseTestExecutionCancelling();
 
@@ -83,9 +83,9 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         public void Should_StopCoverage_When_TestExecutionCancelAndFinished(bool cancelling)
         {
             var mockCoverageService = new Mock<ICoverageService>();
-            this.TestContainerDiscoverer.coverageService = mockCoverageService.Object;
+            this.CoverageRunner.coverageService = mockCoverageService.Object;
 
-            this.TestContainerDiscoverer.cancelling = cancelling;
+            this.CoverageRunner.cancelling = cancelling;
 
             this.RaiseTestExecutionCancelAndFinished();
 
@@ -102,7 +102,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
             _ = this.Mocker.GetMock<ITestOperationFactory>()
                 .Setup(testOperationFactory => testOperationFactory.Create(operation))
                 .Returns(testOperation);
-            this.TestContainerDiscoverer.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
+            this.CoverageRunner.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
 
             this.RaiseTestExecutionCancelling(operation);
 
@@ -121,8 +121,8 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
                 .Setup(testOperationFactory => testOperationFactory.Create(operation))
                 .Returns(testOperation);
 
-            this.TestContainerDiscoverer.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
-            this.TestContainerDiscoverer.cancelling = cancelling;
+            this.CoverageRunner.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
+            this.CoverageRunner.cancelling = cancelling;
 
             this.RaiseTestExecutionCancelAndFinished(operation);
 

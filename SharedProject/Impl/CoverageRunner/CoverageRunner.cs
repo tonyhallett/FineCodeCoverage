@@ -1,33 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using FineCodeCoverage.Core;
 using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Options;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.TestWindow.Extensibility;
-using Task = System.Threading.Tasks.Task;
-using Microsoft.VisualStudio.Utilities;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
-using ILogger = FineCodeCoverage.Logging.ILogger;
-using FineCodeCoverage.Output.JsMessages.Logging;
+using FineCodeCoverage.Options;
 using FineCodeCoverage.Output.HostObjects;
 using FineCodeCoverage.Output.JsMessages;
-using FineCodeCoverage.Core;
+using FineCodeCoverage.Output.JsMessages.Logging;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.TestWindow.Extensibility;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using Task = System.Threading.Tasks.Task;
+using ILogger = FineCodeCoverage.Logging.ILogger;
 
 namespace FineCodeCoverage.Impl
 {
-
-    [Name(Vsix.TestContainerDiscovererName)]
-    // Both exports necessary !
-    [Export(typeof(TestContainerDiscoverer))]
-    [Export(typeof(ITestContainerDiscoverer))]
-    internal class TestContainerDiscoverer : ITestContainerDiscoverer
+    [Export(typeof(IOperationStateChangedHandler))]
+    internal class CoverageRunner : IOperationStateChangedHandler
     {
-#pragma warning disable 67
-        public event EventHandler TestContainersUpdated;
-#pragma warning restore 67
         private readonly ITestOperationFactory testOperationFactory;
         private readonly IRunCoverageConditions runCoverageConditions;
         private readonly IAppOptionsProvider appOptionsProvider;
@@ -42,7 +32,7 @@ namespace FineCodeCoverage.Impl
         internal bool cancelling;
         internal bool runningInParallel;
         internal MsCodeCoverageCollectionStatus msCodeCoverageCollectionStatus;
-        
+
         private IAppOptions settings;
         internal IAppOptions Settings
         {
@@ -55,24 +45,13 @@ namespace FineCodeCoverage.Impl
                 return settings;
             }
         }
-        
-        internal Task initializeTask;
 
-        [ExcludeFromCodeCoverage]
-        public Uri ExecutorUri => new Uri($"executor://{Vsix.Code}.Executor/v1");
-        [ExcludeFromCodeCoverage]
-        public IEnumerable<ITestContainer> TestContainers => Enumerable.Empty<ITestContainer>();
         public bool MsCodeCoverageErrored => msCodeCoverageCollectionStatus == MsCodeCoverageCollectionStatus.Error;
 
         [ImportingConstructor]
-        public TestContainerDiscoverer
-        (
-            [Import(typeof(IOperationState))]
-            IOperationState operationState,
+        public CoverageRunner(
             ITestOperationFactory testOperationFactory,
             IRunCoverageConditions runCoverageConditions,
-            [ImportMany]
-            IEnumerable<ITestInstantiationPathAware> testInstantionPathAwares,
             IAppOptionsProvider appOptionsProvider,
             IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService,
             IOldStyleCoverage oldStyleCoverage,
@@ -80,9 +59,6 @@ namespace FineCodeCoverage.Impl
             ILogger logger
         )
         {
-            testInstantionPathAwares.ToList().ForEach(testInstantionPathAware =>
-                testInstantionPathAware.Notify(operationState)
-            );
             this.msCodeCoverageRunSettingsService = msCodeCoverageRunSettingsService;
             this.oldStyleCoverage = oldStyleCoverage;
 
@@ -100,8 +76,11 @@ namespace FineCodeCoverage.Impl
                 { TestOperationStates.TestExecutionCancelAndFinished, TestExecutionCancelAndFinishedAsync},
                 { TestOperationStates.OperationSetFinished, OperationSetFinishedAsync }
             };
+        }
 
-            operationState.StateChanged += OperationState_StateChanged;
+        public void Initialize(IChangingOperationState changingOperationState)
+        {
+            changingOperationState.OperationStateChanged += ChangingOperationState_OperationStateChanged;
         }
 
         private void AppOptionsProvider_OptionsChanged(IAppOptions newSettings)
@@ -109,14 +88,13 @@ namespace FineCodeCoverage.Impl
             settings = newSettings;
         }
 
-        
         #region cancelling
         private Task TestExecutionCancellingAsync(IOperation operation)
         {
             cancelling = true;
             return CoverageCancelledAsync(
-                "Test execution cancelling - running coverage will be cancelled.", 
-                MessageContext.CoverageCancelled, 
+                "Test execution cancelling - running coverage will be cancelled.",
+                MessageContext.CoverageCancelled,
                 operation
             );
         }
@@ -126,8 +104,8 @@ namespace FineCodeCoverage.Impl
             if (!cancelling)
             {
                 return CoverageCancelledAsync(
-                    "There has been an issue running tests. See the Tests output window pane.", 
-                    MessageContext.Error, 
+                    "There has been an issue running tests. See the Tests output window pane.",
+                    MessageContext.Error,
                     operation
                 );
             }
@@ -243,9 +221,9 @@ namespace FineCodeCoverage.Impl
             {
                 return (false, null);
             }
-            
+
             var testOperation = testOperationFactory.Create(operation);
-            
+
             var shouldCollect = runCoverageConditions.Met(testOperation, Settings);
             return (shouldCollect, testOperation);
         }
@@ -257,7 +235,7 @@ namespace FineCodeCoverage.Impl
                 return true;
             }
             return !Settings.Enabled || runningInParallel || MsCodeCoverageErrored;
-            
+
         }
 
         private Task TestExecutionFinishedCollectAsync(IOperation operation, ITestOperation testOperation)
@@ -267,21 +245,21 @@ namespace FineCodeCoverage.Impl
                 coverageService = msCodeCoverageRunSettingsService;
                 return msCodeCoverageRunSettingsService.CollectAsync(operation, testOperation);
             }
-            
-            
+
+
             CollectOldStyleCoverage(testOperation);
             return Task.CompletedTask;
         }
         #endregion
 
-        private void OperationState_StateChanged(object sender, OperationStateChangedEventArgs e)
+        private void ChangingOperationState_OperationStateChanged(object sender, OperationStateChangedEventArgs e)
         {
-            RunAsync(() => TryAndLogExceptionAsync(() => OperationState_StateChangedAsync(e)));
+            RunAsync(() => TryAndLogExceptionAsync(() => ChangingOperationState_StateChangedAsync(e)));
         }
 
         internal Action<Func<Task>> RunAsync = (asyncMethod) => ThreadHelper.JoinableTaskFactory.Run(asyncMethod);
 
-        private Task OperationState_StateChangedAsync(OperationStateChangedEventArgs e)
+        private Task ChangingOperationState_StateChangedAsync(OperationStateChangedEventArgs e)
         {
             if (testOperationStateChangeHandlers.TryGetValue(e.State, out var handler))
             {
@@ -331,7 +309,7 @@ namespace FineCodeCoverage.Impl
             coverageService = null;
             return Task.CompletedTask;
         }
-        
+
         private void StopCoverage()
         {
             if (coverageService != null)
@@ -351,5 +329,7 @@ namespace FineCodeCoverage.Impl
             eventAggregator.SendMessage(LogMessage.Simple(messageContext, message));
             logger.Log(message);
         }
+
     }
+
 }

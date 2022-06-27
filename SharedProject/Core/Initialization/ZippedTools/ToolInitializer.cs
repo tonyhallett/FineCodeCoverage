@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using FineCodeCoverage.Core.Utilities;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FineCodeCoverage.Core.Initialization.ZippedTools
 {
-    [Export(typeof(IRequireInitialization))]
+    [Order(2, typeof(IRequireInitialization))]
     internal class ToolInitializer : IRequireInitialization
     {
         private readonly IAppDataFolder appDataFolder;

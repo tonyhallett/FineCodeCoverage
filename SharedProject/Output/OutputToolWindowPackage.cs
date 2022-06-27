@@ -10,11 +10,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft;
 using FineCodeCoverage.Engine;
 using EnvDTE80;
-using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Logging;
 using System.Linq;
-using FineCodeCoverage.Output.HostObjects;
-using FineCodeCoverage.Core.ReportGenerator.Colours;
 using FineCodeCoverage.Output.WebView;
 using FineCodeCoverage.Core.Initialization;
 
@@ -95,7 +92,7 @@ namespace FineCodeCoverage.Output
 			componentModel = sp.GetService(typeof(Microsoft.VisualStudio.ComponentModelHost.SComponentModel)) as Microsoft.VisualStudio.ComponentModelHost.IComponentModel;
             Assumes.Present(componentModel);
 			componentModel.GetExtensions<IPackageInitializeAware>().ToList()
-				.ForEach((packageInitializeAware) => packageInitializeAware.Notify());
+				.ForEach(packageInitializeAware => packageInitializeAware.PackageInitializing());
 			await OutputToolWindowCommand.InitializeAsync(this, componentModel.GetService<ILogger>());
 			await ClearUICommand.InitializeAsync(this, componentModel.GetService<IFCCEngine>());
 		}

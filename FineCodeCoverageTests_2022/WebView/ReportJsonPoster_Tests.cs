@@ -24,12 +24,8 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.reportJsonPoster = this.mocker.Create<ReportJsonPoster>();
 
             this.mockJsonPoster = new Mock<IJsonPoster>();
-            
-        }
+            this.reportJsonPoster.Initialize(this.mockJsonPoster.Object);
 
-        private void Ready()
-        {
-            this.reportJsonPoster.Ready(this.mockJsonPoster.Object, null);
         }
 
         [Test]
@@ -65,48 +61,30 @@ namespace FineCodeCoverageTests.WebView_Tests
         }
 
         [Test]
-        public void Should_Post_Report_When_Receives_NewReportMessage_And_Readied()
-        {
-            this.Ready();
-
-            var expectedReport = this.SendNewReportMessage();
-
-            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson("report", expectedReport));
-        }
+        public void Should_Have_NotReadyPostBehaviour_As_KeepLast() =>
+            Assert.That(this.reportJsonPoster.NotReadyPostBehaviour, Is.EqualTo(NotReadyPostBehaviour.KeepLast));
 
         [Test]
-        public void Should_Not_Throw_When_Receives_NewReportMessage_And_Not_Readied()
-        {
-            _ = this.SendNewReportMessage();
-        }
-
-        [Test]
-        public void Should_Early_Post_Report_When_Readied()
+        public void Should_Post_Report_When_Receives_NewReportMessage()
         {
             var expectedReport = this.SendNewReportMessage();
 
-            this.Ready();
-
-            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson("report", expectedReport));
+            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson(this.reportJsonPoster.Type, expectedReport));
         }
 
         [Test]
-        public void Should_Post_Null_Report_When_Receives_ClearReportMessage_And_Readied()
+        public void Should_Post_Null_Report_When_Receives_ClearReportMessage()
         {
-            this.Ready();
-            this.mockJsonPoster.Reset();
-
             _ = this.SendNewReportMessage();
 
             this.reportJsonPoster.Handle(new ClearReportMessage());
 
-            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson<IReport>("report", null));
+            this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson<IReport>(this.reportJsonPoster.Type, null));
         }
 
         [Test]
         public void Should_Repost_When_Refresh()
         {
-            this.Ready();
             this.mockJsonPoster.Reset();
 
             _ = this.SendNewReportMessage();

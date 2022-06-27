@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using System;
     using System.Collections.Generic;
@@ -14,11 +14,13 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using Moq;
     using NUnit.Framework;
 
-    internal abstract class TestContainerDiscoverer_Tests_Base
+    internal abstract class CoverageRunner_Tests_Base
     {
+        private Mock<IChangingOperationState> mockChangingOperationState;
+
         protected AutoMoqer Mocker { get; private set; }
         protected IAppOptions AppOptions { get; private set; }
-        protected TestContainerDiscoverer TestContainerDiscoverer { get; private set; }
+        protected CoverageRunner CoverageRunner { get; private set; }
         protected Mock<IAppOptionsProvider> MockAppOptionsProvider { get; private set; }
 
         [SetUp]
@@ -26,11 +28,13 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         {
             this.Mocker = new AutoMoqer();
             this.Mocker.SetEmptyEnumerable<ITestInstantiationPathAware>();
-            this.TestContainerDiscoverer = this.Mocker.Create<TestContainerDiscoverer>();
+            this.CoverageRunner = this.Mocker.Create<CoverageRunner>();
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-            this.TestContainerDiscoverer.RunAsync = (asyncMethod) => asyncMethod().Wait();
+            this.CoverageRunner.RunAsync = (asyncMethod) => asyncMethod().Wait();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
             this.SetUpOptions();
+            this.mockChangingOperationState = new Mock<IChangingOperationState>();
+            this.CoverageRunner.Initialize(this.mockChangingOperationState.Object);
         }
 
         protected void SetUpOptions(Action<Mock<IAppOptions>> setupAppOptions = null)
@@ -75,7 +79,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         protected void RaiseOperationStateChanged(TestOperationStates testOperationStates, IOperation operation = null)
         {
             var args = operation == null ? new OperationStateChangedEventArgs(testOperationStates) : new OperationStateChangedEventArgs(operation, (RequestStates)testOperationStates);
-            this.Mocker.GetMock<IOperationState>().Raise(s => s.StateChanged += null, args);
+            this.mockChangingOperationState.Raise(s => s.OperationStateChanged += null, args);
         }
 
         protected void RaiseTestExecutionStarting(IOperation operation = null) =>

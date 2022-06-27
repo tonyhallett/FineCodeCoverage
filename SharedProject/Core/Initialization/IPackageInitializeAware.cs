@@ -2,6 +2,6 @@
 {
     internal interface IPackageInitializeAware
     {
-        void Notify();
+        void PackageInitializing();
     }
 }

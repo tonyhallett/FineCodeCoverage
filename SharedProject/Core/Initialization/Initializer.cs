@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Engine;
 using FineCodeCoverage.Impl;
-using FineCodeCoverage.Output;
-using Microsoft.VisualStudio.TestWindow.Extensibility;
 using ILogger = FineCodeCoverage.Logging.ILogger;
 
 namespace FineCodeCoverage.Core.Initialization
@@ -20,85 +18,46 @@ namespace FineCodeCoverage.Core.Initialization
     {
         private readonly ILogger logger;
         private readonly IDisposeAwareTaskRunner disposeAwareTaskRunner;
-        private readonly IEnumerable<IRequireInitialization> requiresInitialization;
+        private readonly List<IRequireInitialization> requiresInitialization;
 
         internal const string initializationFailedMessagePrefix = "Initialization failed.  Please check the following error which may be resolved by reopening visual studio which will start the initialization process again.";
         internal int initializeWait = 5000;
         internal Task initializeTask;
+        private bool initializing;
 
         public InitializeStatus InitializeStatus { get; set; } = InitializeStatus.Initializing;
-        private bool Initialized => InitializeStatus == InitializeStatus.Initialized;
-        public string InitializeExceptionMessage { get; set; }
-        private bool startedInitialization = false;
 
         [ImportingConstructor]
         public Initializer(
             [ImportMany]
-            IEnumerable<IRequireInitialization> requiresInitialization,
+            IEnumerable<Lazy<IRequireInitialization,IOrderMetadata>> lazyRequiresInitialization,
             ILogger logger,
             IDisposeAwareTaskRunner disposeAwareTaskRunner
         )
         {
             this.logger = logger;
             this.disposeAwareTaskRunner = disposeAwareTaskRunner;
-            this.requiresInitialization = requiresInitialization;
+            this.requiresInitialization = lazyRequiresInitialization.OrderBy(lazyRequires => lazyRequires.Metadata.Order)
+                .Select(lazyRequires => lazyRequires.Value).ToList();
         }
 
-        
-        #region IInitializeStatusProvider
-        private void ThrowIfInitializationFailed()
-        {
-            if (InitializeStatus == InitializeStatus.Error)
-            {
-                throw new Exception($"{initializationFailedMessagePrefix} {InitializeExceptionMessage}");
-            }
-        }
-
-        private Task WaitForInitializationAsync()
-        {
-            logger.Log(CoverageStatus.Initializing.Message());
-            return Task.Delay(initializeWait);
-        }
-
-        public async Task WaitForInitializedAsync(CancellationToken cancellationToken)
-        {
-            while (true)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                ThrowIfInitializationFailed();
-                if (Initialized)
-                {
-                    return;
-                }
-                await WaitForInitializationAsync();
-            }
-        }
-
-        #endregion
-        
-        void ITestInstantiationPathAware.Notify(IOperationState operationState)
+        public void PackageInitializing()
         {
             InitializeIfNotInitializing();
         }
 
-        void IPackageInitializeAware.Notify()
+        public void TestPathInstantion()
         {
             InitializeIfNotInitializing();
         }
 
         private void InitializeIfNotInitializing()
         {
-            if (!startedInitialization)
+            if (!initializing)
             {
-                startedInitialization = true;
-                disposeAwareTaskRunner.RunAsync(RunInitializeTaskAsync);
+                initializing = true;
+                initializeTask = disposeAwareTaskRunner.RunAsync(InitializeAsync);
             }
-        }
-
-        private Task RunInitializeTaskAsync()
-        {
-            initializeTask = Task.Run(InitializeAsync);
-            return initializeTask;
         }
 
         private Task InitializeAsync()
@@ -115,7 +74,6 @@ namespace FineCodeCoverage.Core.Initialization
             catch (Exception exception)
             {
                 InitializeStatus = InitializeStatus.Error;
-                InitializeExceptionMessage = exception.Message;
                 if (!cancellationToken.IsCancellationRequested)
                 {
                     logger.Log($"Failed Initialization", exception);
@@ -139,6 +97,7 @@ namespace FineCodeCoverage.Core.Initialization
 
             logger.Log($"Initialized");
         }
+
 
     }
 

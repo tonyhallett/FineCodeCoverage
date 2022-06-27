@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace FineCodeCoverage.Output.WebView
 {
+    internal class UnsuccessfulExitCodeException : Exception { 
+        public int ExitCode { get; private set; }
+        public UnsuccessfulExitCodeException(int exitCode, string message) : base(message) { 
+            ExitCode = exitCode;
+        }
+    }
+
     internal class WebViewRuntimeUninstaller : IWebViewRuntimeUninstaller
     {
         private readonly IWebViewRuntimeRegistry webViewRuntimeRegistry;
@@ -35,10 +42,11 @@ namespace FineCodeCoverage.Output.WebView
             {
                 var (exe, arguments) = ExtractArguments(webViewRuntimeRegistryEntries.SilentUninstallCommand);
 
+                
                 var response = await processUtil.ExecuteAsync(new ExecuteRequest { FilePath = exe, Arguments = arguments }, cancellationToken);
                 if (!IsSuccessfulExitCode(response.ExitCode))
                 {
-                    throw new Exception(response.Output);
+                    throw new UnsuccessfulExitCodeException(response.ExitCode, $"Unsuccessful exit code : {response.ExitCode} - {response.Output}");
                 }
             }
 

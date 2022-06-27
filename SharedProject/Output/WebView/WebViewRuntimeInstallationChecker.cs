@@ -8,22 +8,20 @@ namespace FineCodeCoverage.Output.WebView
     [Export(typeof(IWebViewRuntimeInstallationChecker))]
     internal class WebViewRuntimeInstallationChecker : IWebViewRuntimeInstallationChecker
     {
+        private readonly IWebViewRuntimeRegistry webViewRuntimeRegistry;
+
+        [ImportingConstructor]
+        public WebViewRuntimeInstallationChecker(
+            IWebViewRuntimeRegistry webViewRuntimeRegistry    
+        )
+        {
+            this.webViewRuntimeRegistry = webViewRuntimeRegistry;
+        }
+
         public bool IsInstalled()
         {
-            var installed = false;
-            //     Gets the browser version info including channel name if it is not the stable
-            //     channel or WebView2 Runtime.
-
-            //   T:Microsoft.Web.WebView2.Core.WebView2RuntimeNotFoundException:
-            //     WebView2 Runtime installation is missing.
-            try
-            {
-                CoreWebView2Environment.GetAvailableBrowserVersionString();
-                installed = true;
-            }
-            catch (WebView2RuntimeNotFoundException) { }
-
-            return installed;
+            var isInstalled = webViewRuntimeRegistry.GetEntries() != null;
+            return isInstalled;
         }
     }
 }

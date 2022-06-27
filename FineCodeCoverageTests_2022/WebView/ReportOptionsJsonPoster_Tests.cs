@@ -25,19 +25,23 @@ namespace FineCodeCoverageTests.WebView_Tests
 
             this.mockJsonPoster = new Mock<IJsonPoster>();
 
-            this.reportOptionsJsonPoster.Ready(this.mockJsonPoster.Object, null);
+            this.reportOptionsJsonPoster.Initialize(this.mockJsonPoster.Object);
         }
 
         private void VerifyPostsReportOptions(ReportOptions reportOptions) =>
             this.mockJsonPoster.Verify(
                 jsonPoster => jsonPoster.PostJson(
-                    "reportOptions",
+                    this.reportOptionsJsonPoster.Type,
                     Parameter.Is<ReportOptions>().That(Is.SameAs(reportOptions))
                 )
             );
 
         [Test]
-        public void Should_Post_ReportOptions_From_The_ReportOptionsProvider_When_Ready() =>
+        public void Should_Have_NotReadyPostBehaviour_As_KeepLast() =>
+            Assert.That(this.reportOptionsJsonPoster.NotReadyPostBehaviour, Is.EqualTo(NotReadyPostBehaviour.KeepLast));
+
+        [Test]
+        public void Should_Post_ReportOptions_From_The_ReportOptionsProvider() =>
             this.VerifyPostsReportOptions(this.reportOptions);
 
         [Test]
@@ -61,8 +65,4 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.mockJsonPoster.AssertReInvokes();
         }
     }
-
-
-
-
 }

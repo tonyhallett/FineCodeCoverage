@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using System;
     using FineCodeCoverage.Logging;
@@ -8,7 +8,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using Moq;
     using NUnit.Framework;
 
-    internal class TestContainerDiscoverer_Exceptions_Tests : TestContainerDiscoverer_Tests_Base
+    internal class CoverageRunner_Exceptions_Tests : CoverageRunner_Tests_Base
     {
         private readonly Exception exception = new Exception("an exception");
 
@@ -17,7 +17,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         {
             var mockCoverageService = new Mock<ICoverageService>();
             _ = mockCoverageService.Setup(coverageService => coverageService.StopCoverage()).Throws(this.exception);
-            this.TestContainerDiscoverer.coverageService = mockCoverageService.Object;
+            this.CoverageRunner.coverageService = mockCoverageService.Object;
 
             this.RaiseTestExecutionStarting();
         }

@@ -83,8 +83,13 @@ namespace FineCodeCoverageTests.WebView_Tests
 
             this.stylingJsonPoster = mocker.Create<StylingJsonPoster>();
 
-            this.stylingJsonPoster.Ready(this.mockJsonPoster.Object, mockWebViewImpl.Object);
+            this.stylingJsonPoster.Initialize(this.mockJsonPoster.Object);
+            this.stylingJsonPoster.Ready(mockWebViewImpl.Object);
         }
+
+        [Test, Apartment(ApartmentState.STA)]
+        public void Should_Have_NotReadyPostBehaviour_As_KeepLast() =>
+            Assert.That(this.stylingJsonPoster.NotReadyPostBehaviour, Is.EqualTo(NotReadyPostBehaviour.KeepLast));
 
         [Test, Apartment(ApartmentState.STA)] // in reality the implementation immediately changes
         public void Should_Not_Post_Until_EnvironmentFont_Changes()
@@ -96,7 +101,7 @@ namespace FineCodeCoverageTests.WebView_Tests
         [Test, Apartment(ApartmentState.STA)]
         public void Should_Post_Styling_With_Environment_Font_Details_When_EnvironmentFont_Changes() =>
             this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson(
-                "styling",
+                this.stylingJsonPoster.Type,
                 It.Is<Styling>(styling => styling.fontName == "Arial" && styling.fontSize == "10px"))
             );
 
@@ -108,7 +113,7 @@ namespace FineCodeCoverageTests.WebView_Tests
                 { "Category1", new Dictionary<string,string>{ { "Category1Colour1", "rgba(2,3,4,1)"}} }
             };
             this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson(
-                "styling",
+                this.stylingJsonPoster.Type,
                 Parameter.Is<Styling>().That(styling => styling.categoryColours, Is.EqualTo(expectedCategoryColours))
             ));
         }
@@ -139,7 +144,7 @@ namespace FineCodeCoverageTests.WebView_Tests
             };
 
             this.mockJsonPoster.Verify(jsonPoster => jsonPoster.PostJson(
-                "styling",
+                this.stylingJsonPoster.Type,
                 Parameter.Is<Styling>().That(styling => styling.categoryColours, Is.EqualTo(expectedCategoryColours))
             ));
 
@@ -153,8 +158,4 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.mockJsonPoster.AssertReInvokes();
         }
     }
-
-
-
-
 }

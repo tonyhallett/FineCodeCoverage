@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
-using FineCodeCoverage.Engine;
+using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Output;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -10,7 +10,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Core.Initialization
 {
-    [Export(typeof(IRequireInitialization))]
+    [Order(0, typeof(IRequireInitialization))]
     internal class PackageInitializer : IRequireInitialization
     {
         private readonly IServiceProvider serviceProvider;

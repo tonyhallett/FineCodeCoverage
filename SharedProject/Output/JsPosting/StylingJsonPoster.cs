@@ -17,16 +17,24 @@ namespace FineCodeCoverage.Output.JsPosting
 		private readonly IEnvironmentFont environmentFont;
 		public const string PostType = "styling";
 
-		[ImportingConstructor]
+        public string Type => PostType;
+
+        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepLast;
+
+        [ImportingConstructor]
 		public StylingJsonPoster(IReportColoursProvider reportColoursProvider, IEnvironmentFont environmentFont)
 		{
 			this.reportColoursProvider = reportColoursProvider;
 			this.environmentFont = environmentFont;
 		}
 
-		public void Ready(IJsonPoster jsonPoster, IWebViewImpl webViewImpl)
-		{
+		public void Initialize(IJsonPoster jsonPoster)
+        {
 			this.jsonPoster = jsonPoster;
+		}
+
+		public void Ready(IWebViewImpl webViewImpl)
+		{
 			InitializeStyling(webViewImpl.FrameworkElement);
 		}
 

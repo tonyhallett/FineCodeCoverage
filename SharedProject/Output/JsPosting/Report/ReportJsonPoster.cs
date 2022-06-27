@@ -14,17 +14,24 @@ namespace FineCodeCoverage.Output.JsPosting
         private readonly IReportFactory reportFactory;
 		public const string PostType = "report";
 
-		[ImportingConstructor]
+        public string Type => PostType;
+
+		public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepLast;
+
+        [ImportingConstructor]
 		public ReportJsonPoster(IEventAggregator eventAggregator, IReportFactory reportFactory)
 		{
 			eventAggregator.AddListener(this);
             this.reportFactory = reportFactory;
         }
 
-		public void Ready(IJsonPoster jsonPoster, IWebViewImpl webViewImpl)
-		{
+		public void Initialize(IJsonPoster jsonPoster)
+        {
 			this.jsonPoster = jsonPoster;
-			PostReport();
+		}
+
+		public void Ready(IWebViewImpl webViewImpl)
+		{
 		}
 
 		public void Refresh()
@@ -34,10 +41,7 @@ namespace FineCodeCoverage.Output.JsPosting
 
 		private void PostReport()
 		{
-			if (jsonPoster != null)
-			{
-				jsonPoster.PostJson(PostType, report);
-			}
+			jsonPoster.PostJson(PostType, report);
 		}
 
 		public void Handle(ClearReportMessage message)

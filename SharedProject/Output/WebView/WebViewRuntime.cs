@@ -1,4 +1,5 @@
 ﻿using FineCodeCoverage.Core.Initialization;
+using FineCodeCoverage.Core.Utilities;
 using System;
 using System.ComponentModel.Composition;
 using System.Threading;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 namespace FineCodeCoverage.Output.WebView
 {
     [Export(typeof(IWebViewRuntime))]
-    [Export(typeof(IRequireInitialization))]
+    [Order(1, typeof(IRequireInitialization))]
     internal class WebViewRuntime : IWebViewRuntime, IRequireInitialization
     {
         private readonly IWebViewRuntimeInstallationChecker installationChecker;
@@ -23,31 +24,22 @@ namespace FineCodeCoverage.Output.WebView
             this.webViewRuntimeInstaller = webViewRuntimeInstaller;
         }
 
-        public bool IsInstalled { get; private set; }
+
+        public bool IsInstalled => installationChecker.IsInstalled();
 
         public event EventHandler Installed;
 
         public async Task InitializeAsync(CancellationToken cancellationToken)
         {
-            if (installationChecker.IsInstalled())
+            if (!IsInstalled)
             {
-                RaiseIsInstalled();
-            }
-            else
-            {
-                await InstallWithUIAsync(cancellationToken);
+                await InstallWithoutUIAsync(cancellationToken);
             }
         }
 
-        private async Task InstallWithUIAsync(CancellationToken cancellationToken)
+        private async Task InstallWithoutUIAsync(CancellationToken cancellationToken)
         {
-            await webViewRuntimeInstaller.InstallAsync(cancellationToken, false);
-            RaiseIsInstalled();
-        }
-
-        private void RaiseIsInstalled()
-        {
-            IsInstalled = true;
+            await webViewRuntimeInstaller.InstallAsync(cancellationToken, true);
             Installed?.Invoke(this, new EventArgs());
         }
     }

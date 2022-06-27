@@ -20,6 +20,7 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.logMessageJsonPoster = this.mocker.Create<LogMessageJsonPoster>();
 
             this.mockJsonPoster = new Mock<IJsonPoster>();
+            this.logMessageJsonPoster.Initialize(this.mockJsonPoster.Object);
         }
 
         [Test]
@@ -29,35 +30,19 @@ namespace FineCodeCoverageTests.WebView_Tests
             );
 
         [Test]
-        public void Should_Post_Early_LogMessages_When_Ready()
+        public void Should_PostJson_LogMessage_When_Receives()
         {
-            var logMessage1 = new LogMessage();
-            var logMessage2 = new LogMessage();
-            this.logMessageJsonPoster.Handle(logMessage1);
-            this.logMessageJsonPoster.Handle(logMessage2);
-
-            this.logMessageJsonPoster.Ready(this.mockJsonPoster.Object, null);
-
-            this.VerifyLogsMessage(logMessage1);
-            this.VerifyLogsMessage(logMessage2);
-        }
-
-        [Test]
-        public void Should_PostJson_LogMessage_When_Receives_And_Ready()
-        {
-            this.logMessageJsonPoster.Ready(this.mockJsonPoster.Object, null);
-
             var logMessage = new LogMessage();
             this.logMessageJsonPoster.Handle(logMessage);
 
-            this.VerifyLogsMessage(logMessage);
+            this.mockJsonPoster.Verify(
+                jsonPoster => jsonPoster.PostJson(this.logMessageJsonPoster.Type, logMessage)
+            );
         }
 
         [Test]
-        public void Should_Not_Refresh()
+        public void Should_Not_Repost_When_Refresh()
         {
-            this.logMessageJsonPoster.Ready(this.mockJsonPoster.Object, null);
-
             var logMessage = new LogMessage();
             this.logMessageJsonPoster.Handle(logMessage);
             this.mockJsonPoster.Reset();
@@ -67,9 +52,9 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.mockJsonPoster.VerifyNoOtherCalls();
         }
 
-        private void VerifyLogsMessage(LogMessage logMessage) =>
-            this.mockJsonPoster.Verify(
-                jsonPoster => jsonPoster.PostJson("message", logMessage)
-            );
+        [Test]
+        public void Should_Have_NotReadyPostBehaviour_As_KeepAll() =>
+            Assert.That(this.logMessageJsonPoster.NotReadyPostBehaviour, Is.EqualTo(NotReadyPostBehaviour.KeepAll));
+
     }
 }

@@ -9,7 +9,6 @@ namespace FineCodeCoverage.Output.JsPosting
     internal class CoverageStoppedJsonPoster : IPostJson, IListener<CoverageStoppedMessage>
     {
         private IJsonPoster jsonPoster;
-        private bool earlyCoverageStopped;
 
         [ImportingConstructor]
         public CoverageStoppedJsonPoster(IEventAggregator eventAggregator)
@@ -17,32 +16,23 @@ namespace FineCodeCoverage.Output.JsPosting
             eventAggregator.AddListener(this);
         }
 
+        public string Type => "coverageStopped";
+
+        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepAll;
+
         public void Handle(CoverageStoppedMessage message)
         {
-            if (jsonPoster != null)
-            {
-                PostJson();
-            }
-            else
-            {
-                earlyCoverageStopped = true;
-            }
-            
+            jsonPoster.PostJson<object>(Type, null);
         }
 
-        private void PostJson()
-        {
-            jsonPoster.PostJson<object>("coverageStopped", null);
-        }
-
-        public void Ready(IJsonPoster jsonPoster, IWebViewImpl webViewImpl)
+        public void Initialize(IJsonPoster jsonPoster)
         {
             this.jsonPoster = jsonPoster;
-            if (earlyCoverageStopped)
-            {
-                earlyCoverageStopped = false;
-                PostJson();
-            }
+        }
+
+        public void Ready(IWebViewImpl webViewImpl)
+        {
+            
         }
 
         public void Refresh()

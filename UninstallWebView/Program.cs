@@ -20,7 +20,13 @@ namespace UninstallWebView
                 See issue comment - is 19 a successful uninstall code
                 https://github.com/MicrosoftEdge/WebView2Feedback/issues/2317#issuecomment-1165536731
             */
-            catch { }
+            catch (UnsuccessfulExitCodeException exitCodeException)
+            {
+                if (exitCodeException.ExitCode != 19)
+                {
+                    throw exitCodeException;
+                }
+            }
         }
     }
 }

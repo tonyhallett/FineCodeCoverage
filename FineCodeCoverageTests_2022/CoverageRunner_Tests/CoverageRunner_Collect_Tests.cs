@@ -1,4 +1,4 @@
-namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
+namespace FineCodeCoverageTests.CoverageRunner_Tests
 {
     using Microsoft.VisualStudio.TestWindow.Extensibility;
     using ILogger = FineCodeCoverage.Logging.ILogger;
@@ -11,7 +11,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
     using Moq;
     using NUnit.Framework;
 
-    internal class TestContainerDiscoverer_Collect_Tests : TestContainerDiscoverer_Tests_Base
+    internal class CoverageRunner_Collect_Tests : CoverageRunner_Tests_Base
     {
         private void SetupMsCodeCoverageIsCollecting(MsCodeCoverageCollectionStatus msCodeCoverageCollectionStatus) =>
             _ = this.Mocker.GetMock<IMsCodeCoverageRunSettingsService>()
@@ -39,7 +39,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         public void Should_Stop_Coverage_When_When_TestExecutionStarting()
         {
             var mockCoverageService = new Mock<ICoverageService>();
-            this.TestContainerDiscoverer.coverageService = mockCoverageService.Object;
+            this.CoverageRunner.coverageService = mockCoverageService.Object;
 
             this.RaiseTestExecutionStarting();
 
@@ -70,7 +70,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 
             this.RaiseTestExecutionStarting();
 
-            Assert.That(this.TestContainerDiscoverer.msCodeCoverageCollectionStatus, Is.EqualTo(msCodeCoverageCollectionStatus));
+            Assert.That(this.CoverageRunner.msCodeCoverageCollectionStatus, Is.EqualTo(msCodeCoverageCollectionStatus));
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         [Test]
         public void Should_Collect_With_The_MS_Code_Coverage_When_TestExecutionFinished_And_It_Is_Collecting()
         {
-            this.TestContainerDiscoverer.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
+            this.CoverageRunner.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
             var operation = new Mock<IOperation>().Object;
             var testOperation = this.SetupTestOperationFactory(operation).Object;
             this.SetupRunCoverageConditionsMet();
@@ -124,13 +124,13 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
         [Test]
         public void Should_Set_The_CoverageService_To_Ms_Code_Coverage_When_Collects_With_It()
         {
-            this.TestContainerDiscoverer.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
+            this.CoverageRunner.msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.Collecting;
             this.SetupRunCoverageConditionsMet();
 
             this.RaiseTestExecutionFinished();
 
             Assert.That(
-                this.TestContainerDiscoverer.coverageService,
+                this.CoverageRunner.coverageService,
                 Is.SameAs(this.Mocker.GetMock<IMsCodeCoverageRunSettingsService>().Object)
             );
         }
@@ -157,7 +157,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 
             this.RaiseTestExecutionStarting();
 
-            Assert.That(this.TestContainerDiscoverer.runningInParallel, Is.True);
+            Assert.That(this.CoverageRunner.runningInParallel, Is.True);
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
 
             this.RaiseTestExecutionStarting();
 
-            Assert.That(this.TestContainerDiscoverer.coverageService, Is.SameAs(this.Mocker.GetMock<IOldStyleCoverage>().Object));
+            Assert.That(this.CoverageRunner.coverageService, Is.SameAs(this.Mocker.GetMock<IOldStyleCoverage>().Object));
         }
 
         [Test]
@@ -193,7 +193,7 @@ namespace FineCodeCoverageTests.TestContainerDiscoverer_Tests
             this.RaiseTestExecutionFinished();
 
             Assert.That(
-                this.TestContainerDiscoverer.coverageService,
+                this.CoverageRunner.coverageService,
                 Is.SameAs(this.Mocker.GetMock<IOldStyleCoverage>().Object)
             );
 

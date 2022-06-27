@@ -10,18 +10,27 @@ namespace FineCodeCoverage.Output.JsPosting
         private IJsonPoster jsonPoster;
         ReportOptions reportOptions;
 
+        public string Type => "reportOptions";
+
+        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepLast;
+
         [ImportingConstructor]
         public ReportOptionsJsonPoster(IReportOptionsProvider reportOptionsProvider)
         {
             this.reportOptionsProvider = reportOptionsProvider;
         }
 
-        public void Ready(IJsonPoster jsonPoster, IWebViewImpl webViewImpl)
+        public void Initialize(IJsonPoster jsonPoster)
         {
             this.jsonPoster = jsonPoster;
             reportOptionsProvider.ReportOptionsChanged += ReportOptionsProvider_ReportOptionsChanged;
             this.reportOptions = reportOptionsProvider.Provide();
             PostReportOptions();
+        }
+
+        public void Ready(IWebViewImpl webViewImpl)
+        {
+            
         }
 
         private void ReportOptionsProvider_ReportOptionsChanged(object sender, ReportOptions newReportOptions)
@@ -37,7 +46,7 @@ namespace FineCodeCoverage.Output.JsPosting
 
         private void PostReportOptions()
         {
-            jsonPoster.PostJson("reportOptions", reportOptions);
+            jsonPoster.PostJson(Type, reportOptions);
         }
     }
 

@@ -68,7 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\ICoverageService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ICoverageUtilManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IEnvironmentVariable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\IFCCEngine.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Engine\IFCCEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IMessageBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IRequireInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\ZippedTools\ZipDetails.cs" />
@@ -221,6 +221,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\GlyphMargin\CoverageLineGlyphTaggerProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\Provider\ICoverageColours.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\Provider\ICoverageColoursProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\ChangingOperationStateArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\ChangingOperationStateWhenInitialized.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\CoverageRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\IChangingOperationState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\IOperationStateChangedHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\Logging\FCCOutputPane.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\Logging\IFCCOutputPane.cs" />
@@ -229,26 +234,26 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\OverviewMargin\PartiallyCoveredEditorFormatDefinition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\RunSettingsRetriever.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ShowFCCOutputPaneMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ITestInstantiationPathAware.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ITestRunRequestFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\Container.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\ContainerData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\ITestInstantiationPathAware.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\Reflection\ITestRunRequestFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\Reflection\ReflectObject\Container.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\Reflection\ReflectObject\ContainerData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\IInitializeStatusProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\Initializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\InitializeStatus.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\IRunCoverageConditions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ITestOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ITestOperationFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\LoggingUnsupportedProjectsTestOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\RunCoverageConditions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\TestRunRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\IRunCoverageConditions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\ITestOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\ITestOperationFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\LoggingUnsupportedProjectsTestOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\RunCoverageConditions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\Reflection\ReflectObject\TestRunRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\PackageInitializer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\TestConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\TestContainerDiscoverer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\TestOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\TestOperationFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\TestRunResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\TestRunRequestFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\Reflection\ReflectObject\TestConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\TestExplorerInstantiationHook.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\TestOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\TestOperationFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\Reflection\ReflectObject\TestRunResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\CoverageRunner\Reflection\TestRunRequestFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\Vsix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Options\AppOptionsPage.cs">
       <SubType>Component</SubType>
@@ -365,7 +370,6 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Core\ReportGenerator\Colours\Vs\Reflection\" />
     <Folder Include="$(MSBuildThisFileDirectory)Impl\CoverageColour\Provider\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Reflection\ReflectObject\" />
     <Folder Include="$(MSBuildThisFileDirectory)Output\Commands\" />
   </ItemGroup>
 </Project>

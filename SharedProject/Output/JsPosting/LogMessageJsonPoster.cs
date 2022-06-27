@@ -1,7 +1,6 @@
 ﻿using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Output.JsMessages.Logging;
 using FineCodeCoverage.Output.WebView;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
 namespace FineCodeCoverage.Output.JsPosting
@@ -9,12 +8,14 @@ namespace FineCodeCoverage.Output.JsPosting
 	[Export(typeof(IPostJson))]
 	internal class LogMessageJsonPoster : IPostJson, IListener<LogMessage>
 	{
-		private readonly List<LogMessage> earlyLogMessages = new List<LogMessage>();
 		private IJsonPoster jsonPoster;
-		private bool ready;
 		public const string PostType = "message";
 
-		[ImportingConstructor]
+        public string Type => PostType;
+
+        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepAll;
+
+        [ImportingConstructor]
 		public LogMessageJsonPoster(IEventAggregator eventAggregator)
 		{
 			eventAggregator.AddListener(this);
@@ -25,30 +26,18 @@ namespace FineCodeCoverage.Output.JsPosting
 			jsonPoster.PostJson(PostType, message);
 		}
 
-		private void PostEarlyLogMessages()
-		{
-			earlyLogMessages.ForEach(logMessage => PostLogMessage(logMessage));
-			earlyLogMessages.Clear();
+		public void Initialize(IJsonPoster jsonPoster)
+        {
+			this.jsonPoster = jsonPoster;
 		}
 
 		public void Handle(LogMessage message)
 		{
-			if (ready)
-			{
-				PostLogMessage(message);
-			}
-			else
-			{
-				earlyLogMessages.Add(message);
-			}
-
+			PostLogMessage(message);
 		}
 
-		public void Ready(IJsonPoster jsonPoster, IWebViewImpl webViewImpl)
+		public void Ready(IWebViewImpl webViewImpl)
 		{
-			this.jsonPoster = jsonPoster;
-			ready = true;
-			PostEarlyLogMessages();
 		}
 
 		public void Refresh()
