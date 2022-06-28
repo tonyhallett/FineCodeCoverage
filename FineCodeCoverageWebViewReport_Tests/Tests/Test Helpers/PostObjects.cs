@@ -8,7 +8,7 @@ namespace FineCodeCoverageWebViewReport_Tests
 
     internal static class PostObjects
     {
-        public static readonly Report Report = new Report
+        public static Report CreateReport(string firstClassName = "Class1") => new Report
         {
             summaryResult = new SummaryResultJson
             {
@@ -18,8 +18,8 @@ namespace FineCodeCoverageWebViewReport_Tests
                         {
                             new ClassJson
                             {
-                                name = "Class1",
-                                displayName = "Class1",
+                                name = firstClassName,
+                                displayName = firstClassName,
                                 assemblyIndex = 0,
                                 files = new List<CodeFileJson>
                                 {

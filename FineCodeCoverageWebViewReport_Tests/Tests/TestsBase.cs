@@ -1,6 +1,8 @@
 namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
+    using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using NUnit.Framework;
+    using OpenQA.Selenium;
     using OpenQA.Selenium.Edge;
     using System.IO;
     using System.Reflection;
@@ -51,6 +53,15 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 
         }
 
+
+        protected IWebElement FindTabPanel(string tabPanelToReturn)
+        {
+            this.EdgeDriver.SelectTab(tabPanelToReturn);
+
+            return this.EdgeDriver.FindNonHiddenTabpanel();
+        }
+
+        protected IWebElement FindCoverageTabPanel() => this.FindTabPanel("Coverage");
 
         [TearDown]
         public void TearDown() => this.EdgeDriver.Quit();

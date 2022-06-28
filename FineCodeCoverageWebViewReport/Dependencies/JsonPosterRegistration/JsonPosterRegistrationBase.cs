@@ -5,23 +5,12 @@ using Newtonsoft.Json;
 
 namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
 {
-    internal abstract class JsonPosterRegistrationBase<TData> : IWebViewHostObjectRegistration, IPostJson, IRegJsonPoster
-    {
+    internal abstract class JsonPosterBase : IPostJson {
         protected IJsonPoster jsonPoster;
+        
+        public abstract string Type { get; }
+        public abstract NotReadyPostBehaviour NotReadyPostBehaviour { get; }
 
-        public abstract string Name { get; }
-        protected abstract string PostType { get; }
-
-        public string Type => PostType;
-        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepAll;
-
-        private readonly IHostObject IHostObject = new HostObject();
-        public object HostObject => IHostObject;
-
-        public JsonPosterRegistrationBase()
-        {
-            IHostObject.SetJsonPoster(this);
-        }
 
         public void Initialize(IJsonPoster jsonPoster)
         {
@@ -34,13 +23,33 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
 
         public void Refresh()
         {
-                
+
         }
 
+        public void PostJson(object postObject)
+        {
+            this.jsonPoster.PostJson(
+                Type,
+                postObject
+            );
+        }
+    }
+
+
+    internal abstract class JsonPosterRegistrationBase<TData> : JsonPosterBase, IRegJsonPoster, IWebViewHostObjectRegistration
+    {
+        public abstract string Name { get; }
+        private readonly IHostObject IHostObject = new HostObject();
+        public object HostObject => IHostObject;
+
+        public JsonPosterRegistrationBase()
+        {
+            IHostObject.SetJsonPoster(this);
+        }
         public void PostJson(string data)
         {
             this.jsonPoster.PostJson(
-                PostType, 
+                Type, 
                 JsonConvert.DeserializeObject(data, typeof(TData), new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.Auto,

@@ -1,14 +1,15 @@
 ﻿using FineCodeCoverage.Core.Initialization;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Output.HostObjects;
-using FineCodeCoverage.Output.JsPosting;
 using FineCodeCoverage.Output.JsSerialization;
 using FineCodeCoverage.Output.WebView;
 using FineCodeCoverageWebViewReport.InvocationsRecordingRegistration;
 using FineCodeCoverageWebViewReport.JsonPosterRegistration;
 using FineCodeCoverageWebViewReport.WebViewControllerDependencies;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -18,6 +19,8 @@ namespace FineCodeCoverageWebViewReport
     {
         public static IWebViewController Provide(string[] arguments)
         {
+            var namedArguments = NamedArguments.Get(arguments);
+
             var stylingJsonPosterRegistration = new StylingJsonPosterRegistration();
             var reportJsonPosterRegistration = new ReportJsonPosterRegistration();
             var logJsonPosterRegistration = new LogJsonPosterRegistration();
@@ -32,7 +35,7 @@ namespace FineCodeCoverageWebViewReport
                 new FCCOutputPaneInvocationsRecordingRegistration()
             };
 
-            var jsonPosters = new List<IPostJson> {
+            var jsonPosters = new List<JsonPosterBase> {
                 stylingJsonPosterRegistration,
                 reportJsonPosterRegistration,
                 logJsonPosterRegistration
@@ -62,6 +65,17 @@ namespace FineCodeCoverageWebViewReport
                 )
             );
 
+            if (namedArguments.TryGetValue(NamedArguments.EarlyPostsPath, out var earlyPostsPath))
+            {
+                var earlyPosts = JsonConvert.DeserializeObject<List<ToEarlyPost>>(File.ReadAllText(earlyPostsPath));
+                foreach(var earlyPost in earlyPosts)
+                {
+                    var earlyPoster = jsonPosters.First(jsonPoster => jsonPoster.Type == earlyPost.Type);
+                    earlyPoster.PostJson(earlyPost.PostObject);
+                }
+            }
+
+
             webViewController.ExecuteOnMainThreadAsync = (action) =>
             {
                 Application.Current.Dispatcher.Invoke(action);
@@ -74,24 +88,24 @@ namespace FineCodeCoverageWebViewReport
         private static IReportPathsProvider GetReportPathsProvider(string[] arguments)
         {
             IReportPathsProvider reportPathsProvider;
-            if (arguments.Length > 0)
+            var namedArguments = NamedArguments.Get(arguments);
+            var hasReportPathsDebug = namedArguments.TryGetValue(NamedArguments.ReportPathsDebug, out var reportPathsDebug);
+            if (hasReportPathsDebug)
             {
-                var namedArguments = NamedArguments.Get(arguments);
-                var hasReportPathsDebug = namedArguments.TryGetValue(NamedArguments.ReportPathsDebug, out var reportPathsDebug);
-                if (hasReportPathsDebug)
-                {
-                    reportPathsProvider = new ReportPathsProvider() { debug = bool.Parse(reportPathsDebug) };
-                }
-                else
-                {
-                    var reportPathsPath = namedArguments[NamedArguments.ReportPathsPath];
-                    var serializedReportPaths = File.ReadAllText(reportPathsPath);
-                    reportPathsProvider = new ControlledReportPathsProvider(ReportPaths.Deserialize(serializedReportPaths));
-                }
+                reportPathsProvider = new ReportPathsProvider() { debug = bool.Parse(reportPathsDebug) };
             }
             else
             {
-                reportPathsProvider = new ReportPathsProvider() { debug = false };
+                var hasReportPathsPath = namedArguments.TryGetValue(NamedArguments.ReportPathsPath, out var reportPathsPath);
+                if (hasReportPathsPath)
+                {
+                    var serializedReportPaths = File.ReadAllText(reportPathsPath);
+                    reportPathsProvider = new ControlledReportPathsProvider(ReportPaths.Deserialize(serializedReportPaths));
+                }
+                else
+                {
+                    reportPathsProvider = new ReportPathsProvider() { debug = false };
+                }
             }
 
             return reportPathsProvider;

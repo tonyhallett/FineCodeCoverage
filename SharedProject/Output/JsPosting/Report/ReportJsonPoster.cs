@@ -15,8 +15,8 @@ namespace FineCodeCoverage.Output.JsPosting
 		public const string PostType = "report";
 
         public string Type => PostType;
-
-		public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepLast;
+		public const NotReadyPostBehaviour NotReadyBehaviour = NotReadyPostBehaviour.KeepLast;
+		public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyBehaviour;
 
         [ImportingConstructor]
 		public ReportJsonPoster(IEventAggregator eventAggregator, IReportFactory reportFactory)

@@ -59,27 +59,28 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ControlledReportPathsProvider.cs" />
-    <Compile Include="FileLogger.cs" />
-    <Compile Include="InvocationsRecordingRegistration\FCCOutputPaneInvocationsHostObject.cs" />
-    <Compile Include="InvocationsRecordingRegistration\FCCOutputPaneInvocationsRecordingRegistration.cs" />
-    <Compile Include="InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsHostObject.cs" />
-    <Compile Include="InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsRecordingRegistration.cs" />
-    <Compile Include="InvocationsRecordingRegistration\Invocation.cs" />
-    <Compile Include="InvocationsRecordingRegistration\InvocationsRecordingHostObject.cs" />
-    <Compile Include="InvocationsRecordingRegistration\SourceFileOpenerInvocationsHostObject.cs" />
-    <Compile Include="InvocationsRecordingRegistration\SourceFileOpenerInvocationsRecordingRegistration.cs" />
-    <Compile Include="JsonPosterRegistration\HostObject.cs" />
-    <Compile Include="JsonPosterRegistration\IHostObject.cs" />
-    <Compile Include="JsonPosterRegistration\IRegJsonPoster.cs" />
-    <Compile Include="JsonPosterRegistration\JsonPosterRegistrationBase.cs" />
-    <Compile Include="JsonPosterRegistration\LogJsonPosterRegistration.cs" />
-    <Compile Include="JsonPosterRegistration\ReportJsonPosterRegistration.cs" />
-    <Compile Include="JsonPosterRegistration\StylingJsonPosterRegistration.cs" />
+    <Compile Include="Dependencies\ControlledReportPathsProvider.cs" />
+    <Compile Include="Dependencies\FileLogger.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\FCCOutputPaneInvocationsHostObject.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\FCCOutputPaneInvocationsRecordingRegistration.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsHostObject.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\FCCResourcesNavigatorInvocationsRecordingRegistration.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\Invocation.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\InvocationsRecordingHostObject.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\SourceFileOpenerInvocationsHostObject.cs" />
+    <Compile Include="Dependencies\InvocationsRecordingRegistration\SourceFileOpenerInvocationsRecordingRegistration.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\HostObject.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\IHostObject.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\IRegJsonPoster.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\JsonPosterRegistrationBase.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\LogJsonPosterRegistration.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\ReportJsonPosterRegistration.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\StylingJsonPosterRegistration.cs" />
     <Compile Include="NamedArguments.cs" />
-    <Compile Include="NoEnvironmentVariable.cs" />
-    <Compile Include="NoToolsDirectoryAppOptionsProvider.cs" />
-    <Compile Include="ReportPaths.cs" />
+    <Compile Include="Dependencies\NoEnvironmentVariable.cs" />
+    <Compile Include="Dependencies\NoToolsDirectoryAppOptionsProvider.cs" />
+    <Compile Include="Dependencies\ReportPaths.cs" />
+    <Compile Include="ToEarlyPost.cs" />
     <Compile Include="WebViewControllerProvider.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

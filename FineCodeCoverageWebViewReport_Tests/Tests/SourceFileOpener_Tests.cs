@@ -11,28 +11,21 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     {
         [SetUp]
         public void PostReport() => this.EdgeDriver.ExecutePostBack(
-            ReportJsonPosterRegistration.RegistrationName, PostObjects.Report
+            ReportJsonPosterRegistration.RegistrationName, PostObjects.CreateReport()
         );
 
-        private IWebElement FindClassOpenerButton(IWebElement coverageTabPanel, int rowIndex)
+        private IWebElement FindClassOpener(IWebElement coverageTabPanel, int rowIndex)
         {
             var firstRowGroup = this.EdgeDriver.WaitUntil(() => coverageTabPanel.FindElementByRole("rowgroup"), 5);
             var row = firstRowGroup.FindElementsByRole("row").ElementAt(rowIndex);
             return row.FindElementByAriaLabel("Open in Visual Studio");
         }
 
-        private IWebElement FindTabPanel(string tabPanelToReturn)
-        {
-            this.EdgeDriver.SelectTab(tabPanelToReturn);
-
-            return this.EdgeDriver.FindNonHiddenTabpanel();
-        }
-
         private Invocation Click_Summary_Class_Open_Button(int row)
         {
-            var coverageTabPanel = this.FindTabPanel("Coverage");
+            var coverageTabPanel = this.FindCoverageTabPanel();
 
-            var classOpenerButton = this.FindClassOpenerButton(coverageTabPanel, row);
+            var classOpenerButton = this.FindClassOpener(coverageTabPanel, row);
             classOpenerButton.Click();
 
             return this.EdgeDriver.GetSourceFileOpenerHostObjectInvocation();

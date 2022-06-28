@@ -6,11 +6,13 @@ namespace FineCodeCoverageWebViewReport
     {
         public const string ReportPathsDebug = "reportpathsdebug";
         public const string ReportPathsPath = "reportpathspath";
+        public const string EarlyPostsPath = "earlypostspath";
 
         public static string GetNamedArgument(string name, string value)
         {
             return $"--{name}={value}";
         }
+        
         internal static Dictionary<string, string> Get(string[] arguments)
         {
             Dictionary<string, string> namedArguments = new Dictionary<string, string>();

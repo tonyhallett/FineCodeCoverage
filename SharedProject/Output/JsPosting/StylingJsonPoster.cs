@@ -9,7 +9,7 @@ using System.Windows;
 namespace FineCodeCoverage.Output.JsPosting
 {
 	[Export(typeof(IPostJson))]
-	internal class StylingJsonPoster : IPostJson
+    internal class StylingJsonPoster : IPostJson
 	{
 		private Styling styling;
 		private IJsonPoster jsonPoster;
@@ -18,8 +18,9 @@ namespace FineCodeCoverage.Output.JsPosting
 		public const string PostType = "styling";
 
         public string Type => PostType;
+		public const NotReadyPostBehaviour NotReadyBehaviour = NotReadyPostBehaviour.KeepLast;
 
-        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepLast;
+		public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyBehaviour;
 
         [ImportingConstructor]
 		public StylingJsonPoster(IReportColoursProvider reportColoursProvider, IEnvironmentFont environmentFont)

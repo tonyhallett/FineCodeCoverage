@@ -9,6 +9,8 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
 
         public override string Name => RegistrationName;
 
-        protected override string PostType => LogMessageJsonPoster.PostType;
+        public override NotReadyPostBehaviour NotReadyPostBehaviour => LogMessageJsonPoster.NotReadyBehaviour;
+
+        public override string Type => LogMessageJsonPoster.PostType;
     }
 }

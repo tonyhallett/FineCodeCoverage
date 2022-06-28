@@ -12,8 +12,9 @@ namespace FineCodeCoverage.Output.JsPosting
 		public const string PostType = "message";
 
         public string Type => PostType;
+		public const NotReadyPostBehaviour NotReadyBehaviour = NotReadyPostBehaviour.KeepAll;
 
-        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepAll;
+		public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyBehaviour;
 
         [ImportingConstructor]
 		public LogMessageJsonPoster(IEventAggregator eventAggregator)
