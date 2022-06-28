@@ -29,7 +29,7 @@ namespace FineCodeCoverage.Output.WebView
 
         public event EventHandler Installed;
 
-        public async Task InitializeAsync(CancellationToken cancellationToken)
+        public async Task InitializeAsync(bool testExplorerInstantiation, CancellationToken cancellationToken)
         {
             if (!IsInstalled)
             {

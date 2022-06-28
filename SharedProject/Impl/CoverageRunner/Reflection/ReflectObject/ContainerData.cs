@@ -9,12 +9,14 @@ namespace FineCodeCoverage.Impl
     {
         public ContainerData(object toReflect) : base(toReflect) { }
         public ContainerData() { } // tests
+
         [ReflectFlags(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic)]
         public string ProjectFilePath { get; set; }
+        
         [ReflectFlags(BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic)]
         public Guid Id { get; set; }
 
-        [ReflectFlags(BindingFlags.Instance | BindingFlags.NonPublic)]
+        [ReflectFlags(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)]
         public Func<string, string, Task<string>> GetBuildPropertyAsync { get; protected set; }
     }
 }

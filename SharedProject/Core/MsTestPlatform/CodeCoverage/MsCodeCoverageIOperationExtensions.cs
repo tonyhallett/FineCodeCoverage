@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestWindow.Extensibility;
+using FineCodeCoverage.Impl;
 
 namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
 {
-    public static class MsCodeCoverageIOperationExtensions
+    internal static class MsCodeCoverageIOperationExtensions
     {
-        public static IEnumerable<Uri> GetRunSettingsMsDataCollectorResultUri(this IOperation operation)
+        public static IEnumerable<Uri> GetRunSettingsMsDataCollectorResultUri(this ITestOperation operation)
         {
             return operation.GetRunSettingsDataCollectorResultUri(new Uri(RunSettingsHelper.MsDataCollectorUri));
         }

@@ -12,6 +12,9 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
         public abstract string Name { get; }
         protected abstract string PostType { get; }
 
+        public string Type => PostType;
+        public NotReadyPostBehaviour NotReadyPostBehaviour => NotReadyPostBehaviour.KeepAll;
+
         private readonly IHostObject IHostObject = new HostObject();
         public object HostObject => IHostObject;
 

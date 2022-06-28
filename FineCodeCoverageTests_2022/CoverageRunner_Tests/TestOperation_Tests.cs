@@ -8,6 +8,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
     using FineCodeCoverage.Engine.Model;
     using FineCodeCoverage.Impl;
     using FineCodeCoverage.Options;
+    using Microsoft.VisualStudio.TestWindow.Extensibility;
     using Moq;
     using NUnit.Framework;
 
@@ -74,7 +75,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
                     FailedTests = 42
                 }
             };
-            var testOperation = new TestOperation(testRunRequest, null, null);
+            var testOperation = new TestOperation(testRunRequest, null, null, null);
 
             Assert.That(testOperation.FailedTests, Is.EqualTo(42));
         }
@@ -86,7 +87,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
             {
                 TotalTests = 42
             };
-            var testOperation = new TestOperation(testRunRequest, null, null);
+            var testOperation = new TestOperation(testRunRequest, null, null, null);
 
             Assert.That(testOperation.TotalTests, Is.EqualTo(42));
         }
@@ -101,7 +102,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
                     SolutionDirectory = "SolnDirectory"
                 }
             };
-            var testOperation = new TestOperation(testRunRequest, null, null);
+            var testOperation = new TestOperation(testRunRequest, null, null, null);
 
             Assert.That(testOperation.SolutionDirectory, Is.EqualTo("SolnDirectory"));
         }
@@ -164,7 +165,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
                 Setup(coverageProjectFactory => coverageProjectFactory.CreateAsync()).
                 ReturnsAsync(() => new TestCoverageProject());
 
-            var testOperation = new TestOperation(testRunRequest, mockCoverageProjectFactory.Object, mockRunSettingsRetriever.Object);
+            var testOperation = new TestOperation(testRunRequest, mockCoverageProjectFactory.Object, mockRunSettingsRetriever.Object, null);
 
             var coverageProjects = await testOperation.GetCoverageProjectsAsync();
             Assert.That(coverageProjects, Has.Count.EqualTo(2));
@@ -221,12 +222,25 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
                 Configuration = testConfiguration
             };
 
-            var testOperation = new TestOperation(testRunRequest, null, null);
+            var testOperation = new TestOperation(testRunRequest, null, null, null);
 
             _ = await testOperation.GetCoverageProjectsAsync();
 
             Assert.That(testOperation.UnsupportedProjects, Is.EqualTo(new List<string> { "Unsupported1", "Unsupported2" }));
 
+        }
+
+        [Test]
+        public void Should_GetRunSettingsDataCollectorResultUri_From_The_IOperation()
+        {
+            var mockOperation = new Mock<IOperation>();
+            var collectorUri = new Uri("datacollector://ADataCollectorUri");
+            var resultUrisFromOperation = new List<Uri>();
+            _ = mockOperation.Setup(operation => operation.GetRunSettingsDataCollectorResultUri(collectorUri)).Returns(resultUrisFromOperation);
+
+            var testOperation = new TestOperation(null, null, null, mockOperation.Object);
+            var resultUris = testOperation.GetRunSettingsDataCollectorResultUri(collectorUri);
+            Assert.That(resultUris, Is.SameAs(resultUrisFromOperation));
         }
     }
 }

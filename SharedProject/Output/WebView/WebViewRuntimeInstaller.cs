@@ -12,6 +12,9 @@ namespace FineCodeCoverage.Output.WebView
     {
         private readonly IProcessUtil processUtil;
         private readonly IEnvironment environment;
+        private ProcessUtil processUtil1;
+
+        public WebViewRuntimeInstaller(ProcessUtil processUtil1) => this.processUtil1 = processUtil1;
 
         [ImportingConstructor]
         public WebViewRuntimeInstaller(

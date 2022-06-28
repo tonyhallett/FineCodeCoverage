@@ -6,10 +6,16 @@ namespace FineCodeCoverageTests.WebView_Tests
     using FineCodeCoverage.Output.WebView;
     using NUnit.Framework;
 
+    [TestFixture(true)]
+    [TestFixture(false)]
     internal class WebViewRuntime_Tests
     {
         private AutoMoqer mocker;
         private WebViewRuntime webViewRuntime;
+        private readonly bool testExplorerInstantiation;
+
+        public WebViewRuntime_Tests(bool testExplorerInstantiation) =>
+            this.testExplorerInstantiation = testExplorerInstantiation;
 
         [SetUp]
         public void SetUp()
@@ -18,60 +24,32 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.webViewRuntime = this.mocker.Create<WebViewRuntime>();
         }
 
-        [Test]
-        public void Should_Initially_Not_Be_Installed() =>
-            Assert.That(this.webViewRuntime.IsInstalled, Is.False);
-
-        private Task InitializeInstalledAsync()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Should_Be_Installed_When_WebViewRuntimeInstallationChecker_IsInstalled(bool isInstalled)
         {
             _ = this.mocker.GetMock<IWebViewRuntimeInstallationChecker>()
-                .Setup(webViewRuntimeInstallationChecker => webViewRuntimeInstallationChecker.IsInstalled())
-                .Returns(true);
+                .Setup(checker => checker.IsInstalled()).Returns(isInstalled);
 
-            return this.webViewRuntime.InitializeAsync(CancellationToken.None);
-        }
+            Assert.That(this.webViewRuntime.IsInstalled, Is.EqualTo(isInstalled));
 
-        [Test]
-        public async Task Should_Raise_Installed_Event_When_Initialize_And_Is_Already_Installed_Async()
-        {
-            var raisedInstalledEvent = false;
-            this.webViewRuntime.Installed += (sender, args) => raisedInstalledEvent = true;
-
-            await this.InitializeInstalledAsync();
-
-            Assert.That(raisedInstalledEvent, Is.True);
-
-        }
-
-        [Test]
-        public async Task Should_Be_Installed_When_Initialize_And_Is_Already_Installed_Async()
-        {
-            await this.InitializeInstalledAsync();
-
-            Assert.That(this.webViewRuntime.IsInstalled, Is.True);
         }
 
         private async Task<CancellationToken> InitializeNotInstalledAsync()
         {
             var cancellationToken = CancellationToken.None;
-            await this.webViewRuntime.InitializeAsync(cancellationToken);
+            await this.webViewRuntime.InitializeAsync(this.testExplorerInstantiation, cancellationToken);
             return cancellationToken;
         }
 
-        [Test] // if did silently would need the FCC Tool Window to display as installation takes some time
+        [Test]
         public async Task Should_Install_Without_UI_When_Initialize_And_Is_Not_Installed_Async()
         {
             var cancellationToken = await this.InitializeNotInstalledAsync();
 
-            this.mocker.Verify<IWebViewRuntimeInstaller>(webViewRuntimeInstaller => webViewRuntimeInstaller.InstallAsync(cancellationToken, true));
-        }
-
-        [Test]
-        public async Task Should_Be_Installed_After_Installer_Installs_Async()
-        {
-            _ = await this.InitializeNotInstalledAsync();
-
-            Assert.That(this.webViewRuntime.IsInstalled, Is.True);
+            this.mocker.Verify<IWebViewRuntimeInstaller>(
+                webViewRuntimeInstaller => webViewRuntimeInstaller.InstallAsync(cancellationToken, true)
+            );
         }
 
         [Test]

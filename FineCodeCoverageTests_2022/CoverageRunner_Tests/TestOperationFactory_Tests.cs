@@ -28,6 +28,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
                 Assert.That(testOperation.testRunRequest, Is.SameAs(testRunRequest));
                 Assert.That(testOperation.runSettingsRetriever, Is.SameAs(mocker.GetMock<IRunSettingsRetriever>().Object));
                 Assert.That(testOperation.coverageProjectFactory, Is.SameAs(mocker.GetMock<ICoverageProjectFactory>().Object));
+                Assert.That(testOperation.operation, Is.SameAs(operation));
             });
         }
     }

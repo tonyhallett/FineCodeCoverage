@@ -127,7 +127,7 @@ namespace FineCodeCoverage.Core.ReportGenerator
             return GetVariable("styling", styling);
         }
 
-        public Task InitializeAsync(CancellationToken cancellationToken)
+        public Task InitializeAsync(bool testExplorerInstantiation, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

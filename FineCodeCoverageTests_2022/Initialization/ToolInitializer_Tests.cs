@@ -8,8 +8,12 @@ namespace FineCodeCoverageTests.Initialization_Tests
     using FineCodeCoverage.Core.Initialization.ZippedTools;
     using NUnit.Framework;
 
+    [TestFixture(true)]
+    [TestFixture(false)]
     public class ToolInitializer_Tests
     {
+        private readonly bool testExplorerInstantiation;
+
         private class TestRequireToolUnzipping : IRequireToolUnzipping
         {
             public TestRequireToolUnzipping(string zipDirectoryName, string zipPrefix)
@@ -25,6 +29,9 @@ namespace FineCodeCoverageTests.Initialization_Tests
 
             public void SetZipDestination(string zipDestination) => this.ZipDestination = zipDestination;
         }
+
+        public ToolInitializer_Tests(bool testExplorerInstantiation) =>
+            this.testExplorerInstantiation = testExplorerInstantiation;
 
         [Test]
         public async Task Should_Ensure_Unzipped_For_All_IRequireToolUnzipping_Setting_Zip_Destination_Async()
@@ -62,7 +69,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
 
             var toolInitializer = mocker.Create<ToolInitializer>();
 
-            await toolInitializer.InitializeAsync(cancellationToken);
+            await toolInitializer.InitializeAsync(this.testExplorerInstantiation, cancellationToken);
 
             Assert.Multiple(() =>
             {

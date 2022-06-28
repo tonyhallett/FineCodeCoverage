@@ -24,6 +24,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
         private readonly CancellationToken disposeAwareToken = CancellationToken.None;
         private readonly Action initialize;
         private readonly Action initializeOther;
+        private readonly bool testExplorerInstantiation;
         private class OrderMetadata : IOrderMetadata
         {
             public OrderMetadata(int order) => this.Order = order;
@@ -32,6 +33,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
 
         public Initializer_Tests(bool initializedFromPackage)
         {
+            this.testExplorerInstantiation = !initializedFromPackage;
             this.initialize = initializedFromPackage ?
                 this.InitializeFromPackage : (Action)this.InitializeFromTestInstantiation;
             this.initializeOther = !initializedFromPackage ?
@@ -40,7 +42,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
 
         private void InitializeFromPackage() => this.initializer.PackageInitializing();
 
-        private void InitializeFromTestInstantiation() => this.initializer.TestPathInstantion();
+        private void InitializeFromTestInstantiation() => this.initializer.TestExplorerInstantion();
 
         [SetUp]
         public void SetUp()
@@ -52,7 +54,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
             };
             this.mocker.SetInstance(
                 this.mocksRequireInitialization.Select(
-                    (mockRequireInitialization, order) => new Lazy<IRequireInitialization,IOrderMetadata>(
+                    (mockRequireInitialization, order) => new Lazy<IRequireInitialization, IOrderMetadata>(
                         () => mockRequireInitialization.Object,
                         new OrderMetadata(-order)
                     )
@@ -80,7 +82,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
             var exception = new Exception("initialize exception");
             exceptionCallback?.Invoke(exception);
             _ = this.mocksRequireInitialization[0].Setup(
-                requiresInitialization => requiresInitialization.InitializeAsync(this.disposeAwareToken)
+                requiresInitialization => requiresInitialization.InitializeAsync(this.testExplorerInstantiation, this.disposeAwareToken)
             ).ThrowsAsync(exception);
 
             return this.InitializeAsync();
@@ -91,6 +93,7 @@ namespace FineCodeCoverageTests.Initialization_Tests
         {
             var mockRequiresInitialization = this.mocksRequireInitialization[0];
             _ = mockRequiresInitialization.Setup(requireInitialization => requireInitialization.InitializeAsync(
+                this.testExplorerInstantiation,
                 It.IsAny<CancellationToken>())
             ).Callback(() => Assert.That(this.initializer.InitializeStatus, Is.EqualTo(InitializeStatus.Initializing)));
 
@@ -153,11 +156,11 @@ namespace FineCodeCoverageTests.Initialization_Tests
 
             var firstMockInitialized = false;
             _ = firstMockRequiresInitialization
-                .Setup(requireInitialization => requireInitialization.InitializeAsync(this.disposeAwareToken))
+                .Setup(requireInitialization => requireInitialization.InitializeAsync(this.testExplorerInstantiation, this.disposeAwareToken))
                 .Callback(() => firstMockInitialized = true);
 
             _ = secondMockRequiresInitialization
-                .Setup(requireInitialization => requireInitialization.InitializeAsync(this.disposeAwareToken))
+                .Setup(requireInitialization => requireInitialization.InitializeAsync(this.testExplorerInstantiation, this.disposeAwareToken))
                 .Callback(() => Assert.That(firstMockInitialized, Is.False));
 
             await this.InitializeAsync();

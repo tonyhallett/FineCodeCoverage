@@ -29,7 +29,7 @@ namespace FineCodeCoverage.Core.Initialization.ZippedTools
             this.toolZipProvider = toolZipProvider;
         }
 
-        public Task InitializeAsync(CancellationToken cancellationToken)
+        public Task InitializeAsync(bool testExplorerInstantiation, CancellationToken cancellationToken)
         {
             var appDataDirectoryPath = appDataFolder.GetDirectoryPath(); 
             foreach (var requireToolUnzipping in requiresToolUnzipping)

@@ -57,7 +57,7 @@ namespace FineCodeCoverageWebViewReport
                 fileUtil,
                 reportPathsProvider,
                 new WebViewRuntime(
-                    new WebViewRuntimeInstallationChecker(), 
+                    new WebViewRuntimeInstallationChecker(new WebViewRuntimeRegistry()), 
                     new WebViewRuntimeInstaller(new ProcessUtil(), new EnvironmentWrapper())
                 )
             );

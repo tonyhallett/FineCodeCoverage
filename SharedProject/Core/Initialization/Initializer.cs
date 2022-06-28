@@ -24,6 +24,7 @@ namespace FineCodeCoverage.Core.Initialization
         internal int initializeWait = 5000;
         internal Task initializeTask;
         private bool initializing;
+        private bool isTestExplorerInstantiation;
 
         public InitializeStatus InitializeStatus { get; set; } = InitializeStatus.Initializing;
 
@@ -46,8 +47,9 @@ namespace FineCodeCoverage.Core.Initialization
             InitializeIfNotInitializing();
         }
 
-        public void TestPathInstantion()
+        public void TestExplorerInstantion()
         {
+            isTestExplorerInstantiation = true;
             InitializeIfNotInitializing();
         }
 
@@ -88,7 +90,7 @@ namespace FineCodeCoverage.Core.Initialization
             foreach (var requireInitialization in requiresInitialization)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await requireInitialization.InitializeAsync(cancellationToken);
+                await requireInitialization.InitializeAsync(isTestExplorerInstantiation, cancellationToken);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

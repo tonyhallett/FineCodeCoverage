@@ -23,13 +23,16 @@ namespace FineCodeCoverageTests.WebView_Tests
         private Mock<IPostJson> mockPostJson2;
         private AutoMoqer mocker;
         private const string NavigationPath = @"C:\Users\user\Html\index.html";
+
         [SetUp]
         public void SetUp()
         {
             this.mocker = new AutoMoqer();
             this.mocker.SetEmptyEnumerable<IWebViewHostObjectRegistration>();
             this.mockPostJson1 = new Mock<IPostJson>();
+            _ = this.mockPostJson1.SetupGet(postJson => postJson.Type).Returns("type1");
             this.mockPostJson2 = new Mock<IPostJson>();
+            _ = this.mockPostJson2.SetupGet(postJson => postJson.Type).Returns("type2");
             this.mocker.SetInstance<IEnumerable<IPostJson>>(
                 new List<IPostJson> { this.mockPostJson1.Object, this.mockPostJson2.Object }
             );

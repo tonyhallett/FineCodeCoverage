@@ -163,9 +163,9 @@ namespace FineCodeCoverage.Output.WebView
             this.jsonPosters = jsonPosters.ToList();
 			this.jsonPosters.ForEach(jsonPoster =>
 			{
-				jsonPoster.Initialize(this);
 				earlyPosts.AddJsonPoster(jsonPoster);
-            });
+				jsonPoster.Initialize(this);
+			});
 
 			var reportPaths = reportPathsProvider.Provide();
             if (reportPaths.ShouldWatch)

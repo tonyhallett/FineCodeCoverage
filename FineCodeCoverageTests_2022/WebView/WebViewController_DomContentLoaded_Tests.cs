@@ -24,7 +24,9 @@ namespace FineCodeCoverageTests.WebView_Tests
         public void SetUp()
         {
             this.mockJsonPoster1 = new Mock<IPostJson>();
+            _ = this.mockJsonPoster1.SetupGet(jsonPoster => jsonPoster.Type).Returns("type1");
             this.mockJsonPoster2 = new Mock<IPostJson>();
+            _ = this.mockJsonPoster2.SetupGet(jsonPoster => jsonPoster.Type).Returns("type2");
 
             var mocker = new AutoMoqer();
             mocker.SetEmptyEnumerable<IWebViewHostObjectRegistration>();
@@ -54,12 +56,12 @@ namespace FineCodeCoverageTests.WebView_Tests
 
         }
 
-        //[Test]
-        //public void Should_Ready_Json_Posters()
-        //{
-        //    this.mockJsonPoster1.Verify(jsonPoster1 => jsonPoster1.Ready(this.webViewController, this.mockWebView.Object));
-        //    this.mockJsonPoster2.Verify(jsonPoster2 => jsonPoster2.Ready(this.webViewController, this.mockWebView.Object));
-        //}
+        [Test]
+        public void Should_Ready_Json_Posters()
+        {
+            this.mockJsonPoster1.Verify(jsonPoster1 => jsonPoster1.Ready(this.mockWebView.Object));
+            this.mockJsonPoster2.Verify(jsonPoster2 => jsonPoster2.Ready(this.mockWebView.Object));
+        }
 
         [Test]
         public void Should_Make_The_WebView_Visible() =>

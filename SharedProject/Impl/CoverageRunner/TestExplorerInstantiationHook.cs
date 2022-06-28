@@ -29,7 +29,7 @@ namespace FineCodeCoverage.Impl
         )
         {
             testInstantionPathAwares.ToList()
-                .ForEach(testInstantionPathAware => testInstantionPathAware.TestPathInstantion());
+                .ForEach(testInstantionPathAware => testInstantionPathAware.TestExplorerInstantion());
         }
     }
 }

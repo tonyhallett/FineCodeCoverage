@@ -11,7 +11,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
     using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
     using FineCodeCoverage.Impl;
     using FineCodeCoverage.Options;
-    using Microsoft.VisualStudio.TestWindow.Extensibility;
     using Moq;
     using NUnit.Framework;
 
@@ -118,12 +117,9 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
                 )
             ).Returns(coverageLines);
 
-            var mockOperation = new Mock<IOperation>();
-            _ = mockOperation.Setup(operation => operation.GetRunSettingsDataCollectorResultUri(new Uri(RunSettingsHelper.MsDataCollectorUri))).Returns(resultsUris);
-
-
             // IsCollecting
             var mockTestOperation = new Mock<ITestOperation>();
+            _ = mockTestOperation.Setup(testOperation => testOperation.GetRunSettingsDataCollectorResultUri(new Uri(RunSettingsHelper.MsDataCollectorUri))).Returns(resultsUris);
             this.runSettingsCoverageProject = this.CreateCoverageProject(".runsettings");
             var coverageProjects = new List<ICoverageProject>
             {
@@ -137,7 +133,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage_Tests
                 .Returns(new Mock<IAppOptions>().Object);
             _ = await msCodeCoverageRunSettingsService.IsCollectingAsync(mockTestOperation.Object);
 
-            await msCodeCoverageRunSettingsService.CollectAsync(mockOperation.Object, mockTestOperation.Object);
+            await msCodeCoverageRunSettingsService.CollectAsync(mockTestOperation.Object);
             var processedCoverageLines = await resultProvider(vsLinkedCancellationToken);
 
             Assert.That(processedCoverageLines, Is.SameAs(coverageLines));

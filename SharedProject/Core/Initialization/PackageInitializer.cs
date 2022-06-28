@@ -27,27 +27,31 @@ namespace FineCodeCoverage.Core.Initialization
             this.appDataFolder = appDataFolder;
         }
 
-        public async Task InitializeAsync(CancellationToken cancellationToken)
+        public async Task InitializeAsync(bool testExplorerInstantiation, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            if (serviceProvider.GetService(typeof(SVsShell)) is IVsShell shell)
+            if (testExplorerInstantiation)
             {
-                var packageToBeLoadedGuid = new Guid(OutputToolWindowPackage.PackageGuidString);
-                shell.LoadPackage(ref packageToBeLoadedGuid, out var _);
-                
-                var outputWindowInitializedFile = Path.Combine(appDataFolder.GetDirectoryPath(), "outputWindowInitialized");
+                cancellationToken.ThrowIfCancellationRequested();
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                if (File.Exists(outputWindowInitializedFile))
+                if (serviceProvider.GetService(typeof(SVsShell)) is IVsShell shell)
                 {
-                    await OutputToolWindowCommand.Instance.FindToolWindowAsync();
-                }
-                else
-                {
-                    // for first time users, the window is automatically docked 
-                    await OutputToolWindowCommand.Instance.ShowToolWindowAsync();
-                    File.WriteAllText(outputWindowInitializedFile, string.Empty);
+                    var packageToBeLoadedGuid = new Guid(OutputToolWindowPackage.PackageGuidString);
+                    shell.LoadPackage(ref packageToBeLoadedGuid, out var _);
+
+                    var outputWindowInitializedFile = Path.Combine(appDataFolder.GetDirectoryPath(), "outputWindowInitialized");
+
+                    if (File.Exists(outputWindowInitializedFile))
+                    {
+                        // bizarelly vs 2022 will show whereas 2019 will not
+                        await OutputToolWindowCommand.Instance.FindToolWindowAsync();
+                    }
+                    else
+                    {
+                        // for first time users, the window is automatically docked 
+                        await OutputToolWindowCommand.Instance.ShowToolWindowAsync();
+                        File.WriteAllText(outputWindowInitializedFile, string.Empty);
+                    }
                 }
             }
 

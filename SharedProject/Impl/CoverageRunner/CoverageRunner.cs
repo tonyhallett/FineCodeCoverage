@@ -210,7 +210,7 @@ namespace FineCodeCoverage.Impl
             var (should, testOperation) = ShouldConditionallyCollectWhenTestExecutionFinished(operation);
             if (should)
             {
-                return TestExecutionFinishedCollectAsync(operation, testOperation);
+                return TestExecutionFinishedCollectAsync(testOperation);
             }
             return Task.CompletedTask;
         }
@@ -238,12 +238,12 @@ namespace FineCodeCoverage.Impl
 
         }
 
-        private Task TestExecutionFinishedCollectAsync(IOperation operation, ITestOperation testOperation)
+        private Task TestExecutionFinishedCollectAsync(ITestOperation testOperation)
         {
             if (msCodeCoverageCollectionStatus == MsCodeCoverageCollectionStatus.Collecting)
             {
                 coverageService = msCodeCoverageRunSettingsService;
-                return msCodeCoverageRunSettingsService.CollectAsync(operation, testOperation);
+                return msCodeCoverageRunSettingsService.CollectAsync(testOperation);
             }
 
 

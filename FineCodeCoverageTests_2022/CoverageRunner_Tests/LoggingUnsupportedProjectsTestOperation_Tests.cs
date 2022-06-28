@@ -8,6 +8,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
     using FineCodeCoverage.Impl;
     using Moq;
     using NUnit.Framework;
+    using System;
 
     internal class LoggingUnsupportedProjectsTestOperation_Tests
     {
@@ -70,6 +71,20 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
 
             IEnumerable<string> expectedLogged = new List<string> { "Unsupported projects: ", "Unsupported1", "Unsupported2" };
             this.mocker.Verify<ILogger>(logger => logger.Log(expectedLogged));
+        }
+
+        [Test]
+        public void Should_GetRunSettingsDataCollectorResultUri_From_Wrapped()
+        {
+            var collectorUri = new Uri("datacollector://ADataCollectorUri");
+            var resultUrisFromWrapped = new List<Uri>();
+            _ = this.mocker.GetMock<ITestOperation>()
+                .Setup(wrapped => wrapped.GetRunSettingsDataCollectorResultUri(collectorUri)).Returns(resultUrisFromWrapped);
+
+            Assert.That(
+                this.loggingUnsupportedProjectsTestOperation.GetRunSettingsDataCollectorResultUri(collectorUri),
+                Is.SameAs(resultUrisFromWrapped)
+            );
         }
     }
 }

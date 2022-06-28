@@ -5,6 +5,6 @@ namespace FineCodeCoverage.Core.Initialization
 {
     internal interface IRequireInitialization
     {
-        Task InitializeAsync(CancellationToken cancellationToken);
+        Task InitializeAsync(bool testExplorerInstantiation, CancellationToken cancellationToken);
     }
 }

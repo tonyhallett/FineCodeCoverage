@@ -60,7 +60,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
 
         protected void Assert_Ms_Code_Coverage_Not_Collecting() =>
             this.Mocker.Verify<IMsCodeCoverageRunSettingsService>(
-                msCodeCoverage => msCodeCoverage.CollectAsync(It.IsAny<IOperation>(), It.IsAny<ITestOperation>()),
+                msCodeCoverage => msCodeCoverage.CollectAsync(It.IsAny<ITestOperation>()),
                 Times.Never()
             );
 

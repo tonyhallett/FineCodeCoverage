@@ -23,14 +23,13 @@ namespace FineCodeCoverage.Output.JsPosting
         public void Initialize(IJsonPoster jsonPoster)
         {
             this.jsonPoster = jsonPoster;
-            reportOptionsProvider.ReportOptionsChanged += ReportOptionsProvider_ReportOptionsChanged;
-            this.reportOptions = reportOptionsProvider.Provide();
-            PostReportOptions();
         }
 
         public void Ready(IWebViewImpl webViewImpl)
         {
-            
+            reportOptionsProvider.ReportOptionsChanged += ReportOptionsProvider_ReportOptionsChanged;
+            this.reportOptions = reportOptionsProvider.Provide();
+            PostReportOptions();
         }
 
         private void ReportOptionsProvider_ReportOptionsChanged(object sender, ReportOptions newReportOptions)

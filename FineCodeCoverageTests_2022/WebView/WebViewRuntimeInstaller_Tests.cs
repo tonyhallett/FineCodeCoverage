@@ -11,14 +11,8 @@ namespace FineCodeCoverageTests.WebView_Tests
 
     internal class WebViewRuntimeInstaller_Tests
     {
-        [Test]
-        public void CheckInstallLocation()
-        {
-            var entries = new WebViewRuntimeRegistry().GetEntries();
-        }
-
-        [TestCase(true,true)]
-        [TestCase(false,false)]
+        [TestCase(true, true)]
+        [TestCase(false, false)]
         public async Task Should_Install_From_The_WebViewRuntimeInstaller_Directory_With_Exe_Os_Determined_Async(bool is64BitOs, bool silent)
         {
             var mocker = new AutoMoqer();

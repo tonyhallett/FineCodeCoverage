@@ -164,6 +164,7 @@
     <Compile Include="Tagging\Tagging_Tests.cs" />
     <Compile Include="Initialization\ToolZipProvider_Tests.cs" />
     <Compile Include="WebView\WebViewController_ProcessFailed_Test.cs" />
+    <Compile Include="WebView\WebViewRuntimeInstallationChecker_Tests.cs" />
     <Compile Include="WebView\WebViewRuntimeInstaller_Tests.cs" />
     <Compile Include="WebView\WebViewRuntime_Tests.cs" />
   </ItemGroup>

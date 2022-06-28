@@ -28,25 +28,40 @@ namespace FineCodeCoverageTests.WebView_Tests
             this.reportOptionsJsonPoster.Initialize(this.mockJsonPoster.Object);
         }
 
-        private void VerifyPostsReportOptions(ReportOptions reportOptions) =>
+        private void VerifyPostsReportOptions(ReportOptions reportOptions, Times times) =>
             this.mockJsonPoster.Verify(
                 jsonPoster => jsonPoster.PostJson(
                     this.reportOptionsJsonPoster.Type,
                     Parameter.Is<ReportOptions>().That(Is.SameAs(reportOptions))
-                )
+                ),
+                times
             );
 
         [Test]
         public void Should_Have_NotReadyPostBehaviour_As_KeepLast() =>
             Assert.That(this.reportOptionsJsonPoster.NotReadyPostBehaviour, Is.EqualTo(NotReadyPostBehaviour.KeepLast));
 
-        [Test]
-        public void Should_Post_ReportOptions_From_The_ReportOptionsProvider() =>
-            this.VerifyPostsReportOptions(this.reportOptions);
-
-        [Test]
-        public void Should_Post_ReportOptions_When_ReportOptions_Change()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Should_Post_ReportOptions_From_The_ReportOptionsProvider_When_Ready(bool ready)
         {
+            if (ready)
+            {
+                this.reportOptionsJsonPoster.Ready(null);
+            }
+            var expectedTimes = ready ? Times.Once() : Times.Never();
+            this.VerifyPostsReportOptions(this.reportOptions, expectedTimes);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Should_Post_ReportOptions_When_ReportOptions_Change_When_Ready(bool ready)
+        {
+            if (ready)
+            {
+                this.reportOptionsJsonPoster.Ready(null);
+            }
+
             var newReportOptions = new ReportOptions();
             this.mockReportOptionsProvider.Raise(
                 reportOptionsProvider => reportOptionsProvider.ReportOptionsChanged += null,
@@ -54,12 +69,15 @@ namespace FineCodeCoverageTests.WebView_Tests
                 newReportOptions
             );
 
-            this.VerifyPostsReportOptions(newReportOptions);
+            var expectedTimes = ready ? Times.Once() : Times.Never();
+            this.VerifyPostsReportOptions(newReportOptions, expectedTimes);
         }
 
         [Test]
         public void Should_Repost_When_Refresh()
         {
+            this.reportOptionsJsonPoster.Ready(null);
+
             this.reportOptionsJsonPoster.Refresh();
 
             this.mockJsonPoster.AssertReInvokes();

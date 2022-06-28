@@ -381,12 +381,12 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
         #endregion
 
         #region CollectAsync
-        public async Task CollectAsync(IOperation operation, ITestOperation testOperation)
+        public async Task CollectAsync(ITestOperation testOperation)
         {
             await LogCoverageToolCompletedAsync();
             await CleanUpAsync(testOperation);
 
-            var coberturaFiles = GetCoberturaFiles(operation);
+            var coberturaFiles = GetCoberturaFiles(testOperation);
             fccEngine.RunCancellableCoverageTask((vsShutdownLinkedCancellationToken) =>
             {
                 var coverageLines = fccEngine.RunAndProcessReport(coberturaFiles, vsShutdownLinkedCancellationToken);
@@ -402,7 +402,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             return CombinedLogAsync(completedMessage, MessageContext.CoverageToolCompleted);
         }
 
-        private string[] GetCoberturaFiles(IOperation operation)
+        private string[] GetCoberturaFiles(ITestOperation operation)
         {
             var resultsUris = operation.GetRunSettingsMsDataCollectorResultUri();
             var coberturaFiles = new string[0];

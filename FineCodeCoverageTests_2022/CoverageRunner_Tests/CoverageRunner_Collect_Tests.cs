@@ -118,7 +118,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
 
             this.RaiseTestExecutionFinished(operation);
 
-            this.Mocker.Verify<IMsCodeCoverageRunSettingsService>(msCodeCoverage => msCodeCoverage.CollectAsync(operation, testOperation));
+            this.Mocker.Verify<IMsCodeCoverageRunSettingsService>(msCodeCoverage => msCodeCoverage.CollectAsync(testOperation));
         }
 
         [Test]

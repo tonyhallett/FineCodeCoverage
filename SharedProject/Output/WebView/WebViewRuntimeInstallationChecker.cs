@@ -1,5 +1,4 @@
-﻿using Microsoft.Web.WebView2.Core;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FineCodeCoverage.Output.WebView

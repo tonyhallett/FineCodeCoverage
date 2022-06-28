@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FineCodeCoverage.Engine.Model;
 
 namespace FineCodeCoverage.Impl
@@ -10,6 +11,7 @@ namespace FineCodeCoverage.Impl
         List<string> UnsupportedProjects { get; }
         System.Threading.Tasks.Task<List<ICoverageProject>> GetCoverageProjectsAsync();
         string SolutionDirectory { get; }
+        IEnumerable<Uri> GetRunSettingsDataCollectorResultUri(Uri collectorUri);
     }
 }
 

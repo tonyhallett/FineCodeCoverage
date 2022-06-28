@@ -1,5 +1,6 @@
 ﻿using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,6 +37,11 @@ namespace FineCodeCoverage.Impl
                 logger.Log(new string[] { "Unsupported projects: " }.Concat(wrappedTestOperation.UnsupportedProjects));
             }
             return coverageProjects;
+        }
+
+        public IEnumerable<Uri> GetRunSettingsDataCollectorResultUri(Uri collectorUri)
+        {
+            return wrappedTestOperation.GetRunSettingsDataCollectorResultUri(collectorUri);
         }
     }
 }

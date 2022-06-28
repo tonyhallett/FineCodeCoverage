@@ -32,7 +32,8 @@ namespace FineCodeCoverage.Impl
                 new TestOperation(
                     testRunRequestFactory.Create(operation),
                     coverageProjectFactory,
-                    runSettingsRetriever
+                    runSettingsRetriever,
+                    operation
                 ),
                 logger
             );

@@ -91,10 +91,11 @@ namespace FineCodeCoverage.Output
 			var sp = new ServiceProvider(_dte2 as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
 			componentModel = sp.GetService(typeof(Microsoft.VisualStudio.ComponentModelHost.SComponentModel)) as Microsoft.VisualStudio.ComponentModelHost.IComponentModel;
             Assumes.Present(componentModel);
-			componentModel.GetExtensions<IPackageInitializeAware>().ToList()
-				.ForEach(packageInitializeAware => packageInitializeAware.PackageInitializing());
 			await OutputToolWindowCommand.InitializeAsync(this, componentModel.GetService<ILogger>());
 			await ClearUICommand.InitializeAsync(this, componentModel.GetService<IFCCEngine>());
+
+			componentModel.GetExtensions<IPackageInitializeAware>().ToList()
+				.ForEach(packageInitializeAware => packageInitializeAware.PackageInitializing());
 		}
 		
         protected override Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken)

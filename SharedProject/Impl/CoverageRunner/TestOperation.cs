@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FineCodeCoverage.Engine.Model;
+using Microsoft.VisualStudio.TestWindow.Extensibility;
 
 namespace FineCodeCoverage.Impl
 {
@@ -9,16 +11,19 @@ namespace FineCodeCoverage.Impl
         internal readonly TestRunRequest testRunRequest;
         internal readonly ICoverageProjectFactory coverageProjectFactory;
         internal readonly IRunSettingsRetriever runSettingsRetriever;
+        internal readonly IOperation operation;
 
         public TestOperation(
             TestRunRequest testRunRequest, 
             ICoverageProjectFactory coverageProjectFactory, 
-            IRunSettingsRetriever runSettingsRetriever
+            IRunSettingsRetriever runSettingsRetriever,
+            IOperation operation
         )
         {
             this.testRunRequest = testRunRequest;
             this.coverageProjectFactory = coverageProjectFactory;
             this.runSettingsRetriever = runSettingsRetriever;
+            this.operation = operation;
         }
         public long FailedTests => testRunRequest.Response.FailedTests;
 
@@ -31,6 +36,11 @@ namespace FineCodeCoverage.Impl
         public Task<List<ICoverageProject>> GetCoverageProjectsAsync()
         {
             return GetCoverageProjectsAsync(testRunRequest.Configuration);
+        }
+
+        public IEnumerable<Uri> GetRunSettingsDataCollectorResultUri(Uri collectorUri)
+        {
+            return operation.GetRunSettingsDataCollectorResultUri(collectorUri);
         }
 
         private async Task<List<ICoverageProject>> GetCoverageProjectsAsync(TestConfiguration testConfiguration)

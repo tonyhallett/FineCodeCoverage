@@ -38,7 +38,7 @@ namespace FineCodeCoverage.Impl
             }
         }
 
-        public void TestPathInstantion()
+        public void TestExplorerInstantion()
         {
         }
     }

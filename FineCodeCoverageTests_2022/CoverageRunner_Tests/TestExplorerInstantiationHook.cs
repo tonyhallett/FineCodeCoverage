@@ -14,7 +14,7 @@ namespace FineCodeCoverageTests.CoverageRunner_Tests
         internal class TestInstantiationPathAware : ITestInstantiationPathAware
         {
             public bool Notified { get; private set; }
-            public void TestPathInstantion() => this.Notified = true;
+            public void TestExplorerInstantion() => this.Notified = true;
         }
 
         [SetUp]
