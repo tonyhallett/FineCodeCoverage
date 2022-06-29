@@ -44,7 +44,8 @@ const nameColumn:NameColumn = {
   minWidth:100,
   onRender:(item:ICoverageItem) => {
     if(!item.standalone && item.classPaths){
-      return <OpenFileButton type='class' filePaths={item.classPaths}  display={item.name}/>
+      const toOpenAriaLabel = `class ${item.name}`;
+      return <OpenFileButton toOpenAriaLabel={toOpenAriaLabel} type='class' filePaths={item.classPaths}  display={item.name}/>
     }
     return <span>{item.name}</span>
   },
@@ -289,11 +290,13 @@ class ClassesGroup implements ICoverageGroup{
   private _items:ICoverageItem[] = []
   level:number;
   items:ICoverageItem[] = [];
+  ariaLabel:string
 
-  constructor(classes:Class[],namespacedClasses:boolean,name:string,standalone:boolean,level:number = 0){
+  constructor(classes:Class[],namespacedClasses:boolean,name:string,standalone:boolean,ariaLabel:string,level:number = 0){
     this.level = level;
     this.name = name;
     this.key = name;
+    this.ariaLabel = ariaLabel;
     classes.forEach(cls => {
       const coverageItem = new CoverageItem(cls,namespacedClasses, standalone);
       this._items.push(coverageItem);
@@ -335,14 +338,14 @@ class ClassesGroup implements ICoverageGroup{
 
 class AssemblyGroup extends ClassesGroup{
   constructor(assembly:Assembly,namespacedClasses:boolean, standalone:boolean){
-    super(assembly.classes,namespacedClasses,assembly.shortName,standalone)
+    super(assembly.classes,namespacedClasses,assembly.shortName,standalone, `Assembly ${assembly.name} class coverage`)
   }
 }
 
 class AllGroup extends ClassesGroup{
   
   constructor(assemblies:Assembly[],namespacedClasses:boolean, standalone:boolean){
-    super(AllGroup.getClasses(assemblies),namespacedClasses,"All", standalone);
+    super(AllGroup.getClasses(assemblies),namespacedClasses,"All",  standalone, "All class coverage",);
   }
   static getClasses(assemblies:Assembly[]){
     const classes:any = []; // todo typing
@@ -430,9 +433,11 @@ class NamespacedGroup implements ICoverageGroup{
   
   children:ClassesGroup[] = [];
   level:0 = 0
+  ariaLabel:string
   constructor(assembly:Assembly,namespacedClasses:boolean, grouping:number, isStandalone:boolean){
     this.name = assembly.shortName;
     this.key = assembly.name;// will need a different key ?
+    this.ariaLabel = `${assembly.name} class coverage`;
     const map:Map<string,Class[]> = new Map();
     assembly.classes.forEach(cls => {
       const namespaceGroupingName = getGrouping(cls.displayName,grouping);
@@ -444,7 +449,7 @@ class NamespacedGroup implements ICoverageGroup{
     });
     map.forEach((classes,groupingName) => {
       // todo if just add the assembly to the class will be much better than iterating again
-      this.children.push(new ClassesGroup(classes,namespacedClasses,groupingName,isStandalone,1))
+      this.children.push(new ClassesGroup(classes,namespacedClasses,groupingName,isStandalone,`Namespace ${groupingName} class coverage`,1));
     })
     this.children.forEach(childGroup => {
       this.coveredLines += childGroup.coveredLines;
@@ -619,17 +624,26 @@ export function Coverage(props:CoverageProps) {
         items={items} 
         groups={workaroundIssueGroups} 
         columns={columns}
+        getRowAriaLabel={ (item:ICoverageItem) => `${item.name} coverage`}  
         groupProps={{
           showEmptyGroups:false,
           headerProps:{
             onRenderTitle:(props:IGroupHeaderProps|undefined) => {
               // groupNestingDepth used for aria
+              
               const groupLevel = props!.groupLevel === undefined ? 0 : props!.groupLevel;
               const headerGroupNestingDepth = groupNestingDepth- groupLevel - 1;
               const focusZoneProps:IFocusZoneProps = {
                 disabled:true
               }
-              return <DetailsRow {...props} focusZoneProps={focusZoneProps} groupNestingDepth={headerGroupNestingDepth} item={props!.group} columns={_columns} selectionMode={SelectionMode.none} itemIndex={props!.groupIndex!}/>
+              return <DetailsRow {...props} 
+                focusZoneProps={focusZoneProps} 
+                groupNestingDepth={headerGroupNestingDepth} 
+                item={props!.group} 
+                columns={_columns} 
+                selectionMode={SelectionMode.none} 
+                itemIndex={props!.groupIndex!}
+                />
             }
           },
           onRenderHeader: (props:IGroupHeaderProps|undefined) => {

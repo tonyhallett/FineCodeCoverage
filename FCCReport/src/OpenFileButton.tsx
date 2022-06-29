@@ -25,13 +25,12 @@ interface OpenClass{
 
 export type OpenFileProps = {
   display:string
+  toOpenAriaLabel:string
 } & (OpenHotspot | OpenClass)
 
 export function OpenFileButton(props: OpenFileProps) {
-    const toOpen = props.type === 'class' ? 'class' : 'method';
-    let ariaDescription = `Open ${toOpen} in Visual Studio`;
-  
-    return <ActionButton ariaLabel='Open in Visual Studio' ariaDescription={ariaDescription}  iconProps={openFileInVsIconProps} onClick={() => {
+  const ariaLabel = `Open ${props.toOpenAriaLabel} in Visual Studio`;
+    return <ActionButton ariaLabel={ariaLabel} iconProps={openFileInVsIconProps} onClick={() => {
       if (props.type === 'hotspot') {
         openHotspotLine(props.filePath, props.methodLine);
       } else {

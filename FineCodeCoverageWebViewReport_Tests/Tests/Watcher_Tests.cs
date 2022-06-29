@@ -8,18 +8,10 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 
     public class Watcher_Tests : Readied_TestsBase
     {
-        private static string tempDirectory;
-        private static readonly FileUtil FileUtil = new FileUtil();
+        private string tempDirectory;
+        private readonly FileUtil fileUtil = new FileUtil();
 
-        private static string SetupReportPaths()
-        {
-            tempDirectory = FileUtil.CreateTempDirectory();
-            var navigationPath = WriteNavigation(GetHtml("First"));
-            var reportPathsPath = WriteSerializedReportPaths(navigationPath);
-            return NamedArguments.GetNamedArgument(NamedArguments.ReportPathsPath, reportPathsPath);
-        }
-
-        private static string WriteSerializedReportPaths(string navigationPath)
+        private string WriteSerializedReportPaths(string navigationPath)
         {
             var reportPaths = new ReportPaths
             {
@@ -27,19 +19,19 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
                 NavigationPath = navigationPath
             };
             var reportPathsSerialized = reportPaths.Serialize();
-            return Write(reportPathsSerialized, "ReportPaths.json");
+            return this.Write(reportPathsSerialized, "ReportPaths.json");
         }
 
-        private static string WriteNavigation(string html) => Write(html, "index.html");
+        private string WriteNavigation(string html) => this.Write(html, "index.html");
 
-        private static string Write(string text, string fileName)
+        private string Write(string text, string fileName)
         {
-            var path = Path.Combine(tempDirectory, fileName);
+            var path = Path.Combine(this.tempDirectory, fileName);
             File.WriteAllText(path, text);
             return path;
         }
 
-        private static string GetHtml(string text) => $@"
+        private string GetHtml(string text) => $@"
 <!DOCTYPE html>
 <html lang='en'>
     <head><meta charset='utf-8'></head>
@@ -51,24 +43,32 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 <html>
 ";
 
-        public Watcher_Tests() : base(SetupReportPaths()) { }
 
         [SetUp]
         public void NoSetUp() { } // to satisfy NUnit
 
+        protected override string[] GetFineCodeCoverageWebViewReportArguments()
+        {
+            this.tempDirectory = this.fileUtil.CreateTempDirectory();
+            var navigationPath = this.WriteNavigation(this.GetHtml("First"));
+            var reportPathsPath = this.WriteSerializedReportPaths(navigationPath);
+            var argument = NamedArguments.GetNamedArgument(NamedArguments.ReportPathsPath, reportPathsPath);
+            return new string[] { argument };
+        }
+
         [TearDown]
         public void DeleteNavigation()
         {
-            if (Directory.Exists(tempDirectory))
+            if (Directory.Exists(this.tempDirectory))
             {
-                _ = FileUtil.TryDeleteDirectory(tempDirectory);
+                _ = this.fileUtil.TryDeleteDirectory(this.tempDirectory);
             }
         }
 
         private void ChangeHtmlNotifyWatcherAndWait(string text)
         {
-            _ = WriteNavigation(GetHtml(text));
-            _ = Write("", "watch.txt");
+            _ = this.WriteNavigation(this.GetHtml(text));
+            _ = this.Write("", "watch.txt");
 
             _ = this.EdgeDriver.WaitUntil(() => this.EdgeDriver.FindElementByText(text));
         }

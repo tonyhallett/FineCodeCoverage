@@ -11,13 +11,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     public abstract class TestsBase
     {
         protected EdgeDriver EdgeDriver { get; private set; }
-
-        private readonly string[] fineCodeCoverageWebViewReportArguments;
-
-        public TestsBase() { }
-        public TestsBase(params string[] fineCodeCoverageWebViewReportArguments) =>
-            this.fineCodeCoverageWebViewReportArguments = fineCodeCoverageWebViewReportArguments;
-
+ 
         [SetUp]
         public void Setup()
         {
@@ -26,16 +20,18 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
                 UseWebView = true,
                 BinaryLocation = this.GetFineCodeCoverageWebViewReportExeLocation(),
             };
-
-            if (this.fineCodeCoverageWebViewReportArguments != null)
+            var fineCodeCoverageWebViewReportArguments = this.GetFineCodeCoverageWebViewReportArguments();
+            if (fineCodeCoverageWebViewReportArguments != null)
             {
-                edgeOptions.AddArguments(this.fineCodeCoverageWebViewReportArguments);
+                edgeOptions.AddArguments(fineCodeCoverageWebViewReportArguments);
             }
 
             this.EdgeDriver = new EdgeDriver(edgeOptions);
 
             Thread.Sleep(3000);
         }
+
+        protected virtual string[] GetFineCodeCoverageWebViewReportArguments() => null;
 
         private string GetFineCodeCoverageWebViewReportExeLocation()
         {

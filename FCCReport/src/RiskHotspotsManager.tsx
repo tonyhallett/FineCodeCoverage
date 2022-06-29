@@ -113,7 +113,8 @@ function caseInsensitiveStringSort(item1:string,item2:string){
       if(item.standalone){
         return <span>{item.methodDisplay}</span>;
       }
-      return <OpenFileButton type='class' filePaths={item.classPaths}  display={item.classDisplay}/>
+      const toOpenAriaLabel = `class ${item.classDisplay}`;
+      return <OpenFileButton type='class' toOpenAriaLabel={toOpenAriaLabel} filePaths={item.classPaths}  display={item.classDisplay}/>
     },
     sortItems:(items:HotspotView[], ascending : boolean) => {
       return stringFieldSort(items,ascending,classFieldName);
@@ -129,7 +130,8 @@ function caseInsensitiveStringSort(item1:string,item2:string){
       if(item.standalone){
         return <span>{item.methodDisplay}</span>
       }
-      return <OpenFileButton type='hotspot' filePath={item.filePath} methodLine={item.methodLine} display={item.methodDisplay}/>
+      const toOpenAriaLabel = `class ${item.classDisplay} at method ${item.methodDisplay}`;
+      return <OpenFileButton toOpenAriaLabel={toOpenAriaLabel} type='hotspot' filePath={item.filePath} methodLine={item.methodLine} display={item.methodDisplay}/>
     },
     sortItems:(items:HotspotView[], ascending : boolean) => {
       return stringFieldSort(items,ascending,methodFieldName);
