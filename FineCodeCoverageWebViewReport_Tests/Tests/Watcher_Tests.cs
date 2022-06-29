@@ -44,25 +44,28 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 ";
 
 
-        [SetUp]
-        public void NoSetUp() { } // to satisfy NUnit
+        public override void Setup()
+        {
+            this.SetFineCodeCoverageWebViewReportArguments();
+            base.Setup();
+        }
 
-        protected override string[] GetFineCodeCoverageWebViewReportArguments()
+        protected void SetFineCodeCoverageWebViewReportArguments()
         {
             this.tempDirectory = this.fileUtil.CreateTempDirectory();
             var navigationPath = this.WriteNavigation(this.GetHtml("First"));
             var reportPathsPath = this.WriteSerializedReportPaths(navigationPath);
             var argument = NamedArguments.GetNamedArgument(NamedArguments.ReportPathsPath, reportPathsPath);
-            return new string[] { argument };
+            this.FineCodeCoverageWebViewReportArguments = new string[] { argument };
         }
 
-        [TearDown]
-        public void DeleteNavigation()
+        public override void TearDown()
         {
             if (Directory.Exists(this.tempDirectory))
             {
                 _ = this.fileUtil.TryDeleteDirectory(this.tempDirectory);
             }
+            base.TearDown();
         }
 
         private void ChangeHtmlNotifyWatcherAndWait(string text)

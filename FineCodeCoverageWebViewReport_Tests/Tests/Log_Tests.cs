@@ -24,8 +24,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
                 }
             };
 
-            this.EdgeDriver.SelectTab("Log");
-            var logTabPanel = this.EdgeDriver.FindNonHiddenTabpanel();
+            var logTabPanel = this.FindLogTabPanel();
 
             this.EdgeDriver.ExecutePostBack(LogJsonPosterRegistration.RegistrationName, logMessage);
 

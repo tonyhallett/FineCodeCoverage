@@ -11,27 +11,26 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     public abstract class TestsBase
     {
         protected EdgeDriver EdgeDriver { get; private set; }
- 
+
+        protected string[] FineCodeCoverageWebViewReportArguments { set; private get; }
+
         [SetUp]
-        public void Setup()
+        public virtual void Setup()
         {
             var edgeOptions = new EdgeOptions
             {
                 UseWebView = true,
                 BinaryLocation = this.GetFineCodeCoverageWebViewReportExeLocation(),
             };
-            var fineCodeCoverageWebViewReportArguments = this.GetFineCodeCoverageWebViewReportArguments();
-            if (fineCodeCoverageWebViewReportArguments != null)
+            if (this.FineCodeCoverageWebViewReportArguments != null)
             {
-                edgeOptions.AddArguments(fineCodeCoverageWebViewReportArguments);
+                edgeOptions.AddArguments(this.FineCodeCoverageWebViewReportArguments);
             }
 
             this.EdgeDriver = new EdgeDriver(edgeOptions);
 
             Thread.Sleep(3000);
         }
-
-        protected virtual string[] GetFineCodeCoverageWebViewReportArguments() => null;
 
         private string GetFineCodeCoverageWebViewReportExeLocation()
         {
@@ -58,9 +57,10 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
         }
 
         protected IWebElement FindCoverageTabPanel() => this.FindTabPanel("Coverage");
+        protected IWebElement FindLogTabPanel() => this.FindTabPanel("Log");
 
         [TearDown]
-        public void TearDown() => this.EdgeDriver.Quit();
+        public virtual void TearDown() => this.EdgeDriver.Quit();
 
     }
 }

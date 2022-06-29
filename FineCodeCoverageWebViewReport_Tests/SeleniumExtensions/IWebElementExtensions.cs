@@ -21,5 +21,6 @@ namespace FineCodeCoverageWebViewReport_Tests.SeleniumExtensions
         public static string GetInnerHtml(this IWebElement webElement) => webElement.GetAttribute("innerHTML");
 
         public static string GetOuterHtml(this IWebElement webElement) => webElement.GetAttribute("outerHTML");
+        public static string GetInnerText(this IWebElement webElement) => webElement.GetAttribute("innerText");
     }
 }

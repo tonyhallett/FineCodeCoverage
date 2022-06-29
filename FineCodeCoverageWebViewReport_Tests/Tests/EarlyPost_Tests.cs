@@ -2,6 +2,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Threading;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.JsMessages.Logging;
     using FineCodeCoverage.Output.JsPosting;
@@ -9,13 +10,14 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using Newtonsoft.Json;
     using NUnit.Framework;
+    using OpenQA.Selenium;
 
     public class EarlyPost_Tests : Readied_TestsBase
     {
         private string tempDirectory;
         private readonly FileUtil fileUtil = new FileUtil();
 
-        protected override string[] GetFineCodeCoverageWebViewReportArguments()
+        protected void SetFineCodeCoverageWebViewReportArguments()
         {
             this.tempDirectory = this.fileUtil.CreateTempDirectory();
             var earlyPosts = new List<ToEarlyPost>
@@ -47,16 +49,17 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
                 // todo add styling that will be surpassed by base when have can assert styling
             };
             var serialized = JsonConvert.SerializeObject(earlyPosts);
-            var serializedPath = Path.Combine(tempDirectory, "earlyPosts.json");
-            fileUtil.WriteAllText(serializedPath, serialized);
+            var serializedPath = Path.Combine(this.tempDirectory, "earlyPosts.json");
+            this.fileUtil.WriteAllText(serializedPath, serialized);
             var argument = NamedArguments.GetNamedArgument(NamedArguments.EarlyPostsPath, serializedPath);
-            return new string[] { argument };
+            this.FineCodeCoverageWebViewReportArguments = new string[] { argument };
         }
 
-
-
-        [SetUp]
-        public void NoSetUp() { } // to satisfy NUnit
+        public override void Setup()
+        {
+            this.SetFineCodeCoverageWebViewReportArguments();
+            base.Setup();
+        }
 
         [Test]
         public void Should_Resend_Early_Posts_As_Determined_By_NotReadyPostBehaviour()
@@ -64,16 +67,23 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             var coverageTabPanel = this.FindCoverageTabPanel();
             this.EdgeDriver.WaitUntil(() => coverageTabPanel.FindElementByAriaLabel("ExistsInLastReport coverage"));
 
+            var logTabPanel = this.FindLogTabPanel();
+            var activityTexts = this.EdgeDriver.WaitUntilHasElements(() => logTabPanel.FindElements(By.ClassName("ms-ActivityItem-activityText")));
+            Assert.That(activityTexts, Has.Count.EqualTo(2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(activityTexts[0].GetInnerText(), Is.EqualTo("Second"));
+                Assert.That(activityTexts[1].GetInnerText(), Is.EqualTo("First"));
+            });
         }
 
-        [TearDown]
-        public void DeleteNavigation()
+        public override void TearDown()
         {
             if (Directory.Exists(this.tempDirectory))
             {
                 _ = this.fileUtil.TryDeleteDirectory(this.tempDirectory);
             }
+            base.TearDown();
         }
-
     }
 }
