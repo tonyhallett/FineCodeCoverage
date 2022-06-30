@@ -28,7 +28,7 @@ namespace FineCodeCoverage.Output.WebView
             this.processUtil = processUtil;
         }
 
-        public async Task SilentUninstallAsync(bool throwIfNotInstalled = false, CancellationToken cancellationToken = default)
+        public async Task SilentUninstallAsync(bool throwIfNotInstalled = false,bool exitCode19Success = true, CancellationToken cancellationToken = default)
         {
             var webViewRuntimeRegistryEntries = webViewRuntimeRegistry.GetEntries();
             if (webViewRuntimeRegistryEntries == null)
@@ -44,7 +44,7 @@ namespace FineCodeCoverage.Output.WebView
 
                 
                 var response = await processUtil.ExecuteAsync(new ExecuteRequest { FilePath = exe, Arguments = arguments }, cancellationToken);
-                if (!IsSuccessfulExitCode(response.ExitCode))
+                if (!IsSuccessfulExitCode(response.ExitCode, exitCode19Success))
                 {
                     throw new UnsuccessfulExitCodeException(response.ExitCode, $"Unsuccessful exit code : {response.ExitCode} - {response.Output}");
                 }
@@ -59,9 +59,9 @@ namespace FineCodeCoverage.Output.WebView
             and it does uninstall....
             https://github.com/MicrosoftEdge/WebView2Feedback/issues/2317#issuecomment-1165536731
         */
-        private bool IsSuccessfulExitCode(int exitCode)
+        private bool IsSuccessfulExitCode(int exitCode, bool exitCode19Success)
         {
-            return exitCode == 0;
+            return exitCode == 0 || exitCode19Success && exitCode == 19;
         }
 
         private (string exe, string arguments) ExtractArguments(string commandWithArguments)

@@ -1,5 +1,6 @@
 ﻿using FineCodeCoverage.Output;
 using System.Windows;
+using System.Windows.Automation;
 
 namespace FineCodeCoverageWebViewReport
 {
@@ -15,7 +16,7 @@ namespace FineCodeCoverageWebViewReport
             var outputToolWindowControl = new OutputToolWindowControl(
                 WebViewControllerProvider.Provide(arguments)
             );
-
+            AutomationProperties.SetAutomationId(outputToolWindowControl, "FCCToolWindow");
             this.Content = outputToolWindowControl;
         }
     }

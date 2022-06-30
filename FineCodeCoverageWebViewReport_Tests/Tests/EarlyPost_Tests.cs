@@ -2,7 +2,6 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading;
     using FineCodeCoverage.Core.Utilities;
     using FineCodeCoverage.Output.JsMessages.Logging;
     using FineCodeCoverage.Output.JsPosting;
@@ -65,7 +64,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
         public void Should_Resend_Early_Posts_As_Determined_By_NotReadyPostBehaviour()
         {
             var coverageTabPanel = this.FindCoverageTabPanel();
-            this.EdgeDriver.WaitUntil(() => coverageTabPanel.FindElementByAriaLabel("ExistsInLastReport coverage"));
+            _ = this.EdgeDriver.WaitUntil(() => coverageTabPanel.FindElementByAriaLabel("ExistsInLastReport coverage"));
 
             var logTabPanel = this.FindLogTabPanel();
             var activityTexts = this.EdgeDriver.WaitUntilHasElements(() => logTabPanel.FindElements(By.ClassName("ms-ActivityItem-activityText")));
