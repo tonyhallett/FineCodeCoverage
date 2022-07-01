@@ -16,7 +16,10 @@ namespace FineCodeCoverage.Output
 		IWebView
 	{
 		private WebView2 _webView2;
+        private TextBlock textBlock;
         private readonly IWebViewController webViewController;
+
+		private Grid Grid=> this.Content as Grid;
         
         /// <summary>
         /// Initializes a new instance of the <see cref="OutputToolWindowControl"/> class.
@@ -33,11 +36,35 @@ namespace FineCodeCoverage.Output
 		public void Instantiate()
         {
 			_webView2 = new WebView2();
-			this.AddChild(_webView2); // needs to be in the tree before 
-
+			Grid.Children.Add(_webView2);
 			_webView2.CoreWebView2InitializationCompleted += Webview2_CoreWebView2InitializationCompleted;
 			 _ = InitializeWebViewEnvironmentAsync();
 		}
+
+		public void AddTextBlock(string text, ITextBlockDynamicResourceNames textBlockDynamicResourceNames)
+        {
+			textBlock = new TextBlock() { Text = text, Margin = new Thickness(5)};
+
+			if (textBlockDynamicResourceNames != null)
+			{
+				textBlock.SetResourceReference(TextBlock.FontFamilyProperty, textBlockDynamicResourceNames.FontFamily);
+				textBlock.SetResourceReference(TextBlock.FontSizeProperty, textBlockDynamicResourceNames.FontSize);
+				textBlock.SetResourceReference(TextBlock.BackgroundProperty, textBlockDynamicResourceNames.Background);
+				textBlock.SetResourceReference(TextBlock.ForegroundProperty, textBlockDynamicResourceNames.Foreground);
+			}
+
+			Grid.Children.Add(textBlock);
+        }
+
+		public void UpdateTextBlock(string text)
+        {
+			textBlock.Text = text;
+        }
+
+		public void RemoveTextBlock()
+        {
+			textBlock.Visibility = Visibility.Hidden;
+        }
 
 		private async Task InitializeWebViewEnvironmentAsync()
 		{
@@ -98,17 +125,17 @@ namespace FineCodeCoverage.Output
 		public event EventHandler DomContentLoaded;
 
         #region control properties
-        public void SetVisibility(Visibility visibility)
+        public void SetWebViewVisibility(Visibility visibility)
         {
 			_webView2.Visibility = visibility;
         }
 
-        public void SetVerticalAlignment(VerticalAlignment verticalAlignment)
+        public void SetWebViewVerticalAlignment(VerticalAlignment verticalAlignment)
         {
 			_webView2.VerticalAlignment = verticalAlignment;
         }
 
-        public void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment)
+        public void SetWebViewHorizontalAlignment(HorizontalAlignment horizontalAlignment)
         {
 			_webView2.HorizontalAlignment = horizontalAlignment;
         }
@@ -126,7 +153,7 @@ namespace FineCodeCoverage.Output
 
         public void Navigate(string htmlPath)
         {
-            _webView2.CoreWebView2.Navigate(htmlPath);
+			_webView2.CoreWebView2.Navigate(htmlPath);
         }
 
 		public void Reload()

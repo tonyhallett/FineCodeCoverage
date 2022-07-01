@@ -80,14 +80,14 @@ namespace FineCodeCoverageTests.WebView_Tests
         [Test]
         public void Should_Set_The_WebView_Control_ToStretch_After_Instantiation() =>
             this.Should_Set_WebView_Control_Properties_After_Instantiation(
-                this.mockWebView.Setup(webView => webView.SetVerticalAlignment(VerticalAlignment.Stretch)),
-                this.mockWebView.Setup(webView => webView.SetHorizontalAlignment(HorizontalAlignment.Stretch))
+                this.mockWebView.Setup(webView => webView.SetWebViewVerticalAlignment(VerticalAlignment.Stretch)),
+                this.mockWebView.Setup(webView => webView.SetWebViewHorizontalAlignment(HorizontalAlignment.Stretch))
             );
 
         [Test]
         public void Should_Hide_The_WebView_After_Instantiation() =>
             this.Should_Set_WebView_Control_Properties_After_Instantiation(
-                this.mockWebView.Setup(webView => webView.SetVisibility(Visibility.Hidden))
+                this.mockWebView.Setup(webView => webView.SetWebViewVisibility(Visibility.Hidden))
             );
 
         [Test]

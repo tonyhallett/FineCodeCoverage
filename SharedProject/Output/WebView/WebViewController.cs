@@ -140,6 +140,8 @@ namespace FineCodeCoverage.Output.WebView
 		public string AdditionalBrowserArguments => $"--remote-debugging-port={remoteDebuggingPort}";
 		private readonly EarlyPosts earlyPosts = new EarlyPosts();
 
+		public bool VisualStudioStyling { get; set; } = true;
+
         [ImportingConstructor]
 		public WebViewController(
 			[ImportMany]
@@ -207,25 +209,34 @@ namespace FineCodeCoverage.Output.WebView
 		{
 			EnsureUserDataDirectory();
 			this.webView = webView;
-            if (webViewRuntime.IsInstalled)
+			var initialText = webViewRuntime.IsInstalled ? "Loading." : "Installing Web View Runtime.";
+
+			this.webView.AddTextBlock(initialText, VisualStudioStyling ? new VisualStudioTextBlockDynamicResourceNames() : null);
+
+			if (webViewRuntime.IsInstalled)
             {
-				InstantiateAndSetUpWebView();
+				InstantiateAndSetUpWebView(true);
             }
             else
             {
-				webViewRuntime.Installed += (sender, args) => InstantiateAndSetUpWebView();
+				webViewRuntime.Installed += (sender, args) => InstantiateAndSetUpWebView(false);
 			}
 		}
 
-		private void InstantiateAndSetUpWebView()
+		private void InstantiateAndSetUpWebView(bool isInstalled)
         {
 			_ = ExecuteOnMainThreadAsync(() =>
 			{
+                if (!isInstalled)
+                {
+					webView.UpdateTextBlock("Loading. This takes some time.");
+                }
 				webView.Instantiate();
 				
-				webView.SetVerticalAlignment(VerticalAlignment.Stretch);
-				webView.SetHorizontalAlignment(HorizontalAlignment.Stretch);
-				webView.SetVisibility(Visibility.Hidden);
+				webView.SetWebViewVerticalAlignment(VerticalAlignment.Stretch);
+				webView.SetWebViewHorizontalAlignment(HorizontalAlignment.Stretch);
+				webView.SetWebViewVisibility(Visibility.Hidden);
+
 				webView.DomContentLoaded += WebView_DomContentLoaded;
 				
 			});
@@ -246,9 +257,10 @@ namespace FineCodeCoverage.Output.WebView
 			}
 			else
 			{
+				webView.RemoveTextBlock();
+				webView.SetWebViewVisibility(Visibility.Visible);
 				PostEarlyJsons();
 				ReadyJsonPosters();
-				webView.SetVisibility(Visibility.Visible);
 			}
 		}
 
@@ -257,8 +269,8 @@ namespace FineCodeCoverage.Output.WebView
 			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 			action();
 		};
-        
-		private void PostEarlyJsons()
+        #region json posting
+        private void PostEarlyJsons()
         {
 			postJsonTask = Task.WhenAll(
 				earlyPosts.GetEarlyPosts().Select(earlyPost => PostJsonAsync(earlyPost.Type, earlyPost.Json))
@@ -311,7 +323,7 @@ namespace FineCodeCoverage.Output.WebView
 		{
 			jsonPosters.ForEach(jsonPoster => jsonPoster.Refresh());
 		}
-
+		#endregion
 		public void CoreWebView2InitializationCompleted()
 		{
 			webViewHostObjectRegistrations.ToList().ForEach(webViewHostObjectRegistration =>

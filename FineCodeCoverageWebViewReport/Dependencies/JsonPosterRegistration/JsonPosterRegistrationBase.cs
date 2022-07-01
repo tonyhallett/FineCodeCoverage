@@ -39,7 +39,7 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
     internal abstract class JsonPosterRegistrationBase<TData> : JsonPosterBase, IRegJsonPoster, IWebViewHostObjectRegistration
     {
         public abstract string Name { get; }
-        private readonly IHostObject IHostObject = new HostObject();
+        private readonly IPostBackHostObject IHostObject = new PostBackHostObject();
         public object HostObject => IHostObject;
 
         public JsonPosterRegistrationBase()

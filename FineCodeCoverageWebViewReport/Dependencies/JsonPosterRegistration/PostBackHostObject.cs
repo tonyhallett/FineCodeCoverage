@@ -4,7 +4,7 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
 {
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [ComVisible(true)]
-    public class HostObject : IHostObject
+    public class PostBackHostObject : IPostBackHostObject
     {
         private IRegJsonPoster jsonPoster;
 

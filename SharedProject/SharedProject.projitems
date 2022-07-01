@@ -292,6 +292,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\JsSerialization\ReportGenerator\ReportFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IReportPaths.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IReportPathsProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\ITextBlockDynamicResourceNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewController.cs" />
@@ -346,6 +347,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\ProcessWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\DebugReportPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\ReportPathsProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\VisualStudioTextBlockDynamicResourceNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewRuntime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\WebViewRuntimeInstallationChecker.cs" />

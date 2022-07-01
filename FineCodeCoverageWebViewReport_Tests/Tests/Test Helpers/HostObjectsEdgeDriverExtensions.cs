@@ -17,7 +17,7 @@ namespace FineCodeCoverageWebViewReport_Tests
             object objectToPostBack
         ) => edgeDriver.ExecuteHostObjectSerialized(
             hostObjectRegistrationName,
-            nameof(IHostObject.postBack),
+            nameof(IPostBackHostObject.postBack),
             objectToPostBack
         );
 

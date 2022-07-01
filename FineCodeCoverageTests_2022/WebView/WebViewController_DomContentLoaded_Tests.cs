@@ -65,6 +65,6 @@ namespace FineCodeCoverageTests.WebView_Tests
 
         [Test]
         public void Should_Make_The_WebView_Visible() =>
-            this.mockWebView.Verify(webView => webView.SetVisibility(Visibility.Visible));
+            this.mockWebView.Verify(webView => webView.SetWebViewVisibility(Visibility.Visible));
     }
 }

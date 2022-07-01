@@ -1,6 +1,5 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace FineCodeCoverage.Output.WebView
@@ -8,9 +7,9 @@ namespace FineCodeCoverage.Output.WebView
 	internal interface IWebViewControl
 	{
 		event EventHandler DomContentLoaded;
-		void SetVisibility(Visibility visibility);
-		void SetVerticalAlignment(VerticalAlignment verticalAlignment);
-		void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment);
+		void SetWebViewVisibility(Visibility visibility);
+		void SetWebViewVerticalAlignment(VerticalAlignment verticalAlignment);
+		void SetWebViewHorizontalAlignment(HorizontalAlignment horizontalAlignment);
 		void PostWebMessageAsJson(string webMessage);
 		void AddHostObjectToScript(string name, object rawObject);
 		void Navigate(string htmlPath);
@@ -19,5 +18,9 @@ namespace FineCodeCoverage.Output.WebView
 			string hostName, string folderPath, CoreWebView2HostResourceAccessKind accessKind);
 
 		void Instantiate();
+
+		void AddTextBlock(string text, ITextBlockDynamicResourceNames textBlockDynamicResourceNames);
+		void UpdateTextBlock(string text);
+		void RemoveTextBlock();
 	}
 }

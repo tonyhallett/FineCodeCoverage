@@ -1,6 +1,6 @@
 ﻿namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
 {
-    public interface IHostObject
+    public interface IPostBackHostObject
     {
 #pragma warning disable IDE1006 // Naming Styles
         void postBack(string postBackObject);

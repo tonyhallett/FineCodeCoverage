@@ -69,8 +69,8 @@
     <Compile Include="Dependencies\InvocationsRecordingRegistration\InvocationsRecordingHostObject.cs" />
     <Compile Include="Dependencies\InvocationsRecordingRegistration\SourceFileOpenerInvocationsHostObject.cs" />
     <Compile Include="Dependencies\InvocationsRecordingRegistration\SourceFileOpenerInvocationsRecordingRegistration.cs" />
-    <Compile Include="Dependencies\JsonPosterRegistration\HostObject.cs" />
-    <Compile Include="Dependencies\JsonPosterRegistration\IHostObject.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\PostBackHostObject.cs" />
+    <Compile Include="Dependencies\JsonPosterRegistration\IPostBackHostObject.cs" />
     <Compile Include="Dependencies\JsonPosterRegistration\IRegJsonPoster.cs" />
     <Compile Include="Dependencies\JsonPosterRegistration\JsonPosterRegistrationBase.cs" />
     <Compile Include="Dependencies\JsonPosterRegistration\LogJsonPosterRegistration.cs" />
@@ -82,6 +82,9 @@
     <Compile Include="Dependencies\ReportPaths.cs" />
     <Compile Include="ToEarlyPost.cs" />
     <Compile Include="WebViewControllerProvider.cs" />
+    <Compile Include="Dependencies\WebViewRuntime\WebViewRuntimeControlledInstalling.cs" />
+    <Compile Include="Dependencies\WebViewRuntime\WebViewRuntimeHostObject.cs" />
+    <Compile Include="Dependencies\WebViewRuntime\WebViewRuntimeHostObjectRegistration.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
