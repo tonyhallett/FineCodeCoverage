@@ -35,7 +35,10 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             {
                 File.Delete(this.tempPath);
             }
-            _ = this.appiumProcess.CloseMainWindow();
+            if (!this.appiumProcess.HasExited)
+            {
+                _ = this.appiumProcess.CloseMainWindow();
+            }
             this.windowsDriver.Quit();
         }
 

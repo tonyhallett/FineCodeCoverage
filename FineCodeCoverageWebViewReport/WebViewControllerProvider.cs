@@ -63,7 +63,6 @@ namespace FineCodeCoverageWebViewReport
                 reportPathsProvider,
                 webViewRuntime
             );
-            webViewController.VisualStudioStyling = false;
 
             if (namedArguments.TryGetValue(NamedArguments.EarlyPostsPath, out var earlyPostsPath))
             {

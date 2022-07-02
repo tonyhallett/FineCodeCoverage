@@ -140,9 +140,9 @@ namespace FineCodeCoverage.Output.WebView
 		public string AdditionalBrowserArguments => $"--remote-debugging-port={remoteDebuggingPort}";
 		private readonly EarlyPosts earlyPosts = new EarlyPosts();
 
-		public bool VisualStudioStyling { get; set; } = true;
+		public ITextBlockDynamicResourceNames TextBlockDynamicResourceNames { get; set; } = new VisualStudioTextBlockDynamicResourceNames();
 
-        [ImportingConstructor]
+		[ImportingConstructor]
 		public WebViewController(
 			[ImportMany]
 			IEnumerable<IWebViewHostObjectRegistration> webViewHostObjectRegistrations,
@@ -211,7 +211,7 @@ namespace FineCodeCoverage.Output.WebView
 			this.webView = webView;
 			var initialText = webViewRuntime.IsInstalled ? "Loading." : "Installing Web View Runtime.";
 
-			this.webView.AddTextBlock(initialText, VisualStudioStyling ? new VisualStudioTextBlockDynamicResourceNames() : null);
+			this.webView.AddTextBlock(initialText, TextBlockDynamicResourceNames);
 
 			if (webViewRuntime.IsInstalled)
             {
