@@ -5,9 +5,10 @@ using Newtonsoft.Json;
 
 namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
 {
-    internal abstract class JsonPosterBase : IPostJson {
+    internal abstract class JsonPosterBase : IPostJson
+    {
         protected IJsonPoster jsonPoster;
-        
+
         public abstract string Type { get; }
         public abstract NotReadyPostBehaviour NotReadyPostBehaviour { get; }
 
@@ -34,7 +35,6 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
             );
         }
     }
-
 
     internal abstract class JsonPosterRegistrationBase<TData> : JsonPosterBase, IRegJsonPoster, IWebViewHostObjectRegistration
     {

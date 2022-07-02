@@ -4,6 +4,7 @@ namespace FineCodeCoverageWebViewReport
 {
     public class NamedArguments
     {
+        // it is important that all named arguments are lowercase ! 
         public const string ReportPathsDebug = "reportpathsdebug";
         public const string ReportPathsPath = "reportpathspath";
         public const string EarlyPostsPath = "earlypostspath";

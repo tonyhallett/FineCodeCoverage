@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverageWebViewReport_Tests.Tests
+namespace FineCodeCoverageWebViewReport_Tests.Installation
 {
     using System.IO;
     using System.Reflection;

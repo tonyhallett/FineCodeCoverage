@@ -1,4 +1,4 @@
-﻿namespace FineCodeCoverageWebViewReport_Tests.Tests
+namespace FineCodeCoverageWebViewReport_Tests.AppiumHelpers
 {
     using System;
     using System.Diagnostics;

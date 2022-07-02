@@ -1,6 +1,7 @@
 namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
     using System.Threading.Tasks;
+    using FineCodeCoverageWebViewReport_Tests.Installation;
     using NUnit.Framework;
 
     [SetUpFixture]

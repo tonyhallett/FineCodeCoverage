@@ -3,7 +3,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using NUnit.Framework;
     using OpenQA.Selenium;
-    public class Styling_Post_Determines_Display_Tests : TestsBase
+    public class Styling_Post_Determines_Display_Tests : EdgeDriverTestsBase
     {
         [Test]
         public void Should_Not_Display_If_No_Styling_Received() =>

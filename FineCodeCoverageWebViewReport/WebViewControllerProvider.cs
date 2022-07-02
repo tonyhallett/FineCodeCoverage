@@ -20,7 +20,6 @@ namespace FineCodeCoverageWebViewReport
         public static IWebViewController Provide(string[] arguments)
         {
             var namedArguments = NamedArguments.Get(arguments);
-
             var webViewRuntime = new WebViewRuntimeControlledInstalling(namedArguments);
 
             var stylingJsonPosterRegistration = new StylingJsonPosterRegistration();
@@ -36,11 +35,6 @@ namespace FineCodeCoverageWebViewReport
                 new SourceFileOpenerInvocationsRecordingRegistration(),
                 new FCCOutputPaneInvocationsRecordingRegistration()
             };
-
-            if (!webViewRuntime.IsInstalled)
-            {
-                webViewHostRegistrations.Add(new WebViewRuntimeHostObjectRegistration(webViewRuntime));
-            }
 
             var jsonPosters = new List<JsonPosterBase> {
                 stylingJsonPosterRegistration,
@@ -69,6 +63,7 @@ namespace FineCodeCoverageWebViewReport
                 reportPathsProvider,
                 webViewRuntime
             );
+            webViewController.VisualStudioStyling = false;
 
             if (namedArguments.TryGetValue(NamedArguments.EarlyPostsPath, out var earlyPostsPath))
             {

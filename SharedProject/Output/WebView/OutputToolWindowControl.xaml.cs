@@ -20,11 +20,13 @@ namespace FineCodeCoverage.Output
         private readonly IWebViewController webViewController;
 
 		private Grid Grid=> this.Content as Grid;
-        
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OutputToolWindowControl"/> class.
-        /// </summary>
-        public OutputToolWindowControl(
+		public const string WebViewAutomationId = "WebView";
+		public const string InitializeTextBlockAutomationId = "InitializeTextBlock";
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OutputToolWindowControl"/> class.
+		/// </summary>
+		public OutputToolWindowControl(
 			IWebViewController webViewController
 		)
 		{
@@ -36,6 +38,7 @@ namespace FineCodeCoverage.Output
 		public void Instantiate()
         {
 			_webView2 = new WebView2();
+			_webView2.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, WebViewAutomationId);
 			Grid.Children.Add(_webView2);
 			_webView2.CoreWebView2InitializationCompleted += Webview2_CoreWebView2InitializationCompleted;
 			 _ = InitializeWebViewEnvironmentAsync();
@@ -44,7 +47,7 @@ namespace FineCodeCoverage.Output
 		public void AddTextBlock(string text, ITextBlockDynamicResourceNames textBlockDynamicResourceNames)
         {
 			textBlock = new TextBlock() { Text = text, Margin = new Thickness(5)};
-
+			textBlock.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, InitializeTextBlockAutomationId);
 			if (textBlockDynamicResourceNames != null)
 			{
 				textBlock.SetResourceReference(TextBlock.FontFamilyProperty, textBlockDynamicResourceNames.FontFamily);

@@ -3,6 +3,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverage.Output.JsMessages.Logging;
     using FineCodeCoverageWebViewReport.JsonPosterRegistration;
+    using FineCodeCoverageWebViewReport_Tests.EdgeHelpers;
     using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using NUnit.Framework;
 

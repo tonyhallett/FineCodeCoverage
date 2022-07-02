@@ -12,7 +12,6 @@ namespace FineCodeCoverageWebViewReport
         public MainWindow(string[] arguments)
         {
             InitializeComponent();
-
             var outputToolWindowControl = new OutputToolWindowControl(
                 WebViewControllerProvider.Provide(arguments)
             );

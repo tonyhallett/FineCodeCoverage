@@ -83,8 +83,6 @@
     <Compile Include="ToEarlyPost.cs" />
     <Compile Include="WebViewControllerProvider.cs" />
     <Compile Include="Dependencies\WebViewRuntime\WebViewRuntimeControlledInstalling.cs" />
-    <Compile Include="Dependencies\WebViewRuntime\WebViewRuntimeHostObject.cs" />
-    <Compile Include="Dependencies\WebViewRuntime\WebViewRuntimeHostObjectRegistration.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

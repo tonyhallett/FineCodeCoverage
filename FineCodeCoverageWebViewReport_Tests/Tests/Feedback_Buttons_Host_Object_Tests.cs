@@ -1,6 +1,7 @@
 namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
     using FineCodeCoverage.Output.HostObjects;
+    using FineCodeCoverageWebViewReport_Tests.EdgeHelpers;
     using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using NUnit.Framework;
     using OpenQA.Selenium;

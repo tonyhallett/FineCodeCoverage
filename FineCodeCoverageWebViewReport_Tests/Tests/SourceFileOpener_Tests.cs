@@ -2,6 +2,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
     using FineCodeCoverageWebViewReport.InvocationsRecordingRegistration;
     using FineCodeCoverageWebViewReport.JsonPosterRegistration;
+    using FineCodeCoverageWebViewReport_Tests.EdgeHelpers;
     using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using NUnit.Framework;
     using OpenQA.Selenium;

@@ -1,9 +1,8 @@
-namespace FineCodeCoverageWebViewReport_Tests
+namespace FineCodeCoverageWebViewReport_Tests.EdgeHelpers
 {
     using FineCodeCoverage.Output.HostObjects;
     using FineCodeCoverageWebViewReport.InvocationsRecordingRegistration;
     using FineCodeCoverageWebViewReport.JsonPosterRegistration;
-    using FineCodeCoverageWebViewReport_Tests.SeleniumExtensions;
     using Newtonsoft.Json;
     using OpenQA.Selenium.Edge;
     using System;

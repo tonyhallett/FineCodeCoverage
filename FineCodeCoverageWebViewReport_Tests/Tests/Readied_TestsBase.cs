@@ -1,6 +1,6 @@
 namespace FineCodeCoverageWebViewReport_Tests.Tests
 {
-    public abstract class Readied_TestsBase : TestsBase
+    public abstract class Readied_TestsBase : EdgeDriverTestsBase
     {
         public override void Setup()
         {

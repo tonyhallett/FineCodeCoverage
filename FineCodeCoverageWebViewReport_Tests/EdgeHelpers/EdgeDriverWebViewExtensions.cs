@@ -1,4 +1,4 @@
-namespace FineCodeCoverageWebViewReport_Tests.SeleniumExtensions
+namespace FineCodeCoverageWebViewReport_Tests.EdgeHelpers
 {
     using Newtonsoft.Json;
     using OpenQA.Selenium.Edge;
@@ -6,7 +6,6 @@ namespace FineCodeCoverageWebViewReport_Tests.SeleniumExtensions
 
     internal static class EdgeDriverWebViewExtensions
     {
-
         internal static string GetHostObjectExecuteScriptArguments(object[] args)
         {
             var arguments = args.Select((_, i) => $"arguments[{i}]");
