@@ -45,6 +45,34 @@ namespace FineCodeCoverageTests.WebView_Tests
             _ = this.mocker.GetMock<IWebViewRuntime>().SetupGet(webViewRuntime => webViewRuntime.IsInstalled)
             .Returns(true);
 
+        private void VerifyAddTextBlockWithVisualStudioTextBlockDynamicResourceNames(string text) =>
+            this.mockWebView.Verify(
+                webView => webView.AddTextBlock(
+                    text,
+                    Parameter.Is<ITextBlockDynamicResourceNames>().That(
+                        Is.InstanceOf<VisualStudioTextBlockDynamicResourceNames>()
+                    )
+                )
+            );
+
+        [Test]
+        public void Should_AddTextBlock_Loading_With_VisualStudioTextBlockDynamicResourceNames_When_Already_Installed()
+        {
+            this.SetWebViewRuntimeInstalled();
+            this.webViewController.Initialize(this.mockWebView.Object);
+
+            this.VerifyAddTextBlockWithVisualStudioTextBlockDynamicResourceNames("Loading.");
+        }
+
+        [Test]
+        public void Should_AddTextBlock_Installing_Web_View_Runtime_With_VisualStudioTextBlockDynamicResourceNames_When_Already_Installed()
+        {
+            this.webViewController.Initialize(this.mockWebView.Object);
+
+            this.VerifyAddTextBlockWithVisualStudioTextBlockDynamicResourceNames("Installing Web View Runtime.");
+        }
+
+
         [Test]
         public void Should_Instantiate_When_WebViewRuntime_When_Already_Installed()
         {
@@ -58,10 +86,20 @@ namespace FineCodeCoverageTests.WebView_Tests
         public void Should_Instantiate_When_WebView_Notifies_Is_Installed()
         {
             this.webViewController.Initialize(this.mockWebView.Object);
-            this.mockWebView.Verify(webView => webView.Instantiate(), Times.Never());
 
             this.mocker.GetMock<IWebViewRuntime>().Raise(webViewRuntime => webViewRuntime.Installed += null, null, null);
+
             this.mockWebView.Verify(webView => webView.Instantiate());
+        }
+
+        [Test]
+        public void Should_UpdateTextBlock_With_Loading_This_Takes_Some_Time_When_WebView_Notifies_Is_Installed()
+        {
+            this.webViewController.Initialize(this.mockWebView.Object);
+
+            this.mocker.GetMock<IWebViewRuntime>().Raise(webViewRuntime => webViewRuntime.Installed += null, null, null);
+
+            this.mockWebView.Verify(webView => webView.UpdateTextBlock("Loading. This takes some time."));
         }
 
         private void Should_Set_WebView_Control_Properties_After_Instantiation(params ICallback[] setups)

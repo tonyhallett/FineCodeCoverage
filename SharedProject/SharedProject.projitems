@@ -9,6 +9,14 @@
     <Import_RootNamespace>FineCodeCoverage</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\Controls\DependencyPropertiesItemStatusTextBlock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\IDependencyPropertyItemStatusProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\DependencyPropertiesItemStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\DependencyPropertiesItemStatusSetup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\DependencyPropertiesItemStatusConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\ToStringDependencyPropertyItemStatusProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\TypedDependencyPropertyItemStatusProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Automation\TypedDependencyPropertyItemStatusProviderFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Initialization\AppDataFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Cobertura\Class.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Cobertura\Classes.cs" />

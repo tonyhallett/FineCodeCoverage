@@ -5,13 +5,14 @@ using Microsoft.Web.WebView2.Wpf;
 using Microsoft.Web.WebView2.Core;
 using Task = System.Threading.Tasks.Task;
 using FineCodeCoverage.Output.WebView;
+using FineCodeCoverage.Automation.Controls;
 
 namespace FineCodeCoverage.Output
 {
-    /// <summary>
-    /// Interaction logic for OutputToolWindowControl.
-    /// </summary>
-    internal partial class OutputToolWindowControl : 
+	/// <summary>
+	/// Interaction logic for OutputToolWindowControl.
+	/// </summary>
+	internal partial class OutputToolWindowControl : 
 		UserControl, 
 		IWebView
 	{
@@ -46,7 +47,13 @@ namespace FineCodeCoverage.Output
 
 		public void AddTextBlock(string text, ITextBlockDynamicResourceNames textBlockDynamicResourceNames)
         {
-			textBlock = new TextBlock() { Text = text, Margin = new Thickness(5)};
+#if DEBUG
+			textBlock = new DependencyPropertiesItemStatusTextBlock();
+#else
+			textBlock = new TextBlock();
+#endif
+			textBlock.Text = text;
+			textBlock.Margin = new Thickness(5);
 			textBlock.SetValue(System.Windows.Automation.AutomationProperties.AutomationIdProperty, InitializeTextBlockAutomationId);
 			if (textBlockDynamicResourceNames != null)
 			{
@@ -123,11 +130,11 @@ namespace FineCodeCoverage.Output
 			webViewController.ProcessFailed(e);
 		}
 
-		#region IWebView
+#region IWebView
 		public FrameworkElement FrameworkElement => _webView2;
 		public event EventHandler DomContentLoaded;
 
-        #region control properties
+#region control properties
         public void SetWebViewVisibility(Visibility visibility)
         {
 			_webView2.Visibility = visibility;
@@ -142,8 +149,8 @@ namespace FineCodeCoverage.Output
         {
 			_webView2.HorizontalAlignment = horizontalAlignment;
         }
-		#endregion
-		#region CoreWebView2
+#endregion
+#region CoreWebView2
 		public void PostWebMessageAsJson(string webMessage)
 		{
 			_webView2.CoreWebView2.PostWebMessageAsJson(webMessage);
@@ -168,7 +175,7 @@ namespace FineCodeCoverage.Output
         {
 			_webView2.CoreWebView2.SetVirtualHostNameToFolderMapping(hostName, folderPath, accessKind);
         }
-		#endregion
-		#endregion
+#endregion
+#endregion
 	}
 }

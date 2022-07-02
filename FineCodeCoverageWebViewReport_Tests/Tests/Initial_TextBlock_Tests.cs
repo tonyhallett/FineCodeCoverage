@@ -11,6 +11,7 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     using System.IO;
     using OpenQA.Selenium;
     using FineCodeCoverageWebViewReport_Tests.AppiumHelpers;
+    using FineCodeCoverage.Automation;
 
     public class Initial_TextBlock_Tests
     {
@@ -80,6 +81,15 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             this.CreateWindowsDriver(false);
 
             var initializeTextBlock = this.AssertInitializeTextBlockDisplayedWith("Loading.");
+            var itemStatus = initializeTextBlock.GetAttribute("ItemStatus");
+            var values = DependencyPropertiesItemStatusConverter.ToLookupByDependencyPropertyName(itemStatus);
+            Assert.Multiple(() =>
+            {
+                Assert.That(values["FontFamily"], Is.EqualTo(VsResourceValues.VsFontEnvironmentFontFamily));
+                Assert.That(values["FontSize"], Is.EqualTo(VsResourceValues.VsFontEnvironmentFontSize.ToString()));
+                Assert.That(values["Background"], Is.EqualTo(VsResourceValues.VsBrushToolWindowBackgroundColorHex));
+                Assert.That(values["Foreground"], Is.EqualTo(VsResourceValues.VsBrushToolWindowTextColorHex));
+            });
 
             var webView = new DefaultWait<WindowsDriver>(this.windowsDriver)
                 .Until(wd => wd.FindElement(this.ByWebView()));
@@ -115,7 +125,6 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             this.Install();
 
             var textBlock = this.AssertInitializeTextBlockDisplayedWith("Loading. This takes some time.");
-
             var webView = new DefaultWait<WindowsDriver>(this.windowsDriver) { Timeout = TimeSpan.FromSeconds(10) }
             .Until(wd =>
              {

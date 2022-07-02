@@ -81,6 +81,7 @@
     <Compile Include="Dependencies\NoToolsDirectoryAppOptionsProvider.cs" />
     <Compile Include="Dependencies\ReportPaths.cs" />
     <Compile Include="ToEarlyPost.cs" />
+    <Compile Include="VsResourceValues.cs" />
     <Compile Include="WebViewControllerProvider.cs" />
     <Compile Include="Dependencies\WebViewRuntime\WebViewRuntimeControlledInstalling.cs" />
     <Page Include="MainWindow.xaml">

@@ -64,7 +64,11 @@ namespace FineCodeCoverageTests.WebView_Tests
         }
 
         [Test]
-        public void Should_Make_The_WebView_Visible() =>
+        public void Should_Remove_The_TextBlock_And_Then_Make_The_WebView_Visible()
+        {
+            this.mockWebView.Verify(webView => webView.RemoveTextBlock());
             this.mockWebView.Verify(webView => webView.SetWebViewVisibility(Visibility.Visible));
+
+        }
     }
 }

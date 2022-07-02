@@ -10,13 +10,23 @@ namespace FineCodeCoverageWebViewReport
     /// </summary>
     public partial class MainWindow : Window
     {
+        private SolidColorBrush SolidColorBrushFromHex(string hex) => 
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+
         public MainWindow(string[] arguments)
         {
             var resources = new ResourceDictionary();
-            resources.Add("VsFont.EnvironmentFontFamily", new FontFamily("Arial"));
-            resources.Add("VsFont.EnvironmentFontSize", (double)30);
-            resources.Add("VsBrush.ToolWindowBackground", new SolidColorBrush(Colors.Red));
-            resources.Add("VsBrush.ToolWindowText", new SolidColorBrush(Colors.Yellow));
+            resources.Add("VsFont.EnvironmentFontFamily", new FontFamily(VsResourceValues.VsFontEnvironmentFontFamily));
+            resources.Add("VsFont.EnvironmentFontSize", VsResourceValues.VsFontEnvironmentFontSize);
+            resources.Add(
+                "VsBrush.ToolWindowBackground", 
+                SolidColorBrushFromHex(VsResourceValues.VsBrushToolWindowBackgroundColorHex)
+            );
+            resources.Add(
+                "VsBrush.ToolWindowText", 
+                SolidColorBrushFromHex(VsResourceValues.VsBrushToolWindowTextColorHex)
+            );
+
             this.Resources = resources;
 
             InitializeComponent();
@@ -25,6 +35,7 @@ namespace FineCodeCoverageWebViewReport
                 WebViewControllerProvider.Provide(arguments)
             );
             AutomationProperties.SetAutomationId(outputToolWindowControl, "FCCToolWindow");
+
             this.Content = outputToolWindowControl;
         }
     }
