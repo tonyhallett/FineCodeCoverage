@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChangingVsResourcesDictionary.cs" />
     <Compile Include="Dependencies\ControlledReportPathsProvider.cs" />
     <Compile Include="Dependencies\FileLogger.cs" />
     <Compile Include="Dependencies\InvocationsRecordingRegistration\FCCOutputPaneInvocationsHostObject.cs" />

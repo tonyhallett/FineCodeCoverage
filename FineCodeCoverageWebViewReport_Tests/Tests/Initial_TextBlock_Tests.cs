@@ -17,14 +17,18 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
     {
         private Process appiumProcess;
         private WindowsDriver windowsDriver;
-        private string tempPath;
-        private string tempFile;
+        private string installWatchedPath;
+        private string changeResourcesWatchedFile;
+        private string changeResourcesWatchedPath;
+        private string installWatchedFile;
 
         [SetUp]
         public void Setup()
         {
-            this.tempFile = Path.GetRandomFileName();
-            this.tempPath = Path.Combine(Path.GetTempPath(), this.tempFile);
+            this.installWatchedFile = Path.GetRandomFileName();
+            this.installWatchedPath = Path.Combine(Path.GetTempPath(), this.installWatchedFile);
+            this.changeResourcesWatchedFile = Path.GetRandomFileName();
+            this.changeResourcesWatchedPath = Path.Combine(Path.GetTempPath(), this.changeResourcesWatchedFile);
             Appium.StartWinAppDriver();
             this.appiumProcess = Appium.Start();
         }
@@ -32,9 +36,13 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
         [TearDown]
         public void TearDown()
         {
-            if (File.Exists(this.tempPath))
+            if (File.Exists(this.installWatchedPath))
             {
-                File.Delete(this.tempPath);
+                File.Delete(this.installWatchedPath);
+            }
+            if (File.Exists(this.changeResourcesWatchedPath))
+            {
+                File.Delete(this.changeResourcesWatchedPath);
             }
             if (!this.appiumProcess.HasExited)
             {
@@ -67,9 +75,13 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             };
             if (initializing)
             {
-                var arguments = NamedArguments.GetNamedArgument(
-                    WebViewRuntimeControlledInstalling.InstalledWatcherFile, this.tempFile
+                var argument1 = NamedArguments.GetNamedArgument(
+                    WebViewRuntimeControlledInstalling.InstalledWatcherFile, this.installWatchedFile
                 );
+                var argument2 = NamedArguments.GetNamedArgument(
+                    ChangingVsResourcesDictionary.ChangeResourcesFileName, this.changeResourcesWatchedFile
+                );
+                var arguments = $"{argument1} {argument2}";
                 _ = appiumOptions.AddAppArguments(arguments);
             }
             this.windowsDriver = new WindowsDriver(appiumOptions);
@@ -81,15 +93,6 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
             this.CreateWindowsDriver(false);
 
             var initializeTextBlock = this.AssertInitializeTextBlockDisplayedWith("Loading.");
-            var itemStatus = initializeTextBlock.GetAttribute("ItemStatus");
-            var values = DependencyPropertiesItemStatusConverter.ToLookupByDependencyPropertyName(itemStatus);
-            Assert.Multiple(() =>
-            {
-                Assert.That(values["FontFamily"], Is.EqualTo(VsResourceValues.VsFontEnvironmentFontFamily));
-                Assert.That(values["FontSize"], Is.EqualTo(VsResourceValues.VsFontEnvironmentFontSize.ToString()));
-                Assert.That(values["Background"], Is.EqualTo(VsResourceValues.VsBrushToolWindowBackgroundColorHex));
-                Assert.That(values["Foreground"], Is.EqualTo(VsResourceValues.VsBrushToolWindowTextColorHex));
-            });
 
             var webView = new DefaultWait<WindowsDriver>(this.windowsDriver)
                 .Until(wd => wd.FindElement(this.ByWebView()));
@@ -111,9 +114,48 @@ namespace FineCodeCoverageWebViewReport_Tests.Tests
 
         }
 
+        [Test]
+        public void Should_Dynamically_Style_The_Initialize_TextBox()
+        {
+            this.CreateWindowsDriver(true);
+
+            var initializeTextBlock = this.FindInitializeTextBlock();
+
+            void AssertTextBlockPropertiesFromResources(
+                bool initial
+            )
+            {
+                var itemStatus = initializeTextBlock.GetAttribute("ItemStatus");
+                var values = DependencyPropertiesItemStatusConverter.ToLookupByDependencyPropertyName(itemStatus);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(values["FontFamily"],
+                        Is.EqualTo(
+                        initial ? VsResourceValues.VsFontEnvironmentFontFamily :
+                        VsResourceValues.ChangedVsFontEnvironmentFontFamily)
+                    );
+                    Assert.That(values["FontSize"],
+                        Is.EqualTo(initial ? VsResourceValues.VsFontEnvironmentFontSize.ToString() :
+                        VsResourceValues.ChangedVsFontEnvironmentFontSize.ToString())
+                    );
+                    Assert.That(values["Background"], Is.EqualTo(initial ? VsResourceValues.VsBrushToolWindowBackgroundColorHex
+                        : VsResourceValues.ChangedVsBrushToolWindowBackgroundColorHex)
+                    );
+                    Assert.That(values["Foreground"], Is.EqualTo(initial ? VsResourceValues.VsBrushToolWindowTextColorHex
+                        : VsResourceValues.ChangedVsBrushToolWindowTextColorHex));
+                });
+            }
+
+            AssertTextBlockPropertiesFromResources(true);
+
+            File.WriteAllText(this.changeResourcesWatchedPath, "this is watched to change resources");
+
+            AssertTextBlockPropertiesFromResources(false);
+        }
+
         private By ByWebView() => MobileBy.AccessibilityId(OutputToolWindowControl.WebViewAutomationId);
 
-        private void Install() => File.WriteAllText(this.tempPath, "this is watched and sets installed");
+        private void Install() => File.WriteAllText(this.installWatchedPath, "this is watched and sets installed");
 
         [Test]
         public void Should_Show_Loading_This_Takes_Some_Time_When_Becomes_Installed()

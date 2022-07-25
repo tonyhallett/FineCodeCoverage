@@ -5,6 +5,8 @@ namespace FineCodeCoverageWebViewReport_Tests.SeleniumExtensions
     using System;
     using System.Collections.ObjectModel;
 
+    // Note that there is https://github.com/DotNetSeleniumTools/DotNetSeleniumExtras/blob/master/src/WaitHelpers/ExpectedConditions.cs
+
     public static class IWebDriverWaitExtensions
     {
         public const int DefaultWaitSeconds = 5;
