@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DetailsList, DetailsRow, GroupHeader, IColumn, IFocusZoneProps, IGroup, IGroupHeaderProps, ISearchBoxStyles, ISliderStyles, ProgressIndicator, SearchBox, SelectionMode, Slider, Stack, TextField } from '@fluentui/react';
+import { DetailsList, DetailsListLayoutMode, DetailsRow, GroupHeader, IColumn, IFocusZoneProps, IGroup, IGroupHeaderProps, ISearchBoxStyles, ISliderStyles, ProgressIndicator, SearchBox, SelectionMode, Slider, Stack, TextField } from '@fluentui/react';
 import { Assembly, Class, ClassCoverage, CoverageType, SummaryResult } from './types';
 import { OpenFileButton } from './OpenFileButton';
 import { removeNamespaces } from './common';
@@ -186,7 +186,7 @@ export function getGroupingMax(assemblies:Assembly[]): number{
     return groupingMax;
 }
 
-const useProFeature = true;
+const useProFeature = false;
 
 interface ICoverageGroup extends IGroup, ICoverageItemBase{
   classPaths:undefined
@@ -522,6 +522,9 @@ export function Coverage(props:CoverageProps) {
       columns.push(totalCodeElementsColumn);
       columns.push(codeElementCoverageQuotaColumn);
     }
+    for(const col of columns){
+      col.isResizable = true
+    }
     return columns
   },[supportsBranchCoverage])
   
@@ -620,6 +623,7 @@ export function Coverage(props:CoverageProps) {
       <SearchBox styles={searchBoxStyles} iconProps={{iconName:'filter'}} value={filter} onChange={(_,newFilter) => setFilter(newFilter!)}/>
     </Stack>
       <DetailsList 
+        layoutMode={DetailsListLayoutMode.fixedColumns}
         selectionMode={SelectionMode.none} 
         items={items} 
         groups={workaroundIssueGroups} 
