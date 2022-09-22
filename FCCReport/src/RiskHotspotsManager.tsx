@@ -1,4 +1,4 @@
-import { DetailsList, IColumn, IIconProps, SearchBox, IDropdownOption, Dropdown, SelectionMode } from '@fluentui/react';
+import { DetailsList, IColumn, IIconProps, SearchBox, IDropdownOption, Dropdown, SelectionMode, DetailsListLayoutMode, IDetailsHeaderProps, Sticky } from '@fluentui/react';
 import React, { useRef, useState } from 'react';
 import { removeNamespaces } from './common';
 import { OpenFileButton } from './OpenFileButton';
@@ -9,7 +9,8 @@ export interface RiskHotspotsManagerProps {
   assemblies:Assembly[],
   riskHotspotsAnalysisThresholds: RiskHotspotsAnalysisThresholds,
   namespacedClasses:boolean,
-  standalone:boolean
+  standalone:boolean,
+  active:boolean
 }
 
 interface HotspotView {
@@ -98,6 +99,7 @@ function caseInsensitiveStringSort(item1:string,item2:string){
     name:'Assembly',
     fieldName: assemblyFieldName,
     minWidth:100,
+    isResizable:true,
     sortItems:(items:HotspotView[], ascending : boolean) => {
       return stringFieldSort(items,ascending,assemblyFieldName);
     }
@@ -109,6 +111,7 @@ function caseInsensitiveStringSort(item1:string,item2:string){
     name:'Class',
     fieldName:classFieldName,
     minWidth:100,
+    isResizable:true,
     onRender:(item:HotspotView) => {
       if(item.standalone){
         return <span>{item.methodDisplay}</span>;
@@ -126,6 +129,7 @@ function caseInsensitiveStringSort(item1:string,item2:string){
     name:'Method',
     minWidth:100,
     fieldName:methodFieldName,
+    isResizable:true,
     onRender:(item:HotspotView) => {
       if(item.standalone){
         return <span>{item.methodDisplay}</span>
@@ -159,6 +163,7 @@ function caseInsensitiveStringSort(item1:string,item2:string){
         key:metricColumnName,
         name:columnName,
         minWidth:100,
+        isResizable:true,
         fieldName:metricColumnName, // unnecessary ? - if using onRender
         onRender:(item:HotspotView) => {
           const metricWithStatus = item.metrics[metricColumnName]
@@ -210,7 +215,7 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
   const [filterText, setFilterText] = useState<string>();
   const [filterByAssembly,setFilterByAssembly] = useState<IDropdownOption<Assembly>>();
 
-  const { riskHotspots,assemblies,namespacedClasses, riskHotspotsAnalysisThresholds, standalone } = props;
+  const { riskHotspots,assemblies,namespacedClasses, riskHotspotsAnalysisThresholds, standalone, active } = props;
   
   const items:HotspotView[] = [];
   const metricColumnNames:string[] = [];
@@ -284,7 +289,24 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
     <Dropdown label='Filter by assembly' placeholder='All assemblies' options={assemblyFilterDropDownOptions} onChange={(_,option) => setFilterByAssembly(option)} selectedKey={filterByAssembly?.key}/>
     <SearchBox iconProps={{iconName:'filter'}} placeholder='Filter by class' value={filterText} onChange={(_,newValue) => setFilterText(newValue)}/>
     </div>
-    <DetailsList selectionMode={SelectionMode.none} items={filteredAndSortedItems} columns={columns} onColumnHeaderClick={(_, column) => {
+    <DetailsList 
+      selectionMode={SelectionMode.none} 
+      items={filteredAndSortedItems} 
+      columns={columns} 
+      layoutMode={DetailsListLayoutMode.fixedColumns}
+      onRenderDetailsHeader={
+        //todo resolve typing any
+        (detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
+          if(active){
+            return <Sticky>
+            {defaultRender(detailsHeaderProps)}
+          </Sticky>
+          }
+
+          return defaultRender(detailsHeaderProps)
+        }
+      }
+      onColumnHeaderClick={(_, column) => {
       setSortDetails((current) => {
         if(current.columnFieldName === column!.fieldName){
           return {

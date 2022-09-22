@@ -4,10 +4,10 @@ import { RiskHotspotsManager } from "./RiskHotspotsManager";
 import { NoRiskHotspotsResult } from "./NoRiskHotspotsResult";
 import { Report } from './types';
 
-export type RiskHotspotProps = Pick<Report,'riskHotspotAnalysisResult'|'riskHotspotsAnalysisThresholds'> & Pick<Report['summaryResult'],'assemblies'> & {namespacedClasses:boolean, standalone:boolean}
+export type RiskHotspotProps = Pick<Report,'riskHotspotAnalysisResult'|'riskHotspotsAnalysisThresholds'> & Pick<Report['summaryResult'],'assemblies'> & {namespacedClasses:boolean, standalone:boolean, active:boolean}
 
 export function RiskHotspots(props: RiskHotspotProps) {
-  const { riskHotspotAnalysisResult, riskHotspotsAnalysisThresholds, assemblies, namespacedClasses, standalone } = props;
+  const { riskHotspotAnalysisResult, riskHotspotsAnalysisThresholds, assemblies, namespacedClasses, standalone, active } = props;
   if (!riskHotspotAnalysisResult) {
     return null;
   }
@@ -23,5 +23,6 @@ export function RiskHotspots(props: RiskHotspotProps) {
           riskHotspotsAnalysisThresholds={riskHotspotsAnalysisThresholds} 
           namespacedClasses={namespacedClasses}
           standalone={standalone}
+          active={active}
           />;
 }

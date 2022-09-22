@@ -27,20 +27,25 @@ export function ReportTab(props: ReportTabProps) {
 
   const summaryComponent = hasReport ? <Summary summaryResult={report.summaryResult} /> : <></>;
 
+  const coverageKey = "CoverageTab";
+  const riskHotspotsKey = "RiskHotspotsTab";
+  const coverageTabActive = selectedTabKey == coverageKey;
+  const riskHotspotsActive = selectedTabKey == riskHotspotsKey;
   const items: JSX.Element[] = [
-    <PivotItem key={0} itemKey='CoverageTab' headerText='Coverage' alwaysRender>
-      {hasReport ?<Coverage standalone={standalone} namespacedClasses={namespacedClasses} summaryResult={report.summaryResult} hideFullyCovered={reportOptions.hideFullyCovered}/> : null}
+    <PivotItem key={0} itemKey={coverageKey} headerText='Coverage' alwaysRender>
+      {hasReport ?<Coverage active={coverageTabActive}  standalone={standalone} namespacedClasses={namespacedClasses} summaryResult={report.summaryResult} hideFullyCovered={reportOptions.hideFullyCovered}/> : null}
     </PivotItem>,
     <PivotItem key={1} itemKey='SummaryTab' headerText='Summary' alwaysRender>
       {summaryComponent}
     </PivotItem>,
-    <PivotItem key={2} itemKey='RiskHotspotsTab' headerText='Risk Hotspots' alwaysRender>
+    <PivotItem key={2} itemKey={riskHotspotsKey} headerText='Risk Hotspots' alwaysRender>
       {hasReport ? <RiskHotspots
         namespacedClasses={namespacedClasses}
         assemblies={report.summaryResult.assemblies}
         riskHotspotAnalysisResult={report.riskHotspotAnalysisResult}
         riskHotspotsAnalysisThresholds={report.riskHotspotsAnalysisThresholds} 
         standalone={standalone}
+        active={riskHotspotsActive}
         /> : null}
     </PivotItem>,
     

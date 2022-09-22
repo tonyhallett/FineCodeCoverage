@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DetailsList, DetailsListLayoutMode, DetailsRow, GroupHeader, IColumn, IFocusZoneProps, IGroup, IGroupHeaderProps, ISearchBoxStyles, ISliderStyles, ProgressIndicator, SearchBox, SelectionMode, Slider, Stack, TextField } from '@fluentui/react';
+import { DetailsList, DetailsListLayoutMode, DetailsRow, GroupHeader, IColumn, IDetailsHeaderProps, IFocusZoneProps, IGroup, IGroupHeaderProps, IRenderFunction, ISearchBoxStyles, ISliderStyles, ProgressIndicator, ScrollablePane, SearchBox, SelectionMode, Slider, Stack, Sticky, TextField } from '@fluentui/react';
 import { Assembly, Class, ClassCoverage, CoverageType, SummaryResult } from './types';
 import { OpenFileButton } from './OpenFileButton';
 import { removeNamespaces } from './common';
@@ -8,7 +8,8 @@ export interface CoverageProps{
   summaryResult:SummaryResult,
   namespacedClasses:boolean,
   hideFullyCovered:boolean,
-  standalone:boolean
+  standalone:boolean,
+  active:boolean
 }
 
 export interface ICoverageItemBase extends ClassCoverage{
@@ -492,7 +493,7 @@ export function Coverage(props:CoverageProps) {
   const [sortDetails, setSortDetails] = useState<ColumnSort>({fieldName:undefined,ascending:true})
   const [filter, setFilter] = useState('');
   const [grouping,setGrouping] = useState(0);
-  const {summaryResult, namespacedClasses, standalone} = props;
+  const {summaryResult, namespacedClasses, standalone, active} = props;
   const {assemblies, supportsBranchCoverage} = summaryResult;
   
   const groupingMax = React.useMemo(() => {
@@ -623,6 +624,7 @@ export function Coverage(props:CoverageProps) {
       <SearchBox styles={searchBoxStyles} iconProps={{iconName:'filter'}} value={filter} onChange={(_,newFilter) => setFilter(newFilter!)}/>
     </Stack>
       <DetailsList 
+        onShouldVirtualize={() => false} //https://github.com/microsoft/fluentui/issues/21367 https://github.com/microsoft/fluentui/issues/20825
         layoutMode={DetailsListLayoutMode.fixedColumns}
         selectionMode={SelectionMode.none} 
         items={items} 
@@ -655,6 +657,19 @@ export function Coverage(props:CoverageProps) {
             return <GroupHeader {...props}/>
           }
         }}
+        onRenderDetailsHeader={
+          //todo resolve typing any
+          (detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
+            if(active){
+              return <Sticky>
+              {defaultRender(detailsHeaderProps)}
+            </Sticky>
+            }
+
+            return defaultRender(detailsHeaderProps)
+          }
+        }
+
         onColumnHeaderClick={(_, column) => {
           const coverageColumn:ICoverageColumn = column as ICoverageColumn;
           setSortDetails((current) => {
@@ -673,7 +688,5 @@ export function Coverage(props:CoverageProps) {
         }
         
         />
-      
-    
     </div>
 }

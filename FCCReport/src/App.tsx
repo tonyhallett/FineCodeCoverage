@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Payload, webviewPayloadTypeListen, webviewPayloadTypeUnlisten } from './webviewListener';
-import { ProgressIndicator, registerIcons, ThemeProvider } from '@fluentui/react';
+import { ProgressIndicator, registerIcons, ScrollablePane, ThemeProvider } from '@fluentui/react';
 import { LogMessage, MessageContext, Report, ReportOptions, Styling } from './types';
 import { ReportTab } from './ReportTab';
 import{ OpenFileIcon, SortDownIcon, SortUpIcon, ClearFilterIcon, FilterIcon, ChevronDownIcon, createSvgIcon, ChevronRightMedIcon, TagIcon, BeerMugIcon, GitHubLogoIcon, ReviewSolidIcon, InfoIcon, WarningIcon, ErrorIcon, CompletedIcon, TableIcon, ProcessingIcon, OpenPaneIcon, NavigateExternalInlineIcon, ErrorBadgeIcon, RunningIcon, DeveloperToolsIcon, ProcessingCancelIcon, LogRemoveIcon, GroupedDescendingIcon } from'@fluentui/react-icons-mdl2';
@@ -160,6 +160,7 @@ function App() {
 
   return (
     <ThemeProvider >
+      <ScrollablePane>
       {standalone ? null : <ProgressIndicator percentComplete={percentComplete}/> }
       <ReportTab 
         styling={stylingState} 
@@ -169,6 +170,7 @@ function App() {
         logMessages={logMessages}
         clearLogMessages={clearLogMessages}
         />
+      </ScrollablePane>
         
     </ThemeProvider>
   );
