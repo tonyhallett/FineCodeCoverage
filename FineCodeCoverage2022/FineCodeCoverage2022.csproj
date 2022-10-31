@@ -80,14 +80,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\Shared Files\ZippedTools\coverlet.collector.3.0.3.zip">
-      <Link>ZippedTools\coverlet.collector.3.0.3.zip</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\Shared Files\ZippedTools\coverlet.console.3.0.3.zip">
-      <Link>ZippedTools\coverlet.console.3.0.3.zip</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="..\Shared Files\ZippedTools\microsoft.testplatform.16.9.1.zip">
       <Link>ZippedTools\microsoft.testplatform.16.9.1.zip</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -102,6 +94,14 @@
     </Content>
     <Content Include="..\Shared Files\ZippedTools\microsoft.codecoverage.17.1.0.zip">
       <Link>ZippedTools\microsoft.codecoverage.17.1.0.zip</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Shared Files\ZippedTools\coverlet.collector.3.2.0.zip">
+      <Link>ZippedTools\coverlet.collector.3.2.0.zip</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\Shared Files\ZippedTools\coverlet.console.3.2.0.zip">
+      <Link>ZippedTools\coverlet.console.3.2.0.zip</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">
