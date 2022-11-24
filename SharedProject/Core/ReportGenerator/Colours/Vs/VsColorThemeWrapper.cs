@@ -25,7 +25,7 @@ namespace FineCodeCoverage.Core.ReportGenerator.Colours
 
         public Color GetThemedColour(ThemeResourceKey themeResourceKey)
         {
-            return VSColorTheme.GetThemedColor(themeResourceKey);
+            return  VSColorTheme.GetThemedColor(themeResourceKey);
         }
     }
 }

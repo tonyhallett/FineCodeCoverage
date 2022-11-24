@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.PlatformUI;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
 namespace FineCodeCoverage.Core.ReportGenerator.Colours
@@ -21,8 +22,12 @@ namespace FineCodeCoverage.Core.ReportGenerator.Colours
             {
                 FullCategoryTypes = new List<string>
                     {
-                        "EnvironmentColors",
-                        "CommonControlsColors"
+                        nameof(EnvironmentColors),
+                        nameof(CommonControlsColors),
+                        nameof(SearchControlColors),
+                        nameof(HeaderColors),
+                        nameof(ProgressBarColors),
+                        nameof(TreeViewColors),
                     }
             };
         

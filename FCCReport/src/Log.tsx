@@ -1,7 +1,10 @@
-import { ActionButton, ActivityItem, IActivityItemProps, Icon, IconButton } from '@fluentui/react';
+import { ActionButton, ActivityItem, IActivityItemProps, Icon, IconButton, IStyle } from '@fluentui/react';
 import React, { CSSProperties } from 'react';
 import getFontFamily from './helpers/fontName';
 import { Emphasis, LogMessage, MessageContext, Styling } from './types';
+import { StyledActionButton } from './vs styling/StyledActionButton';
+import { VsStyledActivityItem } from './vs styling/StyledActivityItem';
+import { ToolWindowText } from './vs styling/ToolWindowText';
 
 // use a map
 function getIconNameForContext(messageContext:MessageContext){
@@ -65,54 +68,64 @@ function getActivityIconAriaLabelFromContext(messageContext:MessageContext){
   }
 }
 
-export function Log(props:{logMessages:LogMessage[],styling:Styling, clearLogMessages:() => void}) {
-  const {logMessages,styling, clearLogMessages} = props;
+export function Log(props:{logMessages:LogMessage[], clearLogMessages:() => void}) {
+  const {logMessages, clearLogMessages} = props;
   const activityItemsOrBreaks:any[] = [];
   logMessages.forEach((logMessage,i) => {
     
     const activityDescription:React.ReactNode[] =
     logMessage.message.map((msgPart,j) => {
       if(msgPart.type === 'emphasized' ){
-        const emphasisStyle:CSSProperties={
-          fontFamily:getFontFamily(styling.fontName),
-          fontSize:styling.fontSize,
-          color:styling.categoryColours.EnvironmentColors.ToolWindowText,
-          backgroundColor:styling.categoryColours.EnvironmentColors.ToolWindowBackground
+        const root:IStyle={
         }
         if(msgPart.emphasis & Emphasis.Bold){
-          emphasisStyle.fontWeight='bold';
+          root.fontWeight='bold';
         }
         if(msgPart.emphasis & Emphasis.Italic){
-          emphasisStyle.fontStyle='italic';
+          root.fontStyle='italic';
         }
         if(msgPart.emphasis & Emphasis.Underline){
-          emphasisStyle.textDecoration = 'underline';
+          root.textDecoration = 'underline';
         }
-        return <span key={j} style={emphasisStyle}>{msgPart.message}</span>;
+        return <ToolWindowText key={j} styles={
+          {root}
+        }>{msgPart.message}</ToolWindowText>;
       }else{
-        const actionButton = <ActionButton 
+        const actionButton = <StyledActionButton 
         key={j} 
+        style={{marginLeft:'10px'}}
         ariaLabel={msgPart.ariaLabel}
         iconProps={{iconName:getIconNameForHostObjectMethod(msgPart.hostObject,msgPart.methodName)}} 
         onClick={() => {
           const hostObject = (window as any).chrome.webview.hostObjects[msgPart.hostObject];
           const hostMethod:Function = hostObject[msgPart.methodName];
           hostMethod.apply(null,msgPart.arguments);
-        }}>{msgPart.title}</ActionButton>
+        }}>{msgPart.title}</StyledActionButton>
         return actionButton;
       }
     })
 
-    let activityIconProps:Partial<IActivityItemProps> = {
+    let activityItemProps:Partial<IActivityItemProps> = {
       activityDescription,
       activityIcon:<Icon 
         aria-label={getActivityIconAriaLabelFromContext(logMessage.context)} 
-        style={{marginLeft:'10px'}} 
+        styles={
+          {root:{marginLeft:'10px'}}
+        } 
         iconName={getIconNameForContext(logMessage.context)}/>,
+      styles:{
+        root: {
+          alignItems:"center"
+        },
+        activityTypeIcon: {
+          height:"16px"
+        }
+      },
+      
       isCompact:false
     }
     
-    activityItemsOrBreaks.push(<ActivityItem {...activityIconProps} key={i}/>);
+    activityItemsOrBreaks.push(<VsStyledActivityItem {...activityItemProps} key={i}/>);
 
     // works for ms code coverage but not for old as there are info messages before CoverageStart
     /* if(i !== 0 && logMessage.context === MessageContext.CoverageStart){
@@ -120,7 +133,7 @@ export function Log(props:{logMessages:LogMessage[],styling:Styling, clearLogMes
     } */
   })
   return <>
-    <IconButton ariaLabel='Clear log messages' iconProps={{iconName:'logRemove'}} onClick={clearLogMessages}/>
+    <StyledActionButton ariaLabel='Clear log messages' iconProps={{iconName:'logRemove'}} onClick={clearLogMessages}/>
     {activityItemsOrBreaks}
   </>
 }

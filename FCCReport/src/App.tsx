@@ -1,9 +1,12 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Payload, webviewPayloadTypeListen, webviewPayloadTypeUnlisten } from './webviewListener';
-import { ProgressIndicator, registerIcons, ScrollablePane, ThemeProvider } from '@fluentui/react';
+import { CustomizerContext, ProgressIndicator, registerIcons, ScrollablePane, ThemeProvider } from '@fluentui/react';
 import { LogMessage, MessageContext, Report, ReportOptions, Styling } from './types';
 import { ReportTab } from './ReportTab';
 import{ OpenFileIcon, SortDownIcon, SortUpIcon, ClearFilterIcon, FilterIcon, ChevronDownIcon, createSvgIcon, ChevronRightMedIcon, TagIcon, BeerMugIcon, GitHubLogoIcon, ReviewSolidIcon, InfoIcon, WarningIcon, ErrorIcon, CompletedIcon, TableIcon, ProcessingIcon, OpenPaneIcon, NavigateExternalInlineIcon, ErrorBadgeIcon, RunningIcon, DeveloperToolsIcon, ProcessingCancelIcon, LogRemoveIcon, GroupedDescendingIcon } from'@fluentui/react-icons-mdl2';
+import { useRefInitOnce } from './utilities/hooks/useRefInitiOnce';
+import { getBodyStyles, VsCustomizerContext } from './vs styling/themeStyles';
+import { useBodyToolWindow } from './utilities/hooks/useBody';
 
 //https://github.com/microsoft/fluentui/issues/22895
 const VisualStudioIDELogo32Icon = createSvgIcon({
@@ -105,13 +108,6 @@ function App() {
   },[]);
   useEffect(() => {
     function stylingListener(styling:Styling){
-      // todo fluentui/react styling theming
-      var environmentColors = styling.categoryColours.EnvironmentColors;
-      document.body.style.backgroundColor = environmentColors.ToolWindowBackground;
-      document.body.style.color = environmentColors.ToolWindowText;
-
-      document.body.style.fontFamily = styling.fontName;
-      document.body.style.fontSize = styling.fontSize;
       setStyling(styling);
     }
 
@@ -152,27 +148,36 @@ function App() {
     
   },[])
 
+  const customizationStyling = useRefInitOnce(new VsCustomizerContext(
+    stylingState,
+    ))
+
+  const bodyStyles = stylingState ? getBodyStyles(stylingState.categoryColours) : {}
+  useBodyToolWindow(bodyStyles);
+
   if(!stylingState){
     return null;
   }
 
+  customizationStyling.current = customizationStyling.current.getNext(
+    stylingState
+  );
+
   const percentComplete = coverageRunning ? undefined : 0;
 
   return (
-    <ThemeProvider >
+    <CustomizerContext.Provider value={customizationStyling.current}>
       <ScrollablePane>
       {standalone ? null : <ProgressIndicator percentComplete={percentComplete}/> }
       <ReportTab 
-        styling={stylingState} 
         standalone={standalone} 
         report={reportState} 
         reportOptions={reportOptionsState} 
         logMessages={logMessages}
         clearLogMessages={clearLogMessages}
         />
-      </ScrollablePane>
-        
-    </ThemeProvider>
+        </ScrollablePane>
+      </CustomizerContext.Provider>
   );
 }
 

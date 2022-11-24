@@ -1,4 +1,13 @@
-import { CheckboxVisibility, DetailsList, IDetailsListProps, SelectionMode } from "@fluentui/react";
+import { CheckboxVisibility, customizable, DetailsList, DetailsRow, IDetailsListProps, IDetailsRowProps, SelectionMode } from "@fluentui/react";
+import React from "react";
+
+@customizable('SimpleTableRow', ['theme', 'styles'], true)
+class SimpleTableRow extends React.Component<IDetailsRowProps, {}> {
+  public render(): JSX.Element {
+    return <DetailsRow {...this.props}/>
+  }
+  
+}
 
 /*
     if this was a multi-use component
@@ -13,15 +22,16 @@ export function SimpleTable(props:SimpleTableProps){
     checkboxVisibility={CheckboxVisibility.hidden}
     isHeaderVisible={false}
     selectionMode={SelectionMode.none}
-    onRenderRow={(props, defaultRender) => {
-      props!.styles = {
+    onRenderRow={(props) => {
+      /* props!.styles = {
         root: {
           '&:hover': {
             backgroundColor: 'transparent'
           }
         }
       };
-      return defaultRender!(props);
+      return defaultRender!(props); */
+      return <SimpleTableRow {...props!}/>
     }}
     focusZoneProps={{
       disabled: true

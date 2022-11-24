@@ -4,7 +4,7 @@ import { Coverage } from "./Coverage";
 import { Log } from "./Log";
 import { Summary } from "./Summary";
 import { RiskHotspots } from "./RiskHotspots";
-import { LogMessage, Report, ReportOptions, Styling } from './types';
+import { LogMessage, Report, ReportOptions } from './types';
 import { Feedback } from './Feedback';
 
 export interface ReportTabProps {
@@ -12,7 +12,6 @@ export interface ReportTabProps {
     report:Report,
     reportOptions:ReportOptions,
     logMessages:LogMessage[],
-    styling:Styling,
     clearLogMessages:() => void,
 }
 
@@ -21,7 +20,7 @@ export interface ReportTabProps {
 
 export function ReportTab(props: ReportTabProps) {
   const [selectedTabKey, setSelectedTabKey] = useState("0");
-  const { standalone, report, reportOptions, logMessages, styling, clearLogMessages, } = props;
+  const { standalone, report, reportOptions, logMessages, clearLogMessages, } = props;
   const {namespacedClasses} = reportOptions;
   const hasReport = !!report;
 
@@ -57,7 +56,7 @@ export function ReportTab(props: ReportTabProps) {
   if (!props.standalone) {
     items.push(
     <PivotItem key={3} itemKey='LogTab' headerText='Log' alwaysRender>
-      <Log styling={styling} logMessages={logMessages} clearLogMessages={clearLogMessages}/>
+      <Log logMessages={logMessages} clearLogMessages={clearLogMessages}/>
     </PivotItem>
     );
     items.push(

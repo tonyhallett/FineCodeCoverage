@@ -17,7 +17,7 @@ namespace FineCodeCoverage.Output.JsSerialization
 						namedColour =>
 						{
 							var colour = namedColour.Colour;
-							return $"rgba({colour.R},{colour.G},{colour.B},{colour.A})";
+							return $"rgba({colour.R},{colour.G},{colour.B},{(float)colour.A / 255})";
 						}
 					);
 				}

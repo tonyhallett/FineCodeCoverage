@@ -599,7 +599,7 @@ export function Coverage(props:CoverageProps) {
   
   const groupNestingDepth = grouping > 0 ? 2 : 1;
   
-  return <div>
+  return <>
     <Stack horizontal horizontalAlign='space-between' verticalAlign='center'>
     
     <Slider 
@@ -660,13 +660,9 @@ export function Coverage(props:CoverageProps) {
         onRenderDetailsHeader={
           //todo resolve typing any
           (detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
-            if(active){
-              return <Sticky>
+            return <Sticky>
               {defaultRender(detailsHeaderProps)}
             </Sticky>
-            }
-
-            return defaultRender(detailsHeaderProps)
           }
         }
 
@@ -688,5 +684,5 @@ export function Coverage(props:CoverageProps) {
         }
         
         />
-    </div>
+    </>
 }
