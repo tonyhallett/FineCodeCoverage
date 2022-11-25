@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
-import { DetailsList, DetailsListLayoutMode, DetailsRow, GroupHeader, IColumn, IDetailsHeaderProps, IFocusZoneProps, IGroup, IGroupHeaderProps, IRenderFunction, ISearchBoxStyles, ISliderStyles, ProgressIndicator, ScrollablePane, SearchBox, SelectionMode, Slider, Stack, Sticky, TextField } from '@fluentui/react';
-import { Assembly, Class, ClassCoverage, CoverageType, SummaryResult } from './types';
-import { OpenFileButton } from './OpenFileButton';
+import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, DetailsRow, IColumn, IDetailsHeaderProps, IFocusZoneProps, IGroup, IGroupHeaderProps, IRenderFunction, ISearchBoxStyles, ISliderStyles, ProgressIndicator, ScrollablePane, SearchBox, SelectionMode, Slider, Stack, Sticky, TextField } from '@fluentui/react';
+import { Assembly, Class, ClassCoverage, CoverageType, ReportOptions, SummaryResult } from './types';
+import { OpenFile } from './OpenFile';
 import { removeNamespaces } from './common';
+import { DetailsListCellText } from './vs styling/DetailsListCellText';
 
-export interface CoverageProps{
+export type CoverageProps = {
   summaryResult:SummaryResult,
-  namespacedClasses:boolean,
   hideFullyCovered:boolean,
   standalone:boolean,
   active:boolean
-}
+} & Pick<ReportOptions,"stickyCoverageTable"|"namespacedClasses">
 
 export interface ICoverageItemBase extends ClassCoverage{
   key:string,
   name:string,
   uncoveredLines:number,
   classPaths:string[] | undefined,
-  
 }
 
 export interface ICoverageItem extends ICoverageItemBase{
@@ -46,9 +45,10 @@ const nameColumn:NameColumn = {
   onRender:(item:ICoverageItem) => {
     if(!item.standalone && item.classPaths){
       const toOpenAriaLabel = `class ${item.name}`;
-      return <OpenFileButton toOpenAriaLabel={toOpenAriaLabel} type='class' filePaths={item.classPaths}  display={item.name}/>
+      return <OpenFile toOpenAriaLabel={toOpenAriaLabel} type='class' filePaths={item.classPaths}  display={item.name}/>
+      
     }
-    return <span>{item.name}</span>
+    return <DetailsListCellText>{item.name}</DetailsListCellText>
   },
   setFiltered(filtered:boolean){
     this.isFiltered = filtered;
@@ -489,20 +489,38 @@ interface ColumnSort{
   ascending:boolean
 }
 
+function sortAndFilterColumns(columns:IColumn[],filter:string,sortDetails:ColumnSort){
+  nameColumn.setFiltered(filter !== '');
+  columns.forEach(column => {
+    column.isSorted = column.fieldName === sortDetails.fieldName;
+    column.isSortedDescending = !sortDetails.ascending;
+  })
+}
+
 export function Coverage(props:CoverageProps) {
   const [sortDetails, setSortDetails] = useState<ColumnSort>({fieldName:undefined,ascending:true})
   const [filter, setFilter] = useState('');
   const [grouping,setGrouping] = useState(0);
-  const {summaryResult, namespacedClasses, standalone, active} = props;
+
+  const {summaryResult, namespacedClasses, standalone, active, stickyCoverageTable} = props;
   const {assemblies, supportsBranchCoverage} = summaryResult;
   
+  const onRenderDetailsHeader = React.useCallback((detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
+    detailsHeaderProps!.styles={
+      root:{
+        paddingTop:'0px' 
+      },
+    }
+    return active && stickyCoverageTable ? <Sticky>
+      {defaultRender(detailsHeaderProps)}
+    </Sticky> : defaultRender(detailsHeaderProps);
+  },[active, stickyCoverageTable]);
+
   const groupingMax = React.useMemo(() => {
-    console.log('getting grouping max');
     return getGroupingMax(assemblies);
   },[assemblies]);
 
   const columns = React.useMemo(() => {
-    console.log('getting columns')
     const columns: IColumn[] = [
       nameColumn,
       coveredLinesColumn,
@@ -528,7 +546,7 @@ export function Coverage(props:CoverageProps) {
     }
     return columns
   },[supportsBranchCoverage])
-  
+  sortAndFilterColumns(columns,filter,sortDetails);
   
   const groups = React.useMemo(():ICoverageGroup[] => {
     switch(grouping){
@@ -558,6 +576,7 @@ export function Coverage(props:CoverageProps) {
     group.startIndex = items.length;
     items.push(...group.items);
   }
+
   const workaroundIssueGroups:ICoverageGroup[] = []; // https://github.com/microsoft/fluentui/issues/23169
   groups.forEach(group => {
     group.filter(filter,props.hideFullyCovered);
@@ -591,11 +610,7 @@ export function Coverage(props:CoverageProps) {
     }
   })
 
-  nameColumn.setFiltered(filter !== '');
-  columns.forEach(column => {
-    column.isSorted = column.fieldName === sortDetails.fieldName;
-    column.isSortedDescending = !sortDetails.ascending;
-  })
+
   
   const groupNestingDepth = grouping > 0 ? 2 : 1;
   
@@ -621,12 +636,23 @@ export function Coverage(props:CoverageProps) {
         }
       }
       }/>
-      <SearchBox styles={searchBoxStyles} iconProps={{iconName:'filter'}} value={filter} onChange={(_,newFilter) => setFilter(newFilter!)}/>
+      <SearchBox styles={searchBoxStyles} 
+        iconProps={{iconName:'filter'}} 
+        value={filter} 
+        onChange={(_,newFilter) => setFilter(newFilter!)}/>
     </Stack>
       <DetailsList 
+        styles={
+          {
+            root:{
+              marginTop:'10px'
+            }
+          }
+        }
         onShouldVirtualize={() => false} //https://github.com/microsoft/fluentui/issues/21367 https://github.com/microsoft/fluentui/issues/20825
         layoutMode={DetailsListLayoutMode.fixedColumns}
-        selectionMode={SelectionMode.none} 
+        selectionMode={SelectionMode.none} //****** todo */
+        checkboxVisibility={CheckboxVisibility.hidden}
         items={items} 
         groups={workaroundIssueGroups} 
         columns={columns}
@@ -642,7 +668,7 @@ export function Coverage(props:CoverageProps) {
               const focusZoneProps:IFocusZoneProps = {
                 disabled:true
               }
-              return <DetailsRow {...props} 
+              return <DetailsRow 
                 focusZoneProps={focusZoneProps} 
                 groupNestingDepth={headerGroupNestingDepth} 
                 item={props!.group} 
@@ -652,19 +678,21 @@ export function Coverage(props:CoverageProps) {
                 />
             }
           },
-          onRenderHeader: (props:IGroupHeaderProps|undefined) => {
+          onRenderHeader: (props:IGroupHeaderProps|undefined,defaultRender) => {
             _columns = (props as any).columns; // ****************************** any cast
-            return <GroupHeader {...props}/>
+            return defaultRender!(props);
           }
         }}
-        onRenderDetailsHeader={
-          //todo resolve typing any
-          (detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
-            return <Sticky>
-              {defaultRender(detailsHeaderProps)}
-            </Sticky>
+        onRenderRow={(rowProps, defaultRender) => {
+          //rowProps!.groupNestingDepth = // todo calculate
+          rowProps!.styles = {
+            fields:{
+              alignItems:"center"
+            },
           }
-        }
+          return defaultRender!(rowProps);
+        }}
+        onRenderDetailsHeader={onRenderDetailsHeader}
 
         onColumnHeaderClick={(_, column) => {
           const coverageColumn:ICoverageColumn = column as ICoverageColumn;

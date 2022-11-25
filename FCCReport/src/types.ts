@@ -282,7 +282,8 @@ export enum MetricMergeOrder {
 
   export interface ReportOptions{
     namespacedClasses:boolean,
-    hideFullyCovered:boolean
+    hideFullyCovered:boolean,
+    stickyCoverageTable:boolean
   }
 
   

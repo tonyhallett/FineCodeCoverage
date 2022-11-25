@@ -1,8 +1,9 @@
-import { createTheme, FontClassNames, getFocusStyle, getInputFocusStyle, HighContrastSelector, ICheckboxStyleProps, ICheckboxStyles, ICustomizations, ICustomizerContext, IDetailsColumnStyleProps, IDetailsHeaderStyleProps, IDetailsRowStyleProps, IDropdownStyleProps, IGroupHeaderStyleProps, ILabelStyleProps, ILinkStyleProps, IModalStyleProps, IPivotStyleProps, IProgressIndicatorStyleProps, IProgressIndicatorStyles, IRawStyle, isDark, ISearchBoxStyleProps, IsFocusVisibleClassName, ISliderStyleProps, ZIndexes } from "@fluentui/react";
+import { createTheme, getFocusStyle, getInputFocusStyle, HighContrastSelector, ICheckboxStyleProps, ICheckboxStyles, ICustomizations, ICustomizerContext, IDetailsColumnStyleProps, IDetailsHeaderStyleProps, IDetailsRowStyleProps, IDropdownStyleProps, IGroupHeaderStyleProps, ILabelStyleProps, ILinkStyleProps, IModalStyleProps, IPivotStyleProps, IProgressIndicatorStyleProps, IRawStyle, isDark, ISearchBoxStyleProps, IsFocusVisibleClassName, ISliderStyleProps } from "@fluentui/react";
 import { cbGlobalClassNames, dropDownClassNames, sliderClassNames } from "./globalClassNames";
 import { getScrollbarStyle } from "./getScrollbarStyle";
 import { colorRGBA, getColor, lightenOrDarken } from "./colorHelpers";
 import { CategoryColours, Styling } from "../types";
+const reactToCSS = require('react-style-object-to-css')
 
 export const buttonHighContrastFocus = {
     left: -2,
@@ -190,28 +191,47 @@ export function getActionButtonStyles(vsColors:CategoryColours){
     return [
       {
           background: EnvironmentColors.ToolWindowBackground,
-          selectors:getScrollbarStyle(
-            EnvironmentColors.ScrollBarThumbBackground,
-            EnvironmentColors.ScrollBarThumbMouseOverBackground,
-            EnvironmentColors.ScrollBarThumbPressedBackground,
-            EnvironmentColors.ScrollBarBackground,
-            EnvironmentColors.ScrollBarArrowBackground,
-            EnvironmentColors.ScrollBarArrowMouseOverBackground,
-            EnvironmentColors.ScrollBarArrowPressedBackground,
-            EnvironmentColors.ScrollBarArrowGlyph,
-            EnvironmentColors.ScrollBarArrowGlyphMouseOver,
-            EnvironmentColors.ScrollBarArrowGlyphPressed,
-            EnvironmentColors.ScrollBarBorder,
-            EnvironmentColors.ScrollBarThumbBorder,
-            EnvironmentColors.ScrollBarThumbMouseOverBorder,
-            EnvironmentColors.ScrollBarThumbPressedBorder,
-            EnvironmentColors.ScrollBarThumbGlyphMouseOverBorder,
-            EnvironmentColors.ScrollBarThumbGlyphPressedBorder
-  
-          ),
       },
     ]
   }
+
+export const addScrollBarStyles = (vsColors:CategoryColours) => {
+  const id = "scrollbarStyles";
+  const previousStyle = document.getElementById(id);
+  if(previousStyle){
+    previousStyle.remove();
+  }
+  const style = document.createElement("style");
+  style.id = id;
+  const scrollBarStyle = getVsScrollbarStyle(vsColors);
+  for(const [key,value] of Object.entries(scrollBarStyle)){
+    style.textContent += `${key}{ ${reactToCSS(value)}}`
+  }
+  document.head.append(style);
+}
+
+export const getVsScrollbarStyle = (vsColors:CategoryColours) => {
+  const {EnvironmentColors} = vsColors;
+
+  return getScrollbarStyle(
+    EnvironmentColors.ScrollBarThumbBackground,
+    EnvironmentColors.ScrollBarThumbMouseOverBackground,
+    EnvironmentColors.ScrollBarThumbPressedBackground,
+    EnvironmentColors.ScrollBarBackground,
+    EnvironmentColors.ScrollBarArrowBackground,
+    EnvironmentColors.ScrollBarArrowMouseOverBackground,
+    EnvironmentColors.ScrollBarArrowPressedBackground,
+    EnvironmentColors.ScrollBarArrowGlyph,
+    EnvironmentColors.ScrollBarArrowGlyphMouseOver,
+    EnvironmentColors.ScrollBarArrowGlyphPressed,
+    EnvironmentColors.ScrollBarBorder,
+    EnvironmentColors.ScrollBarThumbBorder,
+    EnvironmentColors.ScrollBarThumbMouseOverBorder,
+    EnvironmentColors.ScrollBarThumbPressedBorder,
+    EnvironmentColors.ScrollBarThumbGlyphMouseOverBorder,
+    EnvironmentColors.ScrollBarThumbGlyphPressedBorder
+  );
+}
 
 const getFontStyle = (fontFamily:string,fontSize:number) : IRawStyle => {
   if(fontFamily.indexOf(" ")!== -1){
@@ -577,6 +597,17 @@ export class VsCustomizerContext implements ICustomizerContext {
                     borderLeft:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
                     borderRight:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
                     borderBottom:`0px solid`,
+                    ':before': {
+                      backgroundColor: 'transparent',
+                      transition: 'none',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      content: '""',
+                      height: 0,
+                    },
                     ':hover': {
                         color: environmentColors.ToolWindowTabSelectedText,
                         backgroundColor:environmentColors.ToolWindowTabSelectedTab,

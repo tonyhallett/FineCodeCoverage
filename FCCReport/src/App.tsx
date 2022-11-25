@@ -1,12 +1,13 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Payload, webviewPayloadTypeListen, webviewPayloadTypeUnlisten } from './webviewListener';
-import { CustomizerContext, ProgressIndicator, registerIcons, ScrollablePane, ThemeProvider } from '@fluentui/react';
+import { CustomizerContext, ProgressIndicator, registerIcons, ScrollablePane } from '@fluentui/react';
 import { LogMessage, MessageContext, Report, ReportOptions, Styling } from './types';
 import { ReportTab } from './ReportTab';
-import{ OpenFileIcon, SortDownIcon, SortUpIcon, ClearFilterIcon, FilterIcon, ChevronDownIcon, createSvgIcon, ChevronRightMedIcon, TagIcon, BeerMugIcon, GitHubLogoIcon, ReviewSolidIcon, InfoIcon, WarningIcon, ErrorIcon, CompletedIcon, TableIcon, ProcessingIcon, OpenPaneIcon, NavigateExternalInlineIcon, ErrorBadgeIcon, RunningIcon, DeveloperToolsIcon, ProcessingCancelIcon, LogRemoveIcon, GroupedDescendingIcon } from'@fluentui/react-icons-mdl2';
+import{ SortDownIcon, SortUpIcon, ClearFilterIcon, FilterIcon, ChevronDownIcon, createSvgIcon, ChevronRightMedIcon, TagIcon, BeerMugIcon, GitHubLogoIcon, ReviewSolidIcon, InfoIcon, WarningIcon, ErrorIcon, CompletedIcon, TableIcon, ProcessingIcon, OpenPaneIcon, NavigateExternalInlineIcon, ErrorBadgeIcon, RunningIcon, DeveloperToolsIcon, ProcessingCancelIcon, LogRemoveIcon, GroupedDescendingIcon } from'@fluentui/react-icons-mdl2';
 import { useRefInitOnce } from './utilities/hooks/useRefInitiOnce';
-import { getBodyStyles, VsCustomizerContext } from './vs styling/themeStyles';
-import { useBodyToolWindow } from './utilities/hooks/useBody';
+import { addScrollBarStyles, getBodyStyles, VsCustomizerContext } from './vs styling/themeStyles';
+import { useBodyStyling } from './utilities/hooks/useBody';
+
 
 //https://github.com/microsoft/fluentui/issues/22895
 const VisualStudioIDELogo32Icon = createSvgIcon({
@@ -100,7 +101,8 @@ function App() {
   const [stylingState, setStyling] = useState<Styling>(standalone ? anyWindow.styling : undefined);
   const [reportState, setReport] = useState<Report>(standalone ? anyWindow.report : undefined);
   const [coverageRunning,setCoverageRunning] = useState(false);
-  const [reportOptionsState, setReportOptions] = useState<ReportOptions>(standalone ? anyWindow.reportOptions : {namespacedClasses:true});
+  const [reportOptionsState, setReportOptions] = useState<ReportOptions>(standalone ? anyWindow.reportOptions : {});
+  
   const clearLogMessages = React.useCallback(() => {
     logMessagesDispatch({
       type:'clear'
@@ -108,6 +110,7 @@ function App() {
   },[]);
   useEffect(() => {
     function stylingListener(styling:Styling){
+      addScrollBarStyles(styling.categoryColours);
       setStyling(styling);
     }
 
@@ -153,7 +156,7 @@ function App() {
     ))
 
   const bodyStyles = stylingState ? getBodyStyles(stylingState.categoryColours) : {}
-  useBodyToolWindow(bodyStyles);
+  useBodyStyling(bodyStyles);
 
   if(!stylingState){
     return null;
@@ -165,6 +168,7 @@ function App() {
 
   const percentComplete = coverageRunning ? undefined : 0;
 
+  
   return (
     <CustomizerContext.Provider value={customizationStyling.current}>
       <ScrollablePane>
@@ -184,3 +188,5 @@ function App() {
 
 
 export default App;
+
+

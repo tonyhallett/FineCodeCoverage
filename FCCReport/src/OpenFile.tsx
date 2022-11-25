@@ -1,5 +1,6 @@
-import { ActionButton, IIconProps } from '@fluentui/react';
-import React from 'react';
+import { IIconProps } from '@fluentui/react';
+import { DetailsListCellText } from './vs styling/DetailsListCellText';
+import { StyledActionButton } from './vs styling/StyledActionButton';
 
 export function openHotspotLine(filePath:string,line:number|null){
   (window as any).chrome.webview.hostObjects.sourceFileOpener.openAtLine(filePath, line);
@@ -28,15 +29,17 @@ export type OpenFileProps = {
   toOpenAriaLabel:string
 } & (OpenHotspot | OpenClass)
 
-export function OpenFileButton(props: OpenFileProps) {
+export function OpenFile(props: OpenFileProps) {
   const ariaLabel = `Open ${props.toOpenAriaLabel} in Visual Studio`;
-    return <ActionButton ariaLabel={ariaLabel} iconProps={openFileInVsIconProps} onClick={() => {
+    return <><StyledActionButton ariaLabel={ariaLabel} iconProps={openFileInVsIconProps} onClick={() => {
       if (props.type === 'hotspot') {
         openHotspotLine(props.filePath, props.methodLine);
       } else {
         openClassFiles(props.filePaths);
       }
     }}>
-    {props.display}
-  </ActionButton>;
+    
+  </StyledActionButton>
+  <DetailsListCellText style={{marginLeft:'5px'}}>{props.display}</DetailsListCellText>
+  </>
 }

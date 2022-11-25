@@ -7,7 +7,7 @@ import { RiskHotspots } from "./RiskHotspots";
 import { LogMessage, Report, ReportOptions } from './types';
 import { Feedback } from './Feedback';
 
-export interface ReportTabProps {
+export type ReportTabProps = {
     standalone:boolean,
     report:Report,
     reportOptions:ReportOptions,
@@ -17,22 +17,29 @@ export interface ReportTabProps {
 
 
 
+const coverageKey = "CoverageTab";
+const riskHotspotsKey = "RiskHotspotsTab";
 
 export function ReportTab(props: ReportTabProps) {
-  const [selectedTabKey, setSelectedTabKey] = useState("0");
-  const { standalone, report, reportOptions, logMessages, clearLogMessages, } = props;
-  const {namespacedClasses} = reportOptions;
+  const [selectedTabKey, setSelectedTabKey] = useState(coverageKey);
+  const { standalone, report, reportOptions, logMessages, clearLogMessages,} = props;
+  const {namespacedClasses, stickyCoverageTable} = reportOptions;
   const hasReport = !!report;
 
   const summaryComponent = hasReport ? <Summary summaryResult={report.summaryResult} /> : <></>;
 
-  const coverageKey = "CoverageTab";
-  const riskHotspotsKey = "RiskHotspotsTab";
+  
   const coverageTabActive = selectedTabKey == coverageKey;
   const riskHotspotsActive = selectedTabKey == riskHotspotsKey;
   const items: JSX.Element[] = [
     <PivotItem key={0} itemKey={coverageKey} headerText='Coverage' alwaysRender>
-      {hasReport ?<Coverage active={coverageTabActive}  standalone={standalone} namespacedClasses={namespacedClasses} summaryResult={report.summaryResult} hideFullyCovered={reportOptions.hideFullyCovered}/> : null}
+      {hasReport ?<Coverage 
+        active={coverageTabActive}
+        stickyCoverageTable={stickyCoverageTable}
+        standalone={standalone}
+        namespacedClasses={namespacedClasses}
+        summaryResult={report.summaryResult}
+        hideFullyCovered={reportOptions.hideFullyCovered}/> : null}
     </PivotItem>,
     <PivotItem key={1} itemKey='SummaryTab' headerText='Summary' alwaysRender>
       {summaryComponent}
@@ -45,6 +52,7 @@ export function ReportTab(props: ReportTabProps) {
         riskHotspotsAnalysisThresholds={report.riskHotspotsAnalysisThresholds} 
         standalone={standalone}
         active={riskHotspotsActive}
+        stickyCoverageTable={stickyCoverageTable}
         /> : null}
     </PivotItem>,
     
@@ -66,9 +74,9 @@ export function ReportTab(props: ReportTabProps) {
     );
   }
 
-  return <Pivot styles={{
+  return <Pivot linkFormat='tabs' styles={{
     itemContainer: {
-      marginTop: '5px' // necessary or the focus indicator is truncated 
+      marginTop: '5px', // necessary or the focus indicator is truncated 
     }
   }} getTabId={(itemKey, _) => itemKey} focusZoneProps={{
     isCircularNavigation: true, onFocus: (evt) => {

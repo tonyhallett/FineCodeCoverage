@@ -36,7 +36,8 @@ namespace FineCodeCoverage.Output.JsPosting
                 return true;
             }
             return !(lastReportOptions.namespacedClasses == reportOptions.namespacedClasses &&
-                lastReportOptions.hideFullyCovered == reportOptions.hideFullyCovered
+                lastReportOptions.hideFullyCovered == reportOptions.hideFullyCovered && 
+                lastReportOptions.stickyCoverageTable == reportOptions.stickyCoverageTable
             );
         }
 

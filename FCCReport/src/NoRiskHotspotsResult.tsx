@@ -1,17 +1,19 @@
-import React from 'react';
-import { Label } from '@fluentui/react';
 import { RiskHotspotsAnalysisThresholds } from './types';
 import { SimpleTable } from './SimpleTable';
+import { ToolWindowText } from './vs styling/ToolWindowText';
 
+export interface INoRiskHotspotsResultProps { 
+  riskHotspotsAnalysisThresholds: RiskHotspotsAnalysisThresholds 
+}
 
-export function NoRiskHotspotsResult(props: { riskHotspotsAnalysisThresholds: RiskHotspotsAnalysisThresholds }) {
+export function NoRiskHotspotsResult(props: INoRiskHotspotsResultProps) {
   const thresholds = [];
   thresholds.push({ threshold: 'Cyclomatic complexity :', value: props.riskHotspotsAnalysisThresholds.MetricThresholdForCyclomaticComplexity});
   thresholds.push({ threshold: 'Crap score :', value: props.riskHotspotsAnalysisThresholds.MetricThresholdForCrapScore});
   thresholds.push({ threshold: 'NPath complexity :', value: props.riskHotspotsAnalysisThresholds.MetricThresholdForCrapScore});
 
   return <div>
-    <Label styles={{root:{marginLeft:10}}}>No risk hotspots for thresholds :</Label>
+    <ToolWindowText styles={{root:{marginLeft:10}}}>No risk hotspots for thresholds :</ToolWindowText>
     <SimpleTable
       items={thresholds}
       columns={[

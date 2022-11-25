@@ -14,6 +14,7 @@
     "@types/react-dom": "^17.0.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-style-object-to-css": "^1.1.2",
     "typescript": "^4.6.3"
   },
   "scripts": {
@@ -22,7 +23,7 @@
     "build-dev": "rimraf dist/debug/*&&set REACT_PROFILING=true&& parcel build src/html/debug/index.html --dist-dir dist/debug&& npm run build-dev-completed",
     "build": "npm run build-parcel-plugin && npm run build-dev && npm run build-prod",
     "build-dev-completed": "ts-node scripts/dev-build-completed-notification.ts",
-    "build-parcel-plugin":"tsc --project packages/parcel-resolver-react-profiling-alias",
+    "build-parcel-plugin": "tsc --project packages/parcel-resolver-react-profiling-alias",
     "test": "jest",
     "check": "tsc --noEmit",
     "debug-parcel-nocache": "set REACT_PROFILING=true&& set PARCEL_WORKERS=0&& set PARCEL_MAX_CONCURRENT_CALLS=1&& node --inspect ./node_modules/parcel/lib/cli.js build --log-level verbose --no-cache  src/html/debug/index.html --dist-dir dist/debug",

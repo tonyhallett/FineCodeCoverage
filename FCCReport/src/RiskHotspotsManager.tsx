@@ -1,17 +1,17 @@
-import { DetailsList, IColumn, IIconProps, SearchBox, IDropdownOption, Dropdown, SelectionMode, DetailsListLayoutMode, IDetailsHeaderProps, Sticky } from '@fluentui/react';
+import { DetailsList, IColumn, IIconProps, SearchBox, IDropdownOption, Dropdown, SelectionMode, DetailsListLayoutMode, IDetailsHeaderProps, Sticky, Stack, Label } from '@fluentui/react';
 import React, { useRef, useState } from 'react';
 import { removeNamespaces } from './common';
-import { OpenFileButton } from './OpenFileButton';
-import { Assembly, RiskHotpot, RiskHotspotsAnalysisThresholds } from './types';
+import { OpenFile } from './OpenFile';
+import { Assembly, ReportOptions, RiskHotpot, RiskHotspotsAnalysisThresholds } from './types';
 
-export interface RiskHotspotsManagerProps {
+export type RiskHotspotsManagerProps = {
   riskHotspots:RiskHotpot[],
   assemblies:Assembly[],
   riskHotspotsAnalysisThresholds: RiskHotspotsAnalysisThresholds,
   namespacedClasses:boolean,
   standalone:boolean,
   active:boolean
-}
+} & Pick<ReportOptions,"namespacedClasses"|"stickyCoverageTable">
 
 interface HotspotView {
   key:string,
@@ -117,7 +117,7 @@ function caseInsensitiveStringSort(item1:string,item2:string){
         return <span>{item.methodDisplay}</span>;
       }
       const toOpenAriaLabel = `class ${item.classDisplay}`;
-      return <OpenFileButton type='class' toOpenAriaLabel={toOpenAriaLabel} filePaths={item.classPaths}  display={item.classDisplay}/>
+      return <OpenFile type='class' toOpenAriaLabel={toOpenAriaLabel} filePaths={item.classPaths}  display={item.classDisplay}/>
     },
     sortItems:(items:HotspotView[], ascending : boolean) => {
       return stringFieldSort(items,ascending,classFieldName);
@@ -135,7 +135,7 @@ function caseInsensitiveStringSort(item1:string,item2:string){
         return <span>{item.methodDisplay}</span>
       }
       const toOpenAriaLabel = `class ${item.classDisplay} at method ${item.methodDisplay}`;
-      return <OpenFileButton toOpenAriaLabel={toOpenAriaLabel} type='hotspot' filePath={item.filePath} methodLine={item.methodLine} display={item.methodDisplay}/>
+      return <OpenFile toOpenAriaLabel={toOpenAriaLabel} type='hotspot' filePath={item.filePath} methodLine={item.methodLine} display={item.methodDisplay}/>
     },
     sortItems:(items:HotspotView[], ascending : boolean) => {
       return stringFieldSort(items,ascending,methodFieldName);
@@ -215,7 +215,25 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
   const [filterText, setFilterText] = useState<string>();
   const [filterByAssembly,setFilterByAssembly] = useState<IDropdownOption<Assembly>>();
 
-  const { riskHotspots,assemblies,namespacedClasses, riskHotspotsAnalysisThresholds, standalone, active } = props;
+  const { 
+    riskHotspots,
+    assemblies,
+    namespacedClasses, 
+    riskHotspotsAnalysisThresholds, 
+    standalone, 
+    active,
+    stickyCoverageTable
+  } = props;
+  const onRenderDetailsHeader = React.useCallback((detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
+    detailsHeaderProps!.styles={
+      root:{
+        paddingTop:'0px' 
+      },
+    }
+    return active && stickyCoverageTable ? <Sticky>
+      {defaultRender(detailsHeaderProps)}
+    </Sticky> : defaultRender(detailsHeaderProps);
+  },[active,stickyCoverageTable]);
   
   const items:HotspotView[] = [];
   const metricColumnNames:string[] = [];
@@ -283,29 +301,38 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
 
   let filteredAndSortedItems:any[] = sort(filteredItems,columns,sortDetails);
   
-  
   return <div>
-    <div>
-    <Dropdown label='Filter by assembly' placeholder='All assemblies' options={assemblyFilterDropDownOptions} onChange={(_,option) => setFilterByAssembly(option)} selectedKey={filterByAssembly?.key}/>
-    <SearchBox iconProps={{iconName:'filter'}} placeholder='Filter by class' value={filterText} onChange={(_,newValue) => setFilterText(newValue)}/>
-    </div>
+    <Stack style={{margin:'10px 0px'}} horizontal horizontalAlign='space-between' verticalAlign='center'>
+        <Dropdown
+          placeholder='All assemblies' 
+
+          options={assemblyFilterDropDownOptions} 
+          onChange={(_,option) => setFilterByAssembly(option)} 
+          selectedKey={filterByAssembly?.key}/>
+        <SearchBox styles={
+          {
+            root:{
+              width:'200px'
+            }
+          }
+        } iconProps={{iconName:'filter'}} 
+          placeholder='Filter by class' 
+          value={filterText} 
+          onChange={(_,newValue) => setFilterText(newValue)}/>
+    </Stack>
     <DetailsList 
+      styles={
+        {
+          root:{
+            clear:"both"
+          }
+        }
+      }
       selectionMode={SelectionMode.none} 
       items={filteredAndSortedItems} 
       columns={columns} 
       layoutMode={DetailsListLayoutMode.fixedColumns}
-      onRenderDetailsHeader={
-        //todo resolve typing any
-        (detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
-          if(active){
-            return <Sticky>
-            {defaultRender(detailsHeaderProps)}
-          </Sticky>
-          }
-
-          return defaultRender(detailsHeaderProps)
-        }
-      }
+      onRenderDetailsHeader={onRenderDetailsHeader}
       onColumnHeaderClick={(_, column) => {
       setSortDetails((current) => {
         if(current.columnFieldName === column!.fieldName){
@@ -319,6 +346,7 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
           ascending:true
         }
       })
+      
     }}/>
     </div>
 }

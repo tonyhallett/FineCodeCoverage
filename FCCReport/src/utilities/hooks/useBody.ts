@@ -1,7 +1,7 @@
 import { makeStyles, useDocument } from "@fluentui/react";
 import React from "react";
 
-export function useBodyToolWindow(bodyStyles:any){
+export function useBodyStyling(bodyStyles:any){
     const bodyClasses = useBodyStyles(bodyStyles)();
     useApplyClassToBody([bodyClasses.body])
 }
@@ -22,21 +22,21 @@ function useApplyClassToBody(classesToApply: string[]): void {
         }
 
         for (const classToApply of classesToApply) {
-        if (classToApply) {
-            body.classList.add(classToApply);
-        }
+            if (classToApply) {
+                body.classList.add(classToApply);
+            }
         }
 
         return () => {
-        if (!body) {
-            return;
-        }
-
-        for (const classToApply of classesToApply) {
-            if (classToApply) {
-            body.classList.remove(classToApply);
+            if (!body) {
+                return;
             }
-        }
+
+            for (const classToApply of classesToApply) {
+                if (classToApply) {
+                body.classList.remove(classToApply);
+                }
+            }
         };
     }, [body, classesToApply]);
 }
