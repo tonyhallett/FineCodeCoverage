@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Pivot, PivotItem } from '@fluentui/react';
-import { Coverage } from "./Coverage";
+import { Coverage } from "./coverage/Coverage";
 import { Log } from "./Log";
 import { Summary } from "./Summary";
 import { RiskHotspots } from "./RiskHotspots";

@@ -1,8 +1,14 @@
-import { createTheme, getFocusStyle, getInputFocusStyle, HighContrastSelector, ICheckboxStyleProps, ICheckboxStyles, ICustomizations, ICustomizerContext, IDetailsColumnStyleProps, IDetailsHeaderStyleProps, IDetailsRowStyleProps, IDropdownStyleProps, IGroupHeaderStyleProps, ILabelStyleProps, ILinkStyleProps, IModalStyleProps, IPivotStyleProps, IProgressIndicatorStyleProps, IRawStyle, isDark, ISearchBoxStyleProps, IsFocusVisibleClassName, ISliderStyleProps } from "@fluentui/react";
+import { createTheme, getFocusStyle, getInputFocusStyle, HighContrastSelector, IActivityItemStyles, IButtonStyles, ICheckboxStyleProps, ICheckboxStyles, ICustomizations, ICustomizerContext, IDetailsColumnStyleProps, IDetailsColumnStyles, IDetailsHeaderStyleProps, IDetailsHeaderStyles, IDetailsRowStyleProps, IDetailsRowStyles, IDropdownStyleProps, IDropdownStyles, IGroupHeaderStyleProps, IGroupHeaderStyles, ILabelStyleProps, ILabelStyles, ILinkStyleProps, ILinkStyles, IModalStyleProps, IModalStyles, IPivotStyleProps, IPivotStyles, IProgressIndicatorStyleProps, IProgressIndicatorStyles, IRawStyle, isDark, ISearchBoxStyleProps, ISearchBoxStyles, IsFocusVisibleClassName, ISliderStyleProps, ISliderStyles, ITextStyles, styled } from "@fluentui/react";
 import { cbGlobalClassNames, dropDownClassNames, sliderClassNames } from "./globalClassNames";
 import { getScrollbarStyle } from "./getScrollbarStyle";
 import { colorRGBA, getColor, lightenOrDarken } from "./colorHelpers";
 import { CategoryColours, Styling } from "../types";
+import { DeepPartial } from "@fluentui/merge-styles";
+import { vsStyledActionButtonScope } from "./VsStyledActionButton";
+import { VsStyledActivityItemScope } from "./VsStyledActivityItem";
+import { vsStyledToolWindowTextScope } from "./VsStyledToolWindowText";
+import { vsStyledPercentageScope } from "./VsStyledPercentage";
+import { vsStyledDetailsListCellTextScope } from "./VsStyledDetailsListCellText";
 const reactToCSS = require('react-style-object-to-css')
 
 export const buttonHighContrastFocus = {
@@ -17,7 +23,7 @@ function getVsFocusStyle(vsColors:CategoryColours) {
   return getFocusStyle(null as any, {borderColor:"transparent", outlineColor:vsColors.CommonControlsColors.FocusVisualText})
 }
 
-export function getActionButtonStyles(vsColors:CategoryColours){
+export function getActionButtonStyles(vsColors:CategoryColours):DeepPartial<IButtonStyles>{
     const {CommonControlsColors} = vsColors;
     const actionButtonStyles = {
       root:[
@@ -64,7 +70,7 @@ export function getActionButtonStyles(vsColors:CategoryColours){
     return actionButtonStyles
   }
 
-  export function getLinkStyle(props:ILinkStyleProps,vsColors:CategoryColours){
+  export function getLinkStyle(props:ILinkStyleProps,vsColors:CategoryColours):DeepPartial<ILinkStyles>{
     const {isDisabled} = props;
     const {EnvironmentColors: environmentColors, CommonControlsColors} = vsColors;
     const focusColor = CommonControlsColors.FocusVisualText;
@@ -248,14 +254,17 @@ const getFontStyle = (fontFamily:string,fontSize:number) : IRawStyle => {
 }
 
 
+
 export class VsCustomizerContext implements ICustomizerContext {
   private rowBackgroundFromTreeViewColors = true;
   private rowTextFromTreeViewColors = false;
   private headerColorsForHeaderText = false;
   private surroundTabs = false;
   private vsColors!:CategoryColours
+  constructor();
+  constructor(styling:Styling);
   constructor(
-    private styling:Styling|undefined,
+    private styling?:Styling,
     ){
       if(styling){
         this.vsColors = styling.categoryColours;
@@ -289,8 +298,8 @@ export class VsCustomizerContext implements ICustomizerContext {
   customizations: ICustomizations = {
     scopedSettings:{
       "Dropdown":{
-        styles:(dropDownStyleProps:IDropdownStyleProps) => {
-          const {isRenderingPlaceholder, disabled, isOpen} = dropDownStyleProps;
+        styles:(dropDownStyleProps:IDropdownStyleProps):DeepPartial<IDropdownStyles> => {
+          const {isRenderingPlaceholder, disabled,} = dropDownStyleProps;
           const {EnvironmentColors, CommonControlsColors} = this.vsColors;
           const focusColor = CommonControlsColors.FocusVisualText;
 
@@ -437,7 +446,7 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "Modal": {
-        styles:(props:IModalStyleProps) => {
+        styles:():DeepPartial<IModalStyles> => {
           const {EnvironmentColors} = this.vsColors;
           return {
             main:[{
@@ -449,7 +458,7 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "Label":{
-        styles:(props:ILabelStyleProps) => {
+        styles:():DeepPartial<ILabelStyles> => {
             return {
               root:{
                 color:this.vsColors.EnvironmentColors.ToolWindowText
@@ -459,48 +468,44 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       // necessary as Pivot renders an ActionButton
-      "StyledActionButton":{
-        styles:(_:never) => {
+      [vsStyledActionButtonScope]:{
+        styles:():DeepPartial<IButtonStyles> => {
           return getActionButtonStyles(this.vsColors);
         }
       },
       "Link":{
-        styles:(props:ILinkStyleProps) => {
-          return getLinkStyle(props,this.vsColors);
+        styles:(linkStyleProps:ILinkStyleProps):DeepPartial<ILinkStyles> => {
+          return getLinkStyle(linkStyleProps,this.vsColors);
         }
       },
       "Checkbox":{
-        styles:(props:ICheckboxStyleProps) => {
-          return vsCbStylesFn(props,this.vsColors)
+        styles:(checkboxStyleProps:ICheckboxStyleProps):DeepPartial<ICheckboxStyles> => {
+          return vsCbStylesFn(checkboxStyleProps,this.vsColors)
         }
       },
       "ProgressIndicator":{
-        styles:(props:IProgressIndicatorStyleProps) => {
+        styles:(progressIndicatorStyleProps:IProgressIndicatorStyleProps):DeepPartial<IProgressIndicatorStyles> => {
           const {ProgressBarColors : progressBarColors, EnvironmentColors:environmentColors} = this.vsColors;
-          const trackColor = progressBarColors.Background;//environmentColors.ToolWindowText
+          const trackColor = progressBarColors.Background;
           const progressBarColor = progressBarColors.IndicatorFill !== trackColor ? progressBarColors.IndicatorFill : environmentColors.ToolWindowText;
           return {
               progressTrack:{
-                  //can barely see this with blue, cannot see with light or dark
                   backgroundColor : trackColor,
-                  //border:`1px solid ${environmentColors.ToolWindowText}`
               },
-              // might use an accent color
               progressBar:[
               {
               },
-              props.indeterminate && {
+              progressIndicatorStyleProps.indeterminate && {
                   background:
                   `linear-gradient(to right, ${progressBarColor} 0%, ` +
                   `${progressBarColor} 50%, ${progressBarColor} 100%)`,
-                  //border:`1px solid ${environmentColors.ToolWindowText}`
               }
               ]
           }
         }
       },
-      "VsStyledActivityItem":{
-        styles:() => {
+      [VsStyledActivityItemScope]:{
+        styles:():DeepPartial<IActivityItemStyles> => {
           return {
             root:{
               color:this.vsColors.EnvironmentColors.ToolWindowText
@@ -509,8 +514,8 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "Pivot":{
-        styles:(props:IPivotStyleProps) => {
-          const {linkFormat} = props;
+        styles:(pivotStyleProps:IPivotStyleProps):DeepPartial<IPivotStyles>=> {
+          const {linkFormat} = pivotStyleProps;
           const {EnvironmentColors:environmentColors, CommonControlsColors} = this.vsColors;
 
           return linkFormat === "links" ? 
@@ -628,7 +633,7 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "Slider": {
-        styles:(props:ISliderStyleProps) => {
+        styles:():DeepPartial<ISliderStyles> => {
           const {CommonControlsColors, EnvironmentColors} = this.vsColors
           const focusStyle = getVsFocusStyle(this.vsColors);
 
@@ -690,8 +695,8 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "SearchBox" : {
-        styles:(props:ISearchBoxStyleProps) => {
-          const {theme, underlined, hasFocus} = props;
+        styles:(searchBoxStyleProps:ISearchBoxStyleProps):DeepPartial<ISearchBoxStyles>=> {
+          const {theme, underlined, hasFocus} = searchBoxStyleProps;
           const {SearchControlColors, CommonControlsColors} = this.vsColors;
         return { 
           root: [{ 
@@ -766,19 +771,19 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "VsSpan":{
-        styles:(_:never) => ({
+        styles:() => ({
           color:this.vsColors.EnvironmentColors.ToolWindowText,
         })
       },
-      "ToolWindowText":{
-        styles:(_:never) => ({
+      [vsStyledToolWindowTextScope]:{
+        styles:() : DeepPartial<ITextStyles> => ({
           root:{
             color:this.vsColors.EnvironmentColors.ToolWindowText,
           }
         })
       },
       "SimpleTableRow":{
-        styles:(props:IDetailsRowStyleProps) => {
+        styles:():DeepPartial<IDetailsRowStyles>=> {
           const {EnvironmentColors} = this.vsColors;
           const environmentCommandBarTextActive = EnvironmentColors.CommandBarTextActive;
           return {
@@ -806,8 +811,8 @@ export class VsCustomizerContext implements ICustomizerContext {
           }
         }
       },
-      "Percentage" : {
-        styles:(props:{percentage:number | null}) => {
+      [vsStyledPercentageScope] : {
+        styles:(props:{percentage:number | null}) : DeepPartial<IProgressIndicatorStyles> => {
           const {percentage} = props;
           const {EnvironmentColors} = this.vsColors;
           const backgroundColor = percentage === null ? "transparent" : EnvironmentColors.VizSurfaceGreenMedium;
@@ -826,8 +831,8 @@ export class VsCustomizerContext implements ICustomizerContext {
           }
         }
       },
-      "DetailsListCellText" : {
-        styles:(props:any) => {
+      [vsStyledDetailsListCellTextScope] : {
+        styles:():DeepPartial<ITextStyles> => {
           return {
             root: [{
               color:'inherit',
@@ -838,19 +843,14 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "DetailsHeader" : {
-        styles:(props:IDetailsHeaderStyleProps) => {
-          const {HeaderColors} = this.vsColors;
+        styles:():DeepPartial<IDetailsHeaderStyles> => {
+          const {HeaderColors, EnvironmentColors} = this.vsColors;
           const focusStyle = getVsFocusStyle(this.vsColors);
           return {
             root:{
               background:HeaderColors.Default,
               borderBottom: `1px solid ${HeaderColors.SeparatorLine}`,
-              paddingTop:'0px'//***************************************** 
-              // should this be done ?
-              //borderTop: `1px solid ${headerColors.SeparatorLine}`,
-              //borderLeft: `1px solid ${headerColors.SeparatorLine}`,
-              //borderRight: `1px solid ${headerColors.SeparatorLine}`,
-              
+              paddingTop:'0px'
             },
             cellIsGroupExpander:[
               focusStyle,
@@ -867,15 +867,35 @@ export class VsCustomizerContext implements ICustomizerContext {
                   },
                 },
 
-            }]
+            }],
+            cellSizer: [
+              {
+                selectors: {
+                  ':after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    width: 1,
+                    background: this.headerColorsForHeaderText ? HeaderColors.MouseOverText : EnvironmentColors.CommandBarDragHandle,
+                    opacity: 0,
+                    left: '50%',
+                  },
+                  [`&.is-resizing:after`]: [
+                    {
+                      boxShadow: `0 0 5px 0 ${EnvironmentColors.CommandBarDragHandleShadow}`,
+                    },
+                  ],
+                },
+              },
+            ]
         }
       }
     },
     "DetailsColumn":{
-      styles:(props:IDetailsColumnStyleProps) => {
-        const {isActionable} = props;
+      styles:(detailsColumnStyleProps:IDetailsColumnStyleProps):DeepPartial<IDetailsColumnStyles> => {
+        const {isActionable} = detailsColumnStyleProps;
         const {HeaderColors, EnvironmentColors} = this.vsColors;
-        
       
       return {
         root:[
@@ -923,7 +943,7 @@ export class VsCustomizerContext implements ICustomizerContext {
       }
     },
      "GroupHeader" : {
-      styles: (props:IGroupHeaderStyleProps) => {
+      styles: ():DeepPartial<IGroupHeaderStyles> => {
         const {HeaderColors, TreeViewColors, EnvironmentColors} = this.vsColors;
         const rowBackground = this.rowBackgroundFromTreeViewColors ? TreeViewColors.Background : "transparent"
         const rowTextColor = this.rowTextFromTreeViewColors ? TreeViewColors.BackgroundText : EnvironmentColors.CommandBarTextActive;
@@ -961,34 +981,11 @@ export class VsCustomizerContext implements ICustomizerContext {
             
             },focusStyle
           ],
-          cellSizer: [
-            {
-              selectors: {
-                ':after': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  bottom: 0,
-                  width: 1,
-                  background: HeaderColors.MouseOver,
-                  opacity: 0,
-                  left: '50%',
-                },
-                // could change the boxShadow
-                /* [`&.${classNames.isResizing}:after`]: [
-                  cellSizerFadeInStyles,
-                  {
-                    boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.4)',
-                  },
-                ], */
-              },
-            },
-          ],
         }
       }
      },
      "DetailsRow" : {
-      styles:(detailsRowStyleProps:IDetailsRowStyleProps) => {        
+      styles:(detailsRowStyleProps:IDetailsRowStyleProps):DeepPartial<IDetailsRowStyles> => {        
         const { TreeViewColors, EnvironmentColors} = this.vsColors;
         const focusStyle = getVsFocusStyle(this.vsColors);
         const rowBackground = this.rowBackgroundFromTreeViewColors ? TreeViewColors.Background : "transparent"

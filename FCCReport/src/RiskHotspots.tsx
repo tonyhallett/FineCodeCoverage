@@ -1,7 +1,7 @@
 import { RiskHotspotsManager, RiskHotspotsManagerProps } from "./RiskHotspotsManager";
 import { INoRiskHotspotsResultProps as NoRiskHotspotsResultProps, NoRiskHotspotsResult } from "./NoRiskHotspotsResult";
 import { Report } from './types';
-import { ToolWindowText } from './vs styling/ToolWindowText';
+import { VsSTyledToolWindowText } from './vs styling/VsStyledToolWindowText';
 
 export type RiskHotspotProps = 
   NoRiskHotspotsResultProps & Omit<RiskHotspotsManagerProps,"riskHotspots"> & Pick<Report,'riskHotspotAnalysisResult'>
@@ -23,7 +23,7 @@ export function RiskHotspots(props: RiskHotspotProps) {
     return null;
   }
   if (!riskHotspotAnalysisResult.codeCodeQualityMetricsAvailable) {
-    return <ToolWindowText>No code quality metrics available</ToolWindowText>;
+    return <VsSTyledToolWindowText>No code quality metrics available</VsSTyledToolWindowText>;
   }
   if (riskHotspotAnalysisResult.riskHotspots.length === 0) {
     return <NoRiskHotspotsResult riskHotspotsAnalysisThresholds={riskHotspotsAnalysisThresholds} />;

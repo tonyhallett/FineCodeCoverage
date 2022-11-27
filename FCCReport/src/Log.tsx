@@ -1,10 +1,10 @@
-import { ActionButton, ActivityItem, IActivityItemProps, Icon, IconButton, IStyle } from '@fluentui/react';
+import { ActionButton, ActivityItem, IActivityItemProps, Icon, IconButton, IStyle, Stack } from '@fluentui/react';
 import React, { CSSProperties } from 'react';
 import getFontFamily from './helpers/fontName';
 import { Emphasis, LogMessage, MessageContext, Styling } from './types';
-import { StyledActionButton } from './vs styling/StyledActionButton';
-import { VsStyledActivityItem } from './vs styling/StyledActivityItem';
-import { ToolWindowText } from './vs styling/ToolWindowText';
+import { VsStyledActionButton } from './vs styling/VsStyledActionButton';
+import { VsStyledActivityItem } from './vs styling/VsStyledActivityItem';
+import { VsSTyledToolWindowText } from './vs styling/VsStyledToolWindowText';
 
 // use a map
 function getIconNameForContext(messageContext:MessageContext){
@@ -87,11 +87,11 @@ export function Log(props:{logMessages:LogMessage[], clearLogMessages:() => void
         if(msgPart.emphasis & Emphasis.Underline){
           root.textDecoration = 'underline';
         }
-        return <ToolWindowText key={j} styles={
+        return <VsSTyledToolWindowText key={j} styles={
           {root}
-        }>{msgPart.message}</ToolWindowText>;
+        }>{msgPart.message}</VsSTyledToolWindowText>;
       }else{
-        const actionButton = <StyledActionButton 
+        const actionButton = <VsStyledActionButton 
         key={j} 
         style={{marginLeft:'10px'}}
         ariaLabel={msgPart.ariaLabel}
@@ -100,7 +100,7 @@ export function Log(props:{logMessages:LogMessage[], clearLogMessages:() => void
           const hostObject = (window as any).chrome.webview.hostObjects[msgPart.hostObject];
           const hostMethod:Function = hostObject[msgPart.methodName];
           hostMethod.apply(null,msgPart.arguments);
-        }}>{msgPart.title}</StyledActionButton>
+        }}>{msgPart.title}</VsStyledActionButton>
         return actionButton;
       }
     })
@@ -132,8 +132,8 @@ export function Log(props:{logMessages:LogMessage[], clearLogMessages:() => void
       activityItemsOrBreaks.push(<br key={`break${i}`}/>);
     } */
   })
-  return <>
-    <StyledActionButton ariaLabel='Clear log messages' iconProps={{iconName:'logRemove'}} onClick={clearLogMessages}/>
-    {activityItemsOrBreaks}
-  </>
+  return <Stack horizontal verticalAlign='start'>
+    <VsStyledActionButton ariaLabel='Clear log messages' iconProps={{iconName:'logRemove'}} onClick={clearLogMessages}/>
+    <div>{activityItemsOrBreaks}</div>
+  </Stack>
 }

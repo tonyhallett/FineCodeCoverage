@@ -1,7 +1,6 @@
 import { assign, clamp, getColorFromRGBA, hsv2rgb, IColor, IHSV } from "@fluentui/react";
 
 export function getColor(rgbString:string):IColor{
-    //rgb(0,1,2)
     const partsStr = rgbString.replace("rgb(","").replace(")","");
     const parts = partsStr.split(",");
     const rgb =  {

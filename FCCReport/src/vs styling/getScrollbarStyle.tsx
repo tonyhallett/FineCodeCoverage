@@ -1,30 +1,35 @@
 //todo type color
 //todo sizes
+import {CSSProperties, SVGAttributes} from "react"
+
+type BackgroundColor = CSSProperties['backgroundColor'];
+type BorderColor = CSSProperties['borderColor'];
+type SvgFill = SVGAttributes<SVGSVGElement>['fill']
 
 export function getScrollbarStyle(
-  thumbColor: string,
-  thumbHoverColor: string,
-  thumbActiveColor: string,
-  trackColor: string,
-  arrowBackgroundColor: string,
-  arrowBackgroundHoverColor: string,
-  arrowBackgroundActiveColor: string,
-  arrowGlyphBackgroundColor: string,
-  arrowGlyphBackgroundHoverColor: string,
-  arrowGlyphBackgroundActiveColor: string,
-  scrollBarBorderColor: string,
-  scrollBarThumbBorderColor: string,
-  scrollBarThumbBorderHoverColor: string,
-  scrollBarThumbBorderActiveColor: string,
-  arrowBorderHoverColor: string,
-  arrowBorderActiveColor: string,
+  thumbColor: BackgroundColor,
+  thumbHoverColor: BackgroundColor,
+  thumbActiveColor: BackgroundColor,
+  trackColor: BackgroundColor,
+  arrowBackgroundColor: BackgroundColor,
+  arrowBackgroundHoverColor: BackgroundColor,
+  arrowBackgroundActiveColor: BackgroundColor,
+  arrowGlyphBackgroundColor: SvgFill,
+  arrowGlyphBackgroundHoverColor: SvgFill,
+  arrowGlyphBackgroundActiveColor: SvgFill,
+  scrollBarBorderColor:  BorderColor,
+  scrollBarThumbBorderColor: BorderColor,
+  scrollBarThumbBorderHoverColor: BorderColor,
+  scrollBarThumbBorderActiveColor: BorderColor,
+  arrowBorderHoverColor: BorderColor,
+  arrowBorderActiveColor: BorderColor,
   scrollbarSize = 18,
   thumbSize = 8,
 ) {
   const hide = (scrollbarSize - thumbSize)/2;
   const arrowShift = (scrollbarSize - thumbSize/2)/2;
-  function getArrow(points: string, fill: string) {
 
+  function getArrow(points: string, fill: SvgFill) {
     return `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='${fill}'><polygon points='${points}'/></svg>")`;
   }
 
@@ -60,7 +65,7 @@ export function getScrollbarStyle(
     };
   }
 
-  function getBorder(borderColor: string) {
+  function getBorder(borderColor: BorderColor) {
     return {};
     /* return {
       // box shadow ?

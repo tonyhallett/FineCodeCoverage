@@ -3,7 +3,7 @@ import { act, fireEvent, getByRole, render, screen, waitFor, within } from '@tes
 import App from './App';
 import { Payload } from './webviewListener';
 import userEvent from '@testing-library/user-event';
-import { Report, Styling } from './types';
+import { CategoryColours, Report, Styling } from './types';
 
 /*
   https://jestjs.io/docs/26.x/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
@@ -26,6 +26,152 @@ function expectOnlyFirstTabSelected(tabList:HTMLElement){
   tabs.forEach((tab,i) => {
     expect(tab).toHaveAttribute('aria-selected',i == 0 ? 'true' : 'false');
   })
+}
+
+function getCategoryColours():CategoryColours {
+  return {
+    EnvironmentColors:{
+      ToolWindowText:"rgba(1,2,3,1)",
+      ToolWindowBackground:"rgba(1,2,3,1)",
+      CommandBarDragHandle:"rgba(1,2,3,1)",
+      CommandBarDragHandleShadow:"rgba(1,2,3,1)",
+      CommandBarTextActive:"rgba(1,2,3,1)",
+      CommandBarTextHover:"rgba(1,2,3,1)",
+      CommandBarTextSelected:"rgba(1,2,3,1)",
+      ControlEditHintText:"rgba(1,2,3,1)",
+      EnvironmentBackground:"rgba(1,2,3,1)",
+      PanelHyperlink:"rgba(1,2,3,1)",
+      PanelHyperlinkHover:"rgba(1,2,3,1)",
+      PanelHyperlinkPressed:"rgba(1,2,3,1)",
+      ScrollBarArrowBackground:"rgba(1,2,3,1)",
+      ScrollBarArrowGlyph:"rgba(1,2,3,1)",
+      ScrollBarArrowGlyphMouseOver:"rgba(1,2,3,1)",
+      ScrollBarArrowGlyphPressed:"rgba(1,2,3,1)",
+      ScrollBarArrowMouseOverBackground:"rgba(1,2,3,1)",
+      ScrollBarArrowPressedBackground:"rgba(1,2,3,1)",
+      ScrollBarBackground:"rgba(1,2,3,1)",
+      ScrollBarBorder:"rgba(1,2,3,1)",
+      ScrollBarThumbBackground:"rgba(1,2,3,1)",
+      ScrollBarThumbBorder:"rgba(1,2,3,1)",
+      ScrollBarThumbGlyphMouseOverBorder:"rgba(1,2,3,1)",
+      ScrollBarThumbGlyphPressedBorder:"rgba(1,2,3,1)",
+      ScrollBarThumbMouseOverBackground:"rgba(1,2,3,1)",
+      ScrollBarThumbMouseOverBorder:"rgba(1,2,3,1)",
+      ScrollBarThumbPressedBackground:"rgba(1,2,3,1)",
+      ScrollBarThumbPressedBorder:"rgba(1,2,3,1)",
+      ToolWindowBorder:"rgba(1,2,3,1)",
+      ToolWindowTabBorder:"rgba(1,2,3,1)",
+      ToolWindowTabGradientBegin:"rgba(1,2,3,1)",
+      ToolWindowTabMouseOverBackgroundBegin:"rgba(1,2,3,1)",
+      ToolWindowTabMouseOverBorder:"rgba(1,2,3,1)",
+      ToolWindowTabMouseOverText:"rgba(1,2,3,1)",
+      ToolWindowTabSelectedActiveText:"rgba(1,2,3,1)",
+      ToolWindowTabSelectedBorder:"rgba(1,2,3,1)",
+      ToolWindowTabSelectedTab:"rgba(1,2,3,1)",
+      ToolWindowTabSelectedText:"rgba(1,2,3,1)",
+      ToolWindowTabText:"rgba(1,2,3,1)",
+      VizSurfaceGreenMedium:"rgba(1,2,3,1)",
+    },
+    CommonControlsColors:{
+      Button:"rgba(1,2,3,1)",
+      ButtonBorder:"rgba(1,2,3,1)",
+      ButtonBorderDisabled:"rgba(1,2,3,1)",
+      ButtonBorderFocused:"rgba(1,2,3,1)",
+      ButtonBorderHover:"rgba(1,2,3,1)",
+      ButtonBorderPressed:"rgba(1,2,3,1)",
+      ButtonDisabled:"rgba(1,2,3,1)",
+      ButtonDisabledText:"rgba(1,2,3,1)",
+      ButtonFocused:"rgba(1,2,3,1)",
+      ButtonFocusedText:"rgba(1,2,3,1)",
+      ButtonHover:"rgba(1,2,3,1)",
+      ButtonHoverText:"rgba(1,2,3,1)",
+      ButtonPressed:"rgba(1,2,3,1)",
+      ButtonPressedText:"rgba(1,2,3,1)",
+      ButtonText:"rgba(1,2,3,1)",
+      CheckBoxBackground:"rgba(1,2,3,1)",
+      CheckBoxBackgroundDisabled:"rgba(1,2,3,1)",
+      CheckBoxBackgroundFocused:"rgba(1,2,3,1)",
+      CheckBoxBackgroundHover:"rgba(1,2,3,1)",
+      CheckBoxBorder:"rgba(1,2,3,1)",
+      CheckBoxBorderDisabled:"rgba(1,2,3,1)",
+      CheckBoxBorderFocused:"rgba(1,2,3,1)",
+      CheckBoxBorderHover:"rgba(1,2,3,1)",
+      CheckBoxGlyph:"rgba(1,2,3,1)",
+      CheckBoxGlyphDisabled:"rgba(1,2,3,1)",
+      CheckBoxGlyphFocused:"rgba(1,2,3,1)",
+      CheckBoxGlyphHover:"rgba(1,2,3,1)",
+      CheckBoxText:"rgba(1,2,3,1)",
+      CheckBoxTextDisabled:"rgba(1,2,3,1)",
+      CheckBoxTextFocused:"rgba(1,2,3,1)",
+      CheckBoxTextHover:"rgba(1,2,3,1)",
+      ComboBoxBackground:"rgba(1,2,3,1)",
+      ComboBoxBackgroundFocused:"rgba(1,2,3,1)",
+      ComboBoxBackgroundHover:"rgba(1,2,3,1)",
+      ComboBoxBackgroundPressed:"rgba(1,2,3,1)",
+      ComboBoxBorder:"rgba(1,2,3,1)",
+      ComboBoxBorderFocused:"rgba(1,2,3,1)",
+      ComboBoxBorderHover:"rgba(1,2,3,1)",
+      ComboBoxBorderPressed:"rgba(1,2,3,1)",
+      ComboBoxGlyph:"rgba(1,2,3,1)",
+      ComboBoxGlyphFocused:"rgba(1,2,3,1)",
+      ComboBoxGlyphHover:"rgba(1,2,3,1)",
+      ComboBoxGlyphPressed:"rgba(1,2,3,1)",
+      ComboBoxListBackground:"rgba(1,2,3,1)",
+      ComboBoxListBorder:"rgba(1,2,3,1)",
+      ComboBoxListItemBackgroundHover:"rgba(1,2,3,1)",
+      ComboBoxListItemBorderHover:"rgba(1,2,3,1)",
+      ComboBoxListItemText:"rgba(1,2,3,1)",
+      ComboBoxListItemTextHover:"rgba(1,2,3,1)",
+      ComboBoxText:"rgba(1,2,3,1)",
+      ComboBoxTextFocused:"rgba(1,2,3,1)",
+      ComboBoxTextHover:"rgba(1,2,3,1)",
+      ComboBoxTextInputSelection:"rgba(1,2,3,1)",
+      ComboBoxTextPressed:"rgba(1,2,3,1)",
+      FocusVisualText:"rgba(1,2,3,1)",
+    },
+    HeaderColors:{
+      Default:"rgba(1,2,3,1)",
+      DefaultText:"rgba(1,2,3,1)",
+      Glyph:"rgba(1,2,3,1)",
+      MouseDown:"rgba(1,2,3,1)",
+      MouseDownGlyph:"rgba(1,2,3,1)",
+      MouseDownText:"rgba(1,2,3,1)",
+      MouseOver:"rgba(1,2,3,1)",
+      MouseOverGlyph:"rgba(1,2,3,1)",
+      MouseOverText:"rgba(1,2,3,1)",
+      SeparatorLine:"rgba(1,2,3,1)",
+    },
+    ProgressBarColors:{
+      Background:"rgba(1,2,3,1)",
+      IndicatorFill:"rgba(1,2,3,1)",
+    },
+    SearchControlColors:{
+      ClearGlyph:"rgba(1,2,3,1)",
+      FocusedBackground:"rgba(1,2,3,1)",
+      FocusedBackgroundText:"rgba(1,2,3,1)",
+      FocusedBorder:"rgba(1,2,3,1)",
+      FocusedClearGlyph:"rgba(1,2,3,1)",
+      MouseOverBackground:"rgba(1,2,3,1)",
+      MouseOverBackgroundText:"rgba(1,2,3,1)",
+      MouseOverBorder:"rgba(1,2,3,1)",
+      MouseOverClearGlyph:"rgba(1,2,3,1)",
+      MouseOverSearchGlyph:"rgba(1,2,3,1)",
+      SearchGlyph:"rgba(1,2,3,1)",
+      Selection:"rgba(1,2,3,1)",
+      SelectionText:"rgba(1,2,3,1)",
+      Unfocused:"rgba(1,2,3,1)",
+      UnfocusedBorder:"rgba(1,2,3,1)",
+      UnfocusedText:"rgba(1,2,3,1)",
+    },
+    TreeViewColors:{
+      Background:"rgba(1,2,3,1)",
+      BackgroundText:"rgba(1,2,3,1)",
+      SelectedItemActive:"rgba(1,2,3,1)",
+      SelectedItemActiveText:"rgba(1,2,3,1)",
+      SelectedItemInactive:"rgba(1,2,3,1)",
+      SelectedItemInactiveText:"rgba(1,2,3,1)",
+    }
+  }
 }
 
 describe('<App/>', () => {
@@ -100,15 +246,7 @@ describe("Standalone", () => {
       const styling:Styling = {
         fontName:"Arial",
         fontSize:"12px",
-        categoryColours:{
-          EnvironmentColors:{
-            ToolWindowText:"red",
-            ToolWindowBackground:"yellow"
-          },
-          CommonControlsColors:{
-  
-          }
-        }
+        categoryColours:getCategoryColours()
       }
       anyWindow.styling = styling;
       anyWindow.reportOptions = {
@@ -208,15 +346,7 @@ describe("Standalone", () => {
             data:{
               fontSize:"10px",
               fontName:"Arial",
-              categoryColours:{
-                EnvironmentColors:{
-                  ToolWindowText: "red",
-                  ToolWindowBackground:"yellow"
-                },
-                CommonControlsColors:{
-                  
-                }
-              }
+              categoryColours:getCategoryColours()
             }
           }
         }

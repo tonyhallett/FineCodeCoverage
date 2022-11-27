@@ -1,6 +1,6 @@
 import { RiskHotspotsAnalysisThresholds } from './types';
 import { SimpleTable } from './SimpleTable';
-import { ToolWindowText } from './vs styling/ToolWindowText';
+import { VsSTyledToolWindowText } from './vs styling/VsStyledToolWindowText';
 
 export interface INoRiskHotspotsResultProps { 
   riskHotspotsAnalysisThresholds: RiskHotspotsAnalysisThresholds 
@@ -13,7 +13,7 @@ export function NoRiskHotspotsResult(props: INoRiskHotspotsResultProps) {
   thresholds.push({ threshold: 'NPath complexity :', value: props.riskHotspotsAnalysisThresholds.MetricThresholdForCrapScore});
 
   return <div>
-    <ToolWindowText styles={{root:{marginLeft:10}}}>No risk hotspots for thresholds :</ToolWindowText>
+    <VsSTyledToolWindowText styles={{root:{marginLeft:10}}}>No risk hotspots for thresholds :</VsSTyledToolWindowText>
     <SimpleTable
       items={thresholds}
       columns={[

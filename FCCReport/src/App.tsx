@@ -151,9 +151,7 @@ function App() {
     
   },[])
 
-  const customizationStyling = useRefInitOnce(new VsCustomizerContext(
-    stylingState,
-    ))
+  const customizationStyling = useRefInitOnce(new VsCustomizerContext())
 
   const bodyStyles = stylingState ? getBodyStyles(stylingState.categoryColours) : {}
   useBodyStyling(bodyStyles);
