@@ -281,7 +281,8 @@ export enum MetricMergeOrder {
   }
 
   export interface Styling extends FontStyling{
-    categoryColours:CategoryColours
+    categoryColours:CategoryColours,
+    themeIsHighContrast:boolean
   }
 
   export interface ReportOptions{

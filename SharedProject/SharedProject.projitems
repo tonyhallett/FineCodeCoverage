@@ -288,6 +288,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IFCCOutputPaneHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\IFCCResourcesNavigatorHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\ISourceFileOpenerHostObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\JsWebViewHostObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\JsWebViewHostObjectRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\HostObjects\SourceFileOpenerHostObjectRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\Process\IProcess.cs" />
@@ -341,6 +343,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OutputToolWindowCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewImpl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntimeInstallationChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\WebView\IWebViewRuntimeInstaller.cs" />

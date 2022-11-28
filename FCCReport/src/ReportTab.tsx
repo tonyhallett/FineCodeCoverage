@@ -55,10 +55,6 @@ export function ReportTab(props: ReportTabProps) {
         stickyCoverageTable={stickyCoverageTable}
         /> : null}
     </PivotItem>,
-    
-    /*<PivotItem key={3} headerText='NestedGroup example' alwaysRender>
-      <NestedGroupsExample/>
-    </PivotItem>*/
   ];
 
   if (!props.standalone) {

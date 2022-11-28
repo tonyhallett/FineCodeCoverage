@@ -333,6 +333,14 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
       columns={columns} 
       layoutMode={DetailsListLayoutMode.fixedColumns}
       onRenderDetailsHeader={onRenderDetailsHeader}
+      onRenderRow={(rowProps, defaultRender) => {
+        rowProps!.styles = {
+          fields:{
+            alignItems:"center"
+          },
+        }
+        return defaultRender!(rowProps);
+      }}
       onColumnHeaderClick={(_, column) => {
       setSortDetails((current) => {
         if(current.columnFieldName === column!.fieldName){

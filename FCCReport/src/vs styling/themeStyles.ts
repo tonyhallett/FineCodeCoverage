@@ -216,6 +216,27 @@ export const addScrollBarStyles = (vsColors:CategoryColours) => {
   document.head.append(style);
 }
 
+export const addVsHighContrastBlocker = (isHighContrastTheme:boolean) => {
+  const id = "vsHighContrast";
+  const previousStyle = document.getElementById(id);
+  if(previousStyle){
+    previousStyle.remove();
+  }
+  if(!isHighContrastTheme){
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = `
+    @media (forced-colors: active) {
+      * {
+        forced-color-adjust: none !important;
+      }
+    }
+    `;
+  document.head.append(style);
+  }
+  
+}
+
 export const getVsScrollbarStyle = (vsColors:CategoryColours) => {
   const {EnvironmentColors} = vsColors;
 
@@ -256,20 +277,28 @@ const getFontStyle = (fontFamily:string,fontSize:number) : IRawStyle => {
 
 
 export class VsCustomizerContext implements ICustomizerContext {
-  private rowBackgroundFromTreeViewColors = true;
-  private rowTextFromTreeViewColors = false;
-  private headerColorsForHeaderText = false;
-  private surroundTabs = false;
+  private readonly rowBackgroundFromTreeViewColors = true;
+  private readonly rowTextFromTreeViewColors = false;
+  private readonly headerColorsForHeaderText = false;
+  private readonly surroundTabs = false;
+  private readonly maxFontSize = 20;
   private vsColors!:CategoryColours
   constructor();
-  constructor(styling:Styling);
+  constructor(styling:Styling,zoomFactor:number);
   constructor(
     private styling?:Styling,
+    private zoomFactor = 1
     ){
       if(styling){
+        let fontSize = Number.parseFloat(styling.fontSize);
+        let newZoomFactor = 1;
+        if(fontSize > this.maxFontSize){
+          newZoomFactor = fontSize / this.maxFontSize;
+          fontSize = this.maxFontSize;
+        }
         this.vsColors = styling.categoryColours;
-      // will have to check if vs quotes 
-        const consistentFontSize = getFontStyle(styling.fontName,12);
+        
+        const consistentFontSize = getFontStyle(styling.fontName,fontSize);
         this.customizations.settings.theme = createTheme({
           fonts:{
             large:consistentFontSize,
@@ -279,7 +308,14 @@ export class VsCustomizerContext implements ICustomizerContext {
             small:consistentFontSize,
             smallPlus:consistentFontSize
           }
-        })
+        });
+
+        if(newZoomFactor !== 1){
+          (window as any).chrome.webview.hostObjects.webView.setZoomFactor(newZoomFactor);
+        }else if(this.zoomFactor !== 1){
+          (window as any).chrome.webview.hostObjects.webView.setZoomFactor(1);
+        }
+        this.zoomFactor = newZoomFactor;
       }
       
   }
@@ -292,6 +328,7 @@ export class VsCustomizerContext implements ICustomizerContext {
     }
     return new VsCustomizerContext(
       styling, 
+      this.zoomFactor
     )
   }
 

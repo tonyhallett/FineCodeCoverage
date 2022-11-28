@@ -61,9 +61,10 @@ namespace FineCodeCoverage.Output.JsPosting
 			reportColoursProvider.CategorizedNamedColoursChanged += ReportColoursProvider_CategorizedNamedColoursChanged;
 		}
 
-		private void ReportColoursProvider_CategorizedNamedColoursChanged(object sender, List<CategorizedNamedColours> reportColours)
+		private void ReportColoursProvider_CategorizedNamedColoursChanged(object sender, CategorizedNamedColoursChangedArgs changeArgs)
 		{
-			styling.categoryColours = reportColours.SerializeAsDictionary();
+			styling.categoryColours = changeArgs.CategorizedNamedColours.SerializeAsDictionary();
+			styling.themeIsHighContrast = changeArgs.ThemeIsHighContrast;
 			PostStyling();
 		}
 

@@ -175,7 +175,13 @@ namespace FineCodeCoverage.Output
         {
 			_webView2.CoreWebView2.SetVirtualHostNameToFolderMapping(hostName, folderPath, accessKind);
         }
-#endregion
-#endregion
+
+		public void SetZoomFactor(double zoomFactor)
+		{
+			_webView2.ZoomFactor = zoomFactor;
+
+        }
+		#endregion
+		#endregion
 	}
 }

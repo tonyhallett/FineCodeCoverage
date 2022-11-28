@@ -1,4 +1,5 @@
 ﻿using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Output.WebView;
 using System.ComponentModel.Composition;
 
 namespace FineCodeCoverage.Output.HostObjects
@@ -15,6 +16,7 @@ namespace FineCodeCoverage.Output.HostObjects
         public string Name => HostObjectName;
 
         public object HostObject { get; }
+        public void InitializationCompleted(IWebViewInterface webViewInterface) { }
     }
 
 }

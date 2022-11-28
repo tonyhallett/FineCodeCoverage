@@ -328,7 +328,9 @@ namespace FineCodeCoverage.Output.WebView
 		{
 			webViewHostObjectRegistrations.ToList().ForEach(webViewHostObjectRegistration =>
 			{
-				webView.AddHostObjectToScript(webViewHostObjectRegistration.Name, webViewHostObjectRegistration.HostObject);
+				webViewHostObjectRegistration.InitializationCompleted(webView);
+
+                webView.AddHostObjectToScript(webViewHostObjectRegistration.Name, webViewHostObjectRegistration.HostObject);
 			});
 
 			webView.SetVirtualHostNameToFolderMapping(

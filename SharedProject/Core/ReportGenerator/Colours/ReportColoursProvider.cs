@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Shell;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
@@ -10,7 +11,7 @@ namespace FineCodeCoverage.Core.ReportGenerator.Colours
         private readonly ICategorizedNamedColoursProvider categorizedNamedColoursProvider;
         private readonly IVsColourTheme vsColourTheme;
 
-        public event EventHandler<List<CategorizedNamedColours>> CategorizedNamedColoursChanged;
+        public event EventHandler<CategorizedNamedColoursChangedArgs> CategorizedNamedColoursChanged;
 
         private List<CategorizedNamedColours> categorizedNamedColoursList; 
 
@@ -44,15 +45,26 @@ namespace FineCodeCoverage.Core.ReportGenerator.Colours
             return (categorizedNamedColoursList, updatedColours);
         }
 
-        private void VSColourTheme_ThemeChanged(object sender, EventArgs args)
+        private void VSColourTheme_ThemeChanged(object sender, ColourThemeChangedArgs args)
         {
+            var themeIsHighContrast = ThemeIsHighContrast(args.ThemeId);
             var (newListCategoryNamedColours, updated) = GetCategorizedNamedColoursListWithUpdated();
-            if (updated)
+
+            if (updated) // should also force if high contrast changed
             {
-                CategorizedNamedColoursChanged?.Invoke(this, newListCategoryNamedColours);
+                CategorizedNamedColoursChanged?.Invoke(this, new CategorizedNamedColoursChangedArgs
+                {
+                    CategorizedNamedColours = newListCategoryNamedColours,
+                    ThemeIsHighContrast = themeIsHighContrast
+                });
             }
         }
         
+        private bool ThemeIsHighContrast(Guid themeId)
+        {
+            return themeId == KnownColorThemes.HighContrast;
+        }
+
         public List<CategorizedNamedColours> GetCategorizedNamedColoursList()
         {
             if (categorizedNamedColoursList == null)

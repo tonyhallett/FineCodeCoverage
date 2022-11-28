@@ -31,15 +31,15 @@ export type OpenFileProps = {
 
 export function OpenFile(props: OpenFileProps) {
   const ariaLabel = `Open ${props.toOpenAriaLabel} in Visual Studio`;
-    return <><VsStyledActionButton ariaLabel={ariaLabel} iconProps={openFileInVsIconProps} onClick={() => {
+    return <>
+    <VsStyledDetailsListCellText style={{marginRight:'5px'}}>{props.display}</VsStyledDetailsListCellText>
+    <VsStyledActionButton ariaLabel={ariaLabel} iconProps={openFileInVsIconProps} onClick={() => {
       if (props.type === 'hotspot') {
         openHotspotLine(props.filePath, props.methodLine);
       } else {
         openClassFiles(props.filePaths);
       }
     }}>
-    
-  </VsStyledActionButton>
-  <VsStyledDetailsListCellText style={{marginLeft:'5px'}}>{props.display}</VsStyledDetailsListCellText>
+    </VsStyledActionButton>
   </>
 }
