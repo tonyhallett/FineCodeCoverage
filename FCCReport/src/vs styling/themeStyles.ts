@@ -228,7 +228,7 @@ export const addVsHighContrastBlocker = (isHighContrastTheme:boolean) => {
     style.textContent = `
     @media (forced-colors: active) {
       * {
-        forced-color-adjust: none !important;
+        forced-color-adjust: none;
       }
     }
     `;
@@ -316,6 +316,7 @@ export class VsCustomizerContext implements ICustomizerContext {
           (window as any).chrome.webview.hostObjects.webView.setZoomFactor(1);
         }
         this.zoomFactor = newZoomFactor;
+
       }
       
   }
@@ -525,18 +526,27 @@ export class VsCustomizerContext implements ICustomizerContext {
           const {ProgressBarColors : progressBarColors, EnvironmentColors:environmentColors} = this.vsColors;
           const trackColor = progressBarColors.Background;
           const progressBarColor = progressBarColors.IndicatorFill !== trackColor ? progressBarColors.IndicatorFill : environmentColors.ToolWindowText;
+          const themeNotHighContrast = !this.styling?.themeIsHighContrast;
+          
           return {
-              progressTrack:{
+              progressTrack:[{
                   backgroundColor : trackColor,
-              },
+              },themeNotHighContrast && {
+                [HighContrastSelector]:{
+                  borderBottom:false
+                }
+              }],
               progressBar:[
-              {
-              },
-              progressIndicatorStyleProps.indeterminate && {
-                  background:
-                  `linear-gradient(to right, ${progressBarColor} 0%, ` +
-                  `${progressBarColor} 50%, ${progressBarColor} 100%)`,
-              }
+                themeNotHighContrast && {
+                  [HighContrastSelector]:{
+                    backgroundColor:false
+                  }
+                },
+                progressIndicatorStyleProps.indeterminate && {
+                    background:
+                    `linear-gradient(to right, ${progressBarColor} 0%, ` +
+                    `${progressBarColor} 50%, ${progressBarColor} 100%)`,
+                }
               ]
           }
         }
@@ -554,6 +564,7 @@ export class VsCustomizerContext implements ICustomizerContext {
         styles:(pivotStyleProps:IPivotStyleProps):DeepPartial<IPivotStyles>=> {
           const {linkFormat} = pivotStyleProps;
           const {EnvironmentColors:environmentColors, CommonControlsColors} = this.vsColors;
+          const themeNotHighContrast = !this.styling?.themeIsHighContrast;
 
           return linkFormat === "links" ? 
           {
@@ -574,11 +585,23 @@ export class VsCustomizerContext implements ICustomizerContext {
                             color: environmentColors.ToolWindowText,
                             backgroundColor:environmentColors.ToolWindowBackground
                         },
-        
-
                     }
 
                 },
+                themeNotHighContrast && {
+                  selectors:{
+
+                    [HighContrastSelector]:{
+                      borderColor:false as any,
+                    },
+                    ':hover':{
+                      [HighContrastSelector]:{
+                        color:false as any
+                      }
+                    }
+
+                  }
+                }
             ],
             linkIsSelected:[
                 {
@@ -594,6 +617,20 @@ export class VsCustomizerContext implements ICustomizerContext {
                             backgroundColor: environmentColors.ToolWindowText, // of course this works against ToolWindowBackground
                         },
                     }
+                },
+                themeNotHighContrast && {
+                  selectors: {
+                    ':before': {
+                       selectors:{
+                        [HighContrastSelector]:{
+                          backgroundColor:false as any
+                        }
+                       }
+                    },
+                    [HighContrastSelector]:{
+                      color:false as any
+                    }
+                  }
                 }
             ],
           } : {
@@ -621,13 +658,26 @@ export class VsCustomizerContext implements ICustomizerContext {
                       },
                       ':active': {
                         color: environmentColors.ToolWindowTabMouseOverText,
-                          backgroundColor:environmentColors.ToolWindowTabMouseOverBackgroundBegin
+                        backgroundColor:environmentColors.ToolWindowTabMouseOverBackgroundBegin
                       },
       
 
                   }
 
               },
+              themeNotHighContrast && {
+                selectors:{
+                  [HighContrastSelector]:{
+                    borderColor:false as any,
+                  },
+                  ':hover':{
+                    [HighContrastSelector]:{
+                      color:false as any
+                    }
+                  }
+
+                }
+              }
           ],
           linkIsSelected:[
               {
@@ -661,10 +711,20 @@ export class VsCustomizerContext implements ICustomizerContext {
                     ':active': {
                       color: environmentColors.ToolWindowTabSelectedActiveText,
                     },
-    
                   }
                 }
+              },
+              themeNotHighContrast && {
+                selectors: {
+                  ['&.is-selected']: {
+                    [HighContrastSelector]:{
+                      fontWeight:false,
+                      color:false,
+                      background:false
+                    }
+                }
               }
+            }
           ],
           }
         }
@@ -735,27 +795,56 @@ export class VsCustomizerContext implements ICustomizerContext {
         styles:(searchBoxStyleProps:ISearchBoxStyleProps):DeepPartial<ISearchBoxStyles>=> {
           const {theme, underlined, hasFocus} = searchBoxStyleProps;
           const {SearchControlColors, CommonControlsColors} = this.vsColors;
+          const themeNotHighContrast = !this.styling?.themeIsHighContrast;
+
         return { 
-          root: [{ 
-            backgroundColor:SearchControlColors.Unfocused,
-            border: `1px solid ${SearchControlColors.UnfocusedBorder}`,
-            selectors: {
-              ':hover': {
-                borderColor: SearchControlColors.MouseOverBorder,
-                backgroundColor:SearchControlColors.MouseOverBackground
-              },
-              [`:hover .ms-SearchBox-iconContainer`]: {
-                color: SearchControlColors.MouseOverSearchGlyph,
+          root: [
+            { 
+              backgroundColor:SearchControlColors.Unfocused,
+              border: `1px solid ${SearchControlColors.UnfocusedBorder}`,
+              selectors: {
+                ':hover': {
+                  borderColor: SearchControlColors.MouseOverBorder,
+                  backgroundColor:SearchControlColors.MouseOverBackground
+                },
+                [`:hover .ms-SearchBox-iconContainer`]: {
+                  color: SearchControlColors.MouseOverSearchGlyph,
+                },
               },
             },
-          },
+            themeNotHighContrast && {
+              selectors:{
+                [HighContrastSelector]:{
+                  borderColor:false as any
+                },
+                ':hover':{
+                  selectors:{
+                    [HighContrastSelector]:{
+                      borderColor:false as any
+                    }
+                  }
+                }
+              }
+            },
             // todo focused states for other
             hasFocus && [
               getInputFocusStyle(CommonControlsColors.FocusVisualText,underlined ? 0 : theme.effects.roundedCorner2, underlined ? 'borderBottom' : 'border'),
               {
                 border: `1px solid ${SearchControlColors.FocusedBorder}`,
                 backgroundColor:SearchControlColors.FocusedBackground
-              }
+              },
+              {
+                selectors: {
+                  ':after': {
+                    selectors: {
+                      [HighContrastSelector]: {
+                        borderColor:false as any,
+                        borderBottomColor:false as any
+                      },
+
+                  }
+                }
+              }}
             ],
           ],
           // gets background color from root
@@ -853,15 +942,24 @@ export class VsCustomizerContext implements ICustomizerContext {
           const {percentage} = props;
           const {EnvironmentColors} = this.vsColors;
           const backgroundColor = percentage === null ? "transparent" : EnvironmentColors.VizSurfaceGreenMedium;
+          //const themeNotHighContrast = !this.styling?.themeIsHighContrast;
           return {
-            progressBar: {
+            progressBar: [{
               backgroundColor,
               color: "transparent"
-            },
-            progressTrack: {
+            },/* themeNotHighContrast && {
+              [HighContrastSelector]:{
+                backgroundColor:false
+              }
+            } */],
+            progressTrack: [{
               backgroundColor: "transparent",
               color: "transparent"
-            },
+            }/* ,themeNotHighContrast && {
+              [HighContrastSelector]:{
+                borderBottom:false
+              }
+            } */],
             root: {
               color: "transparent"
             },
