@@ -20,6 +20,7 @@ import { PercentageColumn } from './Columns/PercentageColumn';
 import { GroupsItemsSelection } from '../utilities/GroupsItemsSelection';
 import { useConst } from '@fluentui/react-hooks';
 import { focusingCells } from './common';
+import { CopyToClipboard } from '../helper components/CopyToCliboard';
 
 const useProFeature = false;
 
@@ -34,7 +35,9 @@ export const nameColumn:INameColumn = {
       return <OpenFile toOpenAriaLabel={toOpenAriaLabel} type='class' filePaths={item.classPaths}  display={item.name}/>
       
     }
-    return <VsStyledDetailsListCellText>{item.name}</VsStyledDetailsListCellText>
+    return <CopyToClipboard>
+      <VsStyledDetailsListCellText data-is-focusable={focusingCells}>{item.name}</VsStyledDetailsListCellText>
+     </CopyToClipboard>
   },
   setFiltered(filtered:boolean){
     this.isFiltered = filtered;

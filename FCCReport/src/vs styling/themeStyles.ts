@@ -9,6 +9,7 @@ import { VsStyledActivityItemScope } from "./VsStyledActivityItem";
 import { vsStyledToolWindowTextScope } from "./VsStyledToolWindowText";
 import { vsStyledPercentageScope } from "./VsStyledPercentage";
 import { vsStyledDetailsListCellTextScope } from "./VsStyledDetailsListCellText";
+import { CSSProperties } from "react";
 const reactToCSS = require('react-style-object-to-css')
 
 export const buttonHighContrastFocus = {
@@ -23,11 +24,35 @@ function getVsFocusStyle(vsColors:CategoryColours) {
   return getFocusStyle(null as any, {borderColor:"transparent", outlineColor:vsColors.CommonControlsColors.FocusVisualText})
 }
 
-export function getActionButtonStyles(vsColors:CategoryColours):DeepPartial<IButtonStyles>{
+const overrideHighContrast = (themeNotHighContrast:boolean,...propertyNames:Array<keyof CSSProperties>) => {
+  if(themeNotHighContrast){
+    // to type
+    const removedProperties :any= {};
+    propertyNames.forEach(propertyName => removedProperties[propertyName] = false);
+
+    return {
+      selectors:{
+        [HighContrastSelector]:removedProperties
+      }
+    }
+  }
+
+  return {};
+}
+
+export function getActionButtonStyles(vsColors:CategoryColours,themeNotHighContrast:boolean):DeepPartial<IButtonStyles>{
     const {CommonControlsColors} = vsColors;
-    const actionButtonStyles = {
+    const overrideHighContrastColor = overrideHighContrast(themeNotHighContrast,"color");
+    const focusHighContrastStyle:any = themeNotHighContrast ? {
+      left: false,
+      top: false,
+      bottom: false,
+      right: false,
+      outlineColor: false 
+  } : buttonHighContrastFocus;
+    const actionButtonStyles:IButtonStyles = {
       root:[
-          getFocusStyle(null as any, { inset: 1, highContrastStyle: buttonHighContrastFocus, borderColor: 'transparent',outlineColor:CommonControlsColors.FocusVisualText }),
+          getFocusStyle(null as any, { inset: 1, highContrastStyle: focusHighContrastStyle, borderColor: 'transparent',outlineColor:CommonControlsColors.FocusVisualText }),
           {
               color:CommonControlsColors.ButtonText,
               backgroundColor:CommonControlsColors.Button,
@@ -39,17 +64,18 @@ export function getActionButtonStyles(vsColors:CategoryColours):DeepPartial<IBut
                   border:`1px solid ${CommonControlsColors.ButtonBorderFocused}`
               }
           },
+          overrideHighContrast(themeNotHighContrast,"borderColor")
       ],
-      rootHovered:{
+      rootHovered:[{
           color:CommonControlsColors.ButtonHoverText, // affects the text
           backgroundColor:CommonControlsColors.ButtonHover,
           border:`1px solid ${CommonControlsColors.ButtonBorderHover}`
-      },
-      rootDisabled:{
+      },overrideHighContrastColor],
+      rootDisabled:[{
           color:CommonControlsColors.ButtonDisabledText,
           backgroundColor:CommonControlsColors.ButtonDisabled,
           border:`1px solid ${CommonControlsColors.ButtonBorderDisabled}`
-      },
+      },overrideHighContrastColor],
       rootPressed:{
           color:CommonControlsColors.ButtonPressedText,
           backgroundColor:CommonControlsColors.ButtonPressed,
@@ -59,13 +85,16 @@ export function getActionButtonStyles(vsColors:CategoryColours):DeepPartial<IBut
       icon:{
           color:"inherit"
       },
+      iconDisabled:overrideHighContrastColor,
       iconHovered:{
           color:"inherit"
       },
       //iconDisabled inherits
       iconPressed:{
           color:"inherit"
-      }
+      },
+      menuIconDisabled:overrideHighContrastColor
+      
     }
     return actionButtonStyles
   }
@@ -508,7 +537,7 @@ export class VsCustomizerContext implements ICustomizerContext {
       // necessary as Pivot renders an ActionButton
       [vsStyledActionButtonScope]:{
         styles:():DeepPartial<IButtonStyles> => {
-          return getActionButtonStyles(this.vsColors);
+          return getActionButtonStyles(this.vsColors,!this.styling?.themeIsHighContrast);
         }
       },
       "Link":{
@@ -737,7 +766,13 @@ export class VsCustomizerContext implements ICustomizerContext {
           const toolWindowTextColor = getColor(EnvironmentColors.ToolWindowText);
           const toolWindowTextDark = isDark(toolWindowTextColor);
           const hoverToolWindowTextShade = lightenOrDarken(toolWindowTextColor,0.4,toolWindowTextDark); 
-          const hoverToolWindowText=  colorRGBA(hoverToolWindowTextShade);
+          const hoverToolWindowText =  colorRGBA(hoverToolWindowTextShade);
+          const themeNotHighContrast = !this.styling?.themeIsHighContrast;
+
+          
+          const overrideHighContrastBackgroundColor = overrideHighContrast(themeNotHighContrast,"backgroundColor");
+          const overrideHighContrastBorderColor = overrideHighContrast(themeNotHighContrast,"borderColor");
+
           return {
             root:{
                 width:200
@@ -745,39 +780,44 @@ export class VsCustomizerContext implements ICustomizerContext {
             slideBox: [
                 focusStyle,
                 {
-                  
                   selectors: {
                     [`:active .${sliderClassNames.activeSection}`]: {
-                      backgroundColor:hoverToolWindowText
+                      backgroundColor:hoverToolWindowText,
+                      ...overrideHighContrastBackgroundColor
                     },
                     [`:hover .${sliderClassNames.activeSection}`]: {
-                      backgroundColor:hoverToolWindowText
+                      backgroundColor:hoverToolWindowText,
+                      ...overrideHighContrastBackgroundColor
                     },
           
                     [`:active .${sliderClassNames.inactiveSection}`]: {
-                      backgroundColor:hoverToolWindowText
+                      backgroundColor:hoverToolWindowText,
+                      ...overrideHighContrastBorderColor
                     },
                     [`:hover .${sliderClassNames.inactiveSection}`]: {
-                      backgroundColor:hoverToolWindowText
+                      backgroundColor:hoverToolWindowText,
+                      ...overrideHighContrastBorderColor
                     },
           
                     [`:active .${sliderClassNames.thumb}`]: {
                       border: `2px solid ${CommonControlsColors.ButtonBorderPressed}`,
+                      ...overrideHighContrastBorderColor
                     },
                     [`:hover .${sliderClassNames.thumb}`]: {
-                      border: `2px solid ${CommonControlsColors.ButtonBorderPressed}`,
+                      border: `2px solid ${CommonControlsColors.ButtonBorderHover}`,
+                      ...overrideHighContrastBorderColor
                     },
                   },
                 },
               ],
-            zeroTick:{
-              background:"red"
-            },
+            
             activeSection:{
-              background:EnvironmentColors.ToolWindowText // this is the lhs of the selected value
+              background:EnvironmentColors.ToolWindowText, // this is the lhs of the selected value
+              ...overrideHighContrastBackgroundColor
             },
             inactiveSection:{
-              background:EnvironmentColors.ToolWindowText // this is the rhs
+              background:EnvironmentColors.ToolWindowText, // this is the rhs
+              ...overrideHighContrast(themeNotHighContrast,"border")
             },
             thumb: [
               {
@@ -869,9 +909,16 @@ export class VsCustomizerContext implements ICustomizerContext {
           ],
           clearButton:[
             {
-              [`.${IsFocusVisibleClassName} && .ms-Button:focus:after`]:{
+              [`.${IsFocusVisibleClassName} && .ms-Button:focus:after`]:[
+                {
                 outline: `1px solid ${this.vsColors.CommonControlsColors.FocusVisualText}`,
-              },
+                },
+                themeNotHighContrast && {
+                  [HighContrastSelector]:{
+                    inset:"0px"
+                  }
+                }
+              ],
               selectors: {
                 '&:hover .ms-Button.ms-Button': {
                   backgroundColor: "transparent",
@@ -882,7 +929,6 @@ export class VsCustomizerContext implements ICustomizerContext {
                 '.ms-Button-icon': {
                   color: SearchControlColors.ClearGlyph,
                 },
-                
               },
               
             },
@@ -978,8 +1024,10 @@ export class VsCustomizerContext implements ICustomizerContext {
         }
       },
       "DetailsHeader" : {
-        styles:():DeepPartial<IDetailsHeaderStyles> => {
+        styles:(detailsHeaderStyleProps:IDetailsHeaderStyleProps):DeepPartial<IDetailsHeaderStyles> => {
           const {HeaderColors, EnvironmentColors} = this.vsColors;
+          const {isSizing} = detailsHeaderStyleProps;
+          const themeNotHighContrast = !this.styling?.themeIsHighContrast;
           const focusStyle = getVsFocusStyle(this.vsColors);
           return {
             root:{
@@ -1023,7 +1071,9 @@ export class VsCustomizerContext implements ICustomizerContext {
                   ],
                 },
               },
-            ]
+            ],
+            sizingOverlay: isSizing && themeNotHighContrast && overrideHighContrast(themeNotHighContrast,"background")
+            
         }
       }
     },
@@ -1125,7 +1175,9 @@ export class VsCustomizerContext implements ICustomizerContext {
         const focusStyle = getVsFocusStyle(this.vsColors);
         const rowBackground = this.rowBackgroundFromTreeViewColors ? TreeViewColors.Background : "transparent"
         const rowTextColor = this.rowTextFromTreeViewColors ? TreeViewColors.BackgroundText : EnvironmentColors.CommandBarTextActive;
+        const themeNotHighContrast = !this.styling?.themeIsHighContrast;
         const {isSelected} = detailsRowStyleProps;
+
         return {
           root: [
             {
@@ -1137,7 +1189,7 @@ export class VsCustomizerContext implements ICustomizerContext {
                   background:rowBackground,//treeViewColors.Background, // mirroring vs, docs say "transparent",
                   color:rowTextColor,// environmentColors.CommandBarTextActive,
                   selectors: {
-                    [`.ms-DetailsRow-cell > .ms-Link`]: {
+                    ['.ms-DetailsRow-cell > .ms-Link']: {
                       color: EnvironmentColors.PanelHyperlink,
                       textDecoration:"underline",
                       cursor:"pointer"
@@ -1147,12 +1199,14 @@ export class VsCustomizerContext implements ICustomizerContext {
                 }
               }
             },
-          
-            isSelected && {
+            isSelected && overrideHighContrast(themeNotHighContrast,"background", "color") as any,
+            isSelected &&               
+              {
               color:TreeViewColors.SelectedItemInactiveText,
               background: TreeViewColors.SelectedItemInactive,
               borderBottom: "none",
               selectors: {
+                
                 ['.ms-DetailsRow-cell button.ms-Link']:{
                   color:TreeViewColors.SelectedItemInactiveText
                 },
@@ -1168,25 +1222,60 @@ export class VsCustomizerContext implements ICustomizerContext {
                 },
         
                 // Selected State hover
-                '&:hover': {
-                  color: TreeViewColors.SelectedItemInactiveText,
-                  background: TreeViewColors.SelectedItemInactive,
-                },
+                '&:hover': [
+                  {
+                    color: TreeViewColors.SelectedItemInactiveText,
+                    background: TreeViewColors.SelectedItemInactive,
+                  },
+                  themeNotHighContrast && 
+                  {
+                    selectors: {
+                      [HighContrastSelector]: {
+                        background: false as any,
+                        selectors: {
+                          [`.ms-DetailsRow-cell`]: {
+                            color: false as any,
+                          },
+                          [`.ms-DetailsRow-cell > .ms-Link`]: {
+                            color: false as any,
+                          },
+                        },
+                      },
+                    }
+                  }
+                ],
         
                 // Focus state
-                '&:focus': {
+                '&:focus': [
+                  {
                   color: TreeViewColors.SelectedItemActiveText,
                   background: TreeViewColors.SelectedItemActive,
                   selectors: {
-                    [`.ms-DetailsRow-cell`]: {
-                      color: TreeViewColors.SelectedItemActiveText,
-                      background: TreeViewColors.SelectedItemActive,
-                    },
+                    [`.ms-DetailsRow-cell`]: [
+                      {
+                        color: TreeViewColors.SelectedItemActiveText,
+                        background: TreeViewColors.SelectedItemActive,
+                      }, 
+                      themeNotHighContrast && 
+                      {
+                        selectors:{
+                          [HighContrastSelector]: {
+                            color: false as any,
+                            selectors: {
+                              '> a': {
+                                color: false as any,
+                              },
+                            },
+                          },
+                      }
+                    }],
                     ['.ms-DetailsRow-cell button.ms-Link']:{
                       color:TreeViewColors.SelectedItemActiveText
                     },
                   },
                 },
+                overrideHighContrast(themeNotHighContrast,"background")
+              ],
         
                 // Focus and hover state
                 '&:focus:hover': {
@@ -1208,19 +1297,21 @@ export class VsCustomizerContext implements ICustomizerContext {
             },
             focusStyle,
           ],
-          // todo requires override ?
-          /* cell:{
-            selectors:{
-              "[data-is-focusable='true']":
-            }
-          } */
+          cell:[
+            {
+              selectors:{
+                "[data-is-focusable='true']":getFocusStyle(null as any,{ inset: -1, borderColor: "cyan", outlineColor: "pink" })
+              }
+            },
+            isSelected && overrideHighContrast(themeNotHighContrast,"background","color")
+          ]
         }
         }
       }
      
     },
     settings:{
-     
+      
     },
   }
   
