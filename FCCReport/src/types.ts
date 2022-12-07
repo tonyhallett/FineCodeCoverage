@@ -239,6 +239,7 @@ export enum MetricMergeOrder {
       ComboBoxListItemText:RGBA,
       ComboBoxTextInputSelection:RGBA,
       ComboBoxListBackground:RGBA,
+      ComboBoxListBackgroundShadow:RGBA,
       ComboBoxText:RGBA,
       ComboBoxBorder:RGBA,
       ComboBoxTextHover:RGBA,

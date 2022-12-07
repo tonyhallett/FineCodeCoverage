@@ -16,6 +16,9 @@ export class VsStyledPercentage extends React.Component<{
 }, {}> {
   public render(): JSX.Element {
     const {percentage, styles,barHeight} = this.props;
+    if(percentage === null){
+      return <></>
+    }
     return <ProgressIndicator  barHeight={barHeight} percentComplete={percentage === null ? 1 : percentage / 100} styles={styles} />;
   }
   

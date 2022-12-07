@@ -208,12 +208,16 @@ function caseInsensitiveStringSort(item1:string,item2:string){
     return filteredItems
   }
 
-
+  const allAssembliesKey = "All assemblies";
+const allAssembliesOption : IDropdownOption<Assembly> = {
+  key:allAssembliesKey,
+  text:'All assemblies',
+}
 
 export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
   const [sortDetails, setSortDetails] = useState<ColumnSort>({columnFieldName:undefined,ascending:true})
   const [filterText, setFilterText] = useState<string>();
-  const [filterByAssembly,setFilterByAssembly] = useState<IDropdownOption<Assembly>>();
+  const [filterByAssembly,setFilterByAssembly] = useState<IDropdownOption<Assembly>>(allAssembliesOption);
 
   const { 
     riskHotspots,
@@ -237,12 +241,9 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
   
   const items:HotspotView[] = [];
   const metricColumnNames:string[] = [];
-  const allAssembliesKey = "All assemblies"
+  
   const assemblyFilterDropDownOptions:IDropdownOption<Assembly>[] = [
-    {
-      key:allAssembliesKey,
-      text:'All assemblies',
-    }
+    allAssembliesOption
   ];
   riskHotspots.forEach(riskHotspot => {
     const assembly = assemblies[riskHotspot.assemblyIndex];
@@ -307,8 +308,16 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
           placeholder='All assemblies' 
 
           options={assemblyFilterDropDownOptions} 
-          onChange={(_,option) => setFilterByAssembly(option)} 
-          selectedKey={filterByAssembly?.key}/>
+          onChange={(_,option) => setFilterByAssembly(option!)} 
+          selectedKey={filterByAssembly?.key}
+          styles={
+            {
+              root:{
+                width:"200px"
+              }
+            }
+          }
+          />
         <SearchBox styles={
           {
             root:{
