@@ -1080,24 +1080,26 @@ export class VsCustomizerContext implements ICustomizerContext {
           const {percentage} = props;
           const {EnvironmentColors} = this.vsColors;
           const backgroundColor = percentage === null ? "transparent" : EnvironmentColors.VizSurfaceGreenMedium;
-          //const themeNotHighContrast = !this.styling?.themeIsHighContrast;
+          const themeNotHighContrast = !this.styling!.themeIsHighContrast;
           return {
             progressBar: [{
               backgroundColor,
-              color: "transparent"
-            },/* themeNotHighContrast && {
+              color: "transparent",
+            },
+            themeNotHighContrast && {
               [HighContrastSelector]:{
                 backgroundColor:false
               }
-            } */],
+            }],
             progressTrack: [{
               backgroundColor: "transparent",
-              color: "transparent"
-            }/* ,themeNotHighContrast && {
-              [HighContrastSelector]:{
-                borderBottom:false
+              color: "transparent",
+              selectors:{
+                [HighContrastSelector] : {
+                  borderBottom: "0px solid transparent" 
+                }
               }
-            } */],
+            }],
             root: {
               color: "transparent"
             },
