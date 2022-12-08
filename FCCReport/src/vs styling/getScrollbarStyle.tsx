@@ -1,11 +1,10 @@
-//todo type color
-//todo sizes
 import {CSSProperties, SVGAttributes} from "react"
 
 type BackgroundColor = CSSProperties['backgroundColor'];
 type BorderColor = CSSProperties['borderColor'];
 type SvgFill = SVGAttributes<SVGSVGElement>['fill']
 
+/* forcedColorAdjust:"none" as when vs allows high contrast EnvironmentColors has the high contrast colors*/
 export function getScrollbarStyle(
   thumbColor: BackgroundColor,
   thumbHoverColor: BackgroundColor,
@@ -81,12 +80,14 @@ export function getScrollbarStyle(
     },
 
     "::-webkit-scrollbar-corner": {
+      forcedColorAdjust:"none",
       backgroundColor: trackColor,
       ...getBorder(scrollBarBorderColor)
     },
     // the track (progress bar) of the scrollbar, where there is a gray bar on top of a white bar
     "::-webkit-scrollbar-track": {
       backgroundColor: trackColor,
+      forcedColorAdjust:"none",
       ...getBorder(scrollBarBorderColor)
     },
 
@@ -94,6 +95,7 @@ export function getScrollbarStyle(
     // what press to slide
     "::-webkit-scrollbar-thumb": {
       backgroundColor: thumbColor, // necessary even when styling differently
+      forcedColorAdjust:"none",
     },
     "::-webkit-scrollbar-thumb:vertical": {
       //...getBorder(scrollBarThumbBorderColor)
@@ -123,8 +125,9 @@ export function getScrollbarStyle(
       backgroundColor: arrowBackgroundColor,
       ...getBorder(scrollBarBorderColor),
       display: 'block',
-      backgroundSize: `${thumbSize}px`,//***************************************************************************************
-      backgroundRepeat: 'no-repeat'
+      backgroundSize: `${thumbSize}px`,
+      backgroundRepeat: 'no-repeat',
+      forcedColorAdjust:"none",
     },
     "::-webkit-scrollbar-button:single-button:hover": {
       backgroundColor: arrowBackgroundHoverColor,
@@ -136,13 +139,5 @@ export function getScrollbarStyle(
     },
     ...getArrowStyles(true),
     ...getArrowStyles(false)
-    // the part of the track (progress bar) not covered by the handle.
-    /* "::-webkit-scrollbar-track-piece":{
-        backgroundColor:"green", ***************** this seems to do the same as track ?
-    }, */
-    //the bottom corner of the scrollbar, where both horizontal and vertical scrollbars meet. This is often the bottom-right corner of the browser window
-    /* "::-webkit-scrollbar-corner":{
-        backgroundColor:"purple"
-    } */
   };
 }

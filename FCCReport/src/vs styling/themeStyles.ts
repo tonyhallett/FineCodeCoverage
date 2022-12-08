@@ -613,172 +613,132 @@ export class VsCustomizerContext implements ICustomizerContext {
       },
       "Pivot":{
         styles:(pivotStyleProps:IPivotStyleProps):DeepPartial<IPivotStyles>=> {
-          const {linkFormat} = pivotStyleProps;
+          const {linkFormat, } = pivotStyleProps;
+          const rootIsTabs = linkFormat === 'tabs';
           const {EnvironmentColors:environmentColors, CommonControlsColors} = this.vsColors;
-          const themeNotHighContrast = !this.styling?.themeIsHighContrast;
+          const themeNotHighContrast = !this.styling!.themeIsHighContrast;
 
-          return linkFormat === "links" ? 
-          {
-            link:[
-                {
-                    color:environmentColors.ToolWindowText,
-                    backgroundColor:environmentColors.ToolWindowBackground,
-                    selectors: {
-                        [`.${IsFocusVisibleClassName} &:focus`]: {
-                          outline: `1px solid ${CommonControlsColors.FocusVisualText}`,
-                        },
-                        
-                        ':hover': {
-                            color: environmentColors.ToolWindowText,
-                            backgroundColor:environmentColors.ToolWindowBackground
-                        },
-                        ':active': {
-                            color: environmentColors.ToolWindowText,
-                            backgroundColor:environmentColors.ToolWindowBackground
-                        },
-                    }
-
-                },
-                themeNotHighContrast && {
-                  selectors:{
-
-                    [HighContrastSelector]:{
-                      borderColor:false as any,
-                    },
-                    ':hover':{
-                      [HighContrastSelector]:{
-                        color:false as any
-                      }
-                    }
-
-                  }
-                }
-            ],
-            linkIsSelected:[
-                {
-                    selectors: { // This is the underline
-                        ':before': {
-                            //TreeView.SelectedItemInactive commonControlsColors.InnerTabActiveBorder, 
-
-                            // vs seems to use ToolWindowBackground for environmentColors.ToolWindowTabSelectedTab
-                            // alone against the ToolWindowBackground this is not that clear or cannot be seen at all
-                            //CommonControlsColors.InnerTabActiveBackground 
-
-                            // legible in all - TreeViewColors.SelectedItemInactiveText
-                            backgroundColor: environmentColors.ToolWindowText, // of course this works against ToolWindowBackground
-                        },
-                    }
-                },
-                themeNotHighContrast && {
-                  selectors: {
-                    ':before': {
-                       selectors:{
-                        [HighContrastSelector]:{
-                          backgroundColor:false as any
-                        }
-                       }
-                    },
-                    [HighContrastSelector]:{
-                      color:false as any
-                    }
-                  }
-                }
-            ],
-          } : {
-            root:[this.surroundTabs && {
-              paddingTop:'5px',
-              paddingLeft:'5px',
-              paddingRight:'5px',
-              backgroundColor:environmentColors.EnvironmentBackground,
-              display:'inline-block'
-            }],
-            link:[
+          const getLinkStyles = (isLinkInOverflowMenu: boolean = false) => {
+            return [
               {
+                color:environmentColors.ToolWindowText,
+                backgroundColor:environmentColors.ToolWindowBackground,
+                selectors: {
+                  ':hover': {
+                    color: environmentColors.ToolWindowText,
+                    backgroundColor: environmentColors.ToolWindowBackground,
+                    ...overrideHighContrast(themeNotHighContrast,"color")
+                  },
+                  ':active': {
+                    color: environmentColors.ToolWindowText,
+                    backgroundColor: environmentColors.ToolWindowBackground,
+                  },
+                },
+              },
+              !isLinkInOverflowMenu && [
+                {
+                  selectors:{
+                    [`.${IsFocusVisibleClassName} &:focus`]: {
+                      outline: `1px solid ${CommonControlsColors.FocusVisualText}`,
+                    },
+                  }
+                },
+                overrideHighContrast(themeNotHighContrast,"borderColor"),
+                
+                rootIsTabs && [{
                   color:environmentColors.ToolWindowTabText,
                   backgroundColor:environmentColors.ToolWindowTabGradientBegin,
                   border:`1px solid ${environmentColors.ToolWindowTabBorder}`,
-                  selectors: {
-                      [`.${IsFocusVisibleClassName} &:focus`]: {
-                        outline: `1px solid ${CommonControlsColors.FocusVisualText}`,
-                      },
-                      
-                      ':hover': {
-                          color: environmentColors.ToolWindowTabMouseOverText,
-                          backgroundColor:environmentColors.ToolWindowTabMouseOverBackgroundBegin,
-                          border:`1px solid ${environmentColors.ToolWindowTabMouseOverBorder}`,
-                      },
-                      ':active': {
-                        color: environmentColors.ToolWindowTabMouseOverText,
-                        backgroundColor:environmentColors.ToolWindowTabMouseOverBackgroundBegin
-                      },
-      
-
-                  }
-
-              },
-              themeNotHighContrast && {
-                selectors:{
-                  [HighContrastSelector]:{
-                    borderColor:false as any,
-                  },
-                  ':hover':{
-                    [HighContrastSelector]:{
-                      color:false as any
-                    }
-                  }
-
-                }
-              }
-          ],
-          linkIsSelected:[
-              {
-                selectors: {
-                  [`&.is-selected`]:{
-                    color:environmentColors.ToolWindowTabSelectedText,
-                    backgroundColor:environmentColors.ToolWindowTabSelectedTab,
-                    borderTop:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
-                    borderLeft:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
-                    borderRight:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
-                    borderBottom:`0px solid`,
-                    ':before': {
-                      backgroundColor: 'transparent',
-                      transition: 'none',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      content: '""',
-                      height: 0,
+                  selectors:{
+                    '&:hover, &:focus': {
+                      color: environmentColors.ToolWindowTabMouseOverText,
+                      backgroundColor:environmentColors.ToolWindowTabMouseOverBackgroundBegin,
+                      border:`1px solid ${environmentColors.ToolWindowTabMouseOverBorder}`,
                     },
-                    ':hover': {
-                        color: environmentColors.ToolWindowTabSelectedText,
-                        backgroundColor:environmentColors.ToolWindowTabSelectedTab,
-                        borderTop:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
-                        borderLeft:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
-                        borderRight:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
-                        borderBottom:`0px solid`,
+                    '&:active, &:hover': {
+                      color: environmentColors.ToolWindowTabMouseOverText,
+                      backgroundColor:environmentColors.ToolWindowTabMouseOverBackgroundBegin,
+                      border:`1px solid ${environmentColors.ToolWindowTabMouseOverBorder}`,
                     },
-                    ':active': {
-                      color: environmentColors.ToolWindowTabSelectedActiveText,
+                    [`&.is-selected`]: {
+                      color:environmentColors.ToolWindowTabSelectedText,
+                      backgroundColor:environmentColors.ToolWindowTabSelectedTab,
+                      borderTop:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
+                      borderLeft:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
+                      borderRight:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
+                      borderBottom:`0px solid`,
+                      selectors: {
+                        ':hover': {
+                          color: environmentColors.ToolWindowTabSelectedText,
+                          backgroundColor:environmentColors.ToolWindowTabSelectedTab,
+                          borderTop:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
+                          borderLeft:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
+                          borderRight:`1px solid ${environmentColors.ToolWindowTabSelectedBorder}`,
+                          borderBottom:`0px solid`,
+                          selectors:{
+                            ...(themeNotHighContrast ? {
+                          
+                            }:{
+                              [HighContrastSelector]: {
+                                color:'HighlightText',
+                                backgroundColor:'Highlight',
+                                borderWidth:'0px'
+                              }
+                            })
+                          }
+                        },
+                        '&:active': {
+                          color: environmentColors.ToolWindowTabSelectedActiveText,
+                          backgroundColor:environmentColors.ToolWindowTabSelectedTab,
+                        },
+                        ...(themeNotHighContrast ? {
+                          
+                        }:{
+                          [HighContrastSelector]: {
+                            borderWidth:"0px"
+                          }
+                        }),
+                        ...(themeNotHighContrast ? {
+                            [HighContrastSelector]: {
+                              fontWeight:false as any,
+                              color: false as any,
+                              background: false as any,
+                            } 
+                        }:{}),
+                      },
                     },
                   }
-                }
-              },
-              themeNotHighContrast && {
-                selectors: {
-                  ['&.is-selected']: {
-                    [HighContrastSelector]:{
-                      fontWeight:false,
-                      color:false,
-                      background:false
-                    }
-                }
-              }
-            }
-          ],
+                }]
+              ]
+            ]
           }
-        }
+
+          return {
+            root:{
+
+            },
+            link:getLinkStyles(),
+            linkIsSelected:{
+              selectors: {
+                ':before': {
+                  backgroundColor: environmentColors.ToolWindowText,
+                  selectors: {
+                    ...(themeNotHighContrast ? {
+                      [HighContrastSelector]: {
+                        backgroundColor: false as any,
+                    }}:{})
+                  },
+                },
+                ...(themeNotHighContrast ? 
+                  {
+                    [HighContrastSelector]: {
+                      color: false as any,
+                    }
+                  }:{}),
+              },
+            },
+            }
+          }
       },
       "Slider": {
         styles:():DeepPartial<ISliderStyles> => {
