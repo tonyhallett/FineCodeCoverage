@@ -651,6 +651,13 @@ export class VsCustomizerContext implements ICustomizerContext {
                     background:
                     `linear-gradient(to right, ${progressBarColor} 0%, ` +
                     `${progressBarColor} 50%, ${progressBarColor} 100%)`,
+                    selectors:{
+                      ...(themeNotHighContrast ? {
+                        [HighContrastSelector]:{
+                          background:false as any
+                        }
+                      } : {}),
+                    }
                 }
               ]
           }
@@ -803,7 +810,7 @@ export class VsCustomizerContext implements ICustomizerContext {
           const toolWindowTextDark = isDark(toolWindowTextColor);
           const hoverToolWindowTextShade = lightenOrDarken(toolWindowTextColor,0.4,toolWindowTextDark); 
           const hoverToolWindowText =  colorRGBA(hoverToolWindowTextShade);
-          const themeNotHighContrast = !this.styling?.themeIsHighContrast;
+          const themeNotHighContrast = !this.styling!.themeIsHighContrast;
 
           
           const overrideHighContrastBackgroundColor = overrideHighContrast(themeNotHighContrast,"backgroundColor");
@@ -825,13 +832,34 @@ export class VsCustomizerContext implements ICustomizerContext {
           
                     [`:active .${sliderClassNames.inactiveSection}`]: {
                       backgroundColor:hoverToolWindowText,
-                      ...overrideHighContrastBorderColor
+                      selectors:{
+                        [HighContrastSelector]:{
+                        ...(themeNotHighContrast ? {
+                          border: false as any,
+                        } : {
+                          background:"WindowText", // bizarrely not supplied by base 
+                          border : false as any,
+                        })
+                        }
+                      },
+                     
                     },
                     [`:hover .${sliderClassNames.inactiveSection}`]: {
                       backgroundColor:hoverToolWindowText,
+                      selectors:{
+                        [HighContrastSelector]:{
+                        ...(themeNotHighContrast ? {
+                          border: false as any,
+                        } : {
+                          background:"WindowText", // bizarrely not supplied by base 
+                          border : false as any,
+                        })
+                        }
+                      },
                       ...overrideHighContrastBorderColor
                     },
           
+                    
                     [`:active .${sliderClassNames.thumb}`]: {
                       border: `2px solid ${CommonControlsColors.ButtonBorderPressed}`,
                       ...overrideHighContrastBorderColor
@@ -844,22 +872,53 @@ export class VsCustomizerContext implements ICustomizerContext {
                 },
               ],
             
-            activeSection:{
-              background:EnvironmentColors.ToolWindowText, // this is the lhs of the selected value
-              ...overrideHighContrastBackgroundColor
+            activeSection:{ //*********** This has messed up  */
+              background:EnvironmentColors.ToolWindowText, // this is the lhs of the selected value,
+              borderRadius:"4px 0px 0px 4px",
+              selectors:{
+                [HighContrastSelector]:{
+                ...(themeNotHighContrast ? {
+                  backgroundColor : false as any
+                } : {})
+                }
+              },
+              
             },
             inactiveSection:{
               background:EnvironmentColors.ToolWindowText, // this is the rhs
-              ...overrideHighContrast(themeNotHighContrast,"border")
+              borderRadius:"0px 4px 4px 0px",
+              selectors:{
+                [HighContrastSelector]:{
+                ...(themeNotHighContrast ? {
+                  border: false as any,
+                } : {
+                  background:"WindowText", // bizarrely not supplied by base 
+                  border : false as any,
+                })
+                }
+              },
             },
             thumb: [
               {
                 borderColor: CommonControlsColors.ButtonBorder,
                 background: CommonControlsColors.Button,
+                selectors:{
+                  [HighContrastSelector]:{
+                    ...(themeNotHighContrast ? {} : {
+                      borderColor:"transparent",
+                      background:"WindowText"
+                    })
+                  }
+                }
               },
             ],
             valueLabel:{
-              color:EnvironmentColors.ToolWindowText
+              color:EnvironmentColors.ToolWindowText,
+              selectors:{
+                [HighContrastSelector]:{
+                  color:themeNotHighContrast ? EnvironmentColors.ToolWindowText : "WindowText"
+                }
+              }
             }
           }
         }
