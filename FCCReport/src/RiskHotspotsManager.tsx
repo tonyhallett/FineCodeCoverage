@@ -99,7 +99,6 @@ function caseInsensitiveStringSort(item1:string,item2:string){
     name:'Assembly',
     fieldName: assemblyFieldName,
     minWidth:100,
-    isResizable:true,
     sortItems:(items:HotspotView[], ascending : boolean) => {
       return stringFieldSort(items,ascending,assemblyFieldName);
     }
@@ -111,7 +110,6 @@ function caseInsensitiveStringSort(item1:string,item2:string){
     name:'Class',
     fieldName:classFieldName,
     minWidth:100,
-    isResizable:true,
     onRender:(item:HotspotView) => {
       if(item.standalone){
         return <span>{item.methodDisplay}</span>;
@@ -129,7 +127,6 @@ function caseInsensitiveStringSort(item1:string,item2:string){
     name:'Method',
     minWidth:100,
     fieldName:methodFieldName,
-    isResizable:true,
     onRender:(item:HotspotView) => {
       if(item.standalone){
         return <span>{item.methodDisplay}</span>
@@ -185,6 +182,13 @@ function caseInsensitiveStringSort(item1:string,item2:string){
       columns.push(metricColumn);
 
     })
+    for(const col of columns){
+      col.isResizable = true,
+      col.calculatedWidth = 0;
+      col.flexGrow = undefined;
+    }
+
+    columns[columns.length-1].flexGrow = 1;
     return columns;
   }
 
