@@ -1269,7 +1269,7 @@ export class VsCustomizerContext implements ICustomizerContext {
         const rowTextColor = this.rowTextFromTreeViewColors ? TreeViewColors.BackgroundText : EnvironmentColors.CommandBarTextActive;
         const themeNotHighContrast = !this.styling?.themeIsHighContrast;
         const {isSelected} = detailsRowStyleProps;
-
+        const progressBarClass = "ms-ProgressIndicator-progressBar";
         return {
           root: [
             {
@@ -1277,6 +1277,9 @@ export class VsCustomizerContext implements ICustomizerContext {
               borderBottom:"none",
               color: rowTextColor,// environmentColors.CommandBarTextActive,
               selectors: {
+                [`.${progressBarClass}`]:{
+                  backgroundColor:rowTextColor
+                },
                 "&:hover":{
                   background:rowBackground,//treeViewColors.Background, // mirroring vs, docs say "transparent",
                   color:rowTextColor,// environmentColors.CommandBarTextActive,
@@ -1298,7 +1301,9 @@ export class VsCustomizerContext implements ICustomizerContext {
               background: TreeViewColors.SelectedItemInactive,
               borderBottom: "none",
               selectors: {
-                
+                [`.${progressBarClass}`]:{
+                  backgroundColor:TreeViewColors.SelectedItemInactiveText
+                },
                 ['.ms-DetailsRow-cell button.ms-Link']:{
                   color:TreeViewColors.SelectedItemInactiveText
                 },
@@ -1343,6 +1348,9 @@ export class VsCustomizerContext implements ICustomizerContext {
                   color: TreeViewColors.SelectedItemActiveText,
                   background: TreeViewColors.SelectedItemActive,
                   selectors: {
+                    [`.${progressBarClass}`]:{
+                      backgroundColor:TreeViewColors.SelectedItemActiveText
+                    },
                     [`.ms-DetailsRow-cell`]: [
                       {
                         color: TreeViewColors.SelectedItemActiveText,
@@ -1383,6 +1391,9 @@ export class VsCustomizerContext implements ICustomizerContext {
                 '&:focus-within':{
                   color: TreeViewColors.SelectedItemActiveText,
                   background: TreeViewColors.SelectedItemActive,
+                  [`.${progressBarClass}`]:{
+                    backgroundColor:TreeViewColors.SelectedItemActiveText
+                  },
                 }
                 
               },
@@ -1398,8 +1409,8 @@ export class VsCustomizerContext implements ICustomizerContext {
             isSelected && overrideHighContrast(themeNotHighContrast,"background","color")
           ]
         }
-        }
       }
+    }
      
     },
     settings:{
