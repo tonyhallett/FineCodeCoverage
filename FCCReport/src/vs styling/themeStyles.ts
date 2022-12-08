@@ -366,10 +366,10 @@ export class VsCustomizerContext implements ICustomizerContext {
     scopedSettings:{
       "Dropdown":{
         styles:(dropDownStyleProps:IDropdownStyleProps):DeepPartial<IDropdownStyles> => {
-          const {isRenderingPlaceholder, disabled,} = dropDownStyleProps;
+          const {isRenderingPlaceholder, disabled,isOpen} = dropDownStyleProps;
           const {EnvironmentColors, CommonControlsColors} = this.vsColors;
           const focusColor = CommonControlsColors.FocusVisualText;
-          const themeIsNotHighContrast = !this.styling?.themeIsHighContrast;
+          const themeIsNotHighContrast = !this.styling!.themeIsHighContrast;
           const overrideHighContrastBorderColor = overrideHighContrast(themeIsNotHighContrast,"borderColor");
           const overrideHighContrastColor = overrideHighContrast(themeIsNotHighContrast,"color");
           const overrideHighContrastItemAndTitleStateMixin = overrideHighContrast(
@@ -381,10 +381,11 @@ export class VsCustomizerContext implements ICustomizerContext {
           const getDropDownItemSelectors = (isSelected:boolean) => {
             const dropDownItemSelectors =  {
               selectors: {
+                // when hover an item it is also focused
                 '&:hover:focus': [
                   {
                     color: CommonControlsColors.ComboBoxListItemTextHover,//override
-                    backgroundColor: CommonControlsColors.ComboBoxListItemBackgroundHover,//override
+                    backgroundColor:CommonControlsColors.ComboBoxListItemBackgroundHover,//override
                     borderColor: CommonControlsColors.ComboBoxListItemBorderHover
                   },
                   overrideHighContrastItemAndTitleStateMixin
@@ -400,8 +401,9 @@ export class VsCustomizerContext implements ICustomizerContext {
                 ],
                 '&:focus': [
                   {
-                    color: CommonControlsColors.ComboBoxListItemText,
-                    backgroundColor: !isSelected ? 'transparent' : CommonControlsColors.ComboBoxTextInputSelection,//override
+                    color: CommonControlsColors.ComboBoxListItemTextHover,
+                    backgroundColor: CommonControlsColors.ComboBoxListItemBackgroundHover,
+                    borderColor: CommonControlsColors.ComboBoxListItemBorderHover
                   },
                   overrideHighContrastItemAndTitleStateMixin
                 ],
@@ -410,7 +412,7 @@ export class VsCustomizerContext implements ICustomizerContext {
                 '&:active': [
                   {
                     color: CommonControlsColors.ComboBoxListItemTextHover,//override
-                    backgroundColor: isSelected ? CommonControlsColors.ComboBoxListBackground :CommonControlsColors.ComboBoxListItemBackgroundHover,//override
+                    backgroundColor: CommonControlsColors.ComboBoxListItemBackgroundHover,//override
                     borderColor: CommonControlsColors.ComboBoxListItemBorderHover,
                   },
                   overrideHighContrastItemAndTitleStateMixin
@@ -425,22 +427,46 @@ export class VsCustomizerContext implements ICustomizerContext {
             return dropDownItemSelectors;
         }
 
+        const dropDownItemHighContrastFocus:any = themeIsNotHighContrast ? {
+          left: false,
+          top: false,
+          bottom: false,
+          right: false,
+          outlineColor: this.vsColors.CommonControlsColors.FocusVisualText, 
+        } : {
+          left: 1,
+          top: 1,
+          bottom: 1,
+          right: 1,
+          outlineColor: 'ButtonText', 
+      };;
 
+        const dropDownItemFocusStyle = getFocusStyle(
+          null as any, 
+          { 
+            inset: 1, 
+            highContrastStyle: dropDownItemHighContrastFocus, 
+            borderColor: 'transparent', 
+            outlineColor:focusColor 
+          }
+        );
+
+        const dropDownFocusStyle = getFocusStyle(null as any, {borderColor:"transparent", outlineColor:this.vsColors.CommonControlsColors.FocusVisualText, inset: -1})
         return {
           label:{
             color:EnvironmentColors.ToolWindowText
           },
-          dropdown:{
-            color:CommonControlsColors.ComboBoxText,
-            borderColor:CommonControlsColors.ComboBoxBorder,
+          dropdown:[{
+            color:isOpen ? CommonControlsColors.ComboBoxTextPressed : CommonControlsColors.ComboBoxText,
             selectors: {
               // title --------------------------------------------------------
               ['&:hover .' + dropDownClassNames.title]: [
-                !disabled && {
-                  color:CommonControlsColors.ComboBoxTextHover,//override
-                  backgroundColor:CommonControlsColors.ComboBoxBackgroundHover
+                {
+                  color:isOpen ? CommonControlsColors.ComboBoxTextPressed : CommonControlsColors.ComboBoxTextHover,
+                  backgroundColor: isOpen ? CommonControlsColors.ComboBoxBackgroundPressed : CommonControlsColors.ComboBoxBackgroundHover,
+                  borderColor: isOpen ? CommonControlsColors.ComboBoxBorderPressed : CommonControlsColors.ComboBoxBorderHover
+
                 },
-                { borderColor: CommonControlsColors.ComboBoxBorderHover},
                 overrideHighContrastBorderColor
               ],
               ['&:focus .' + dropDownClassNames.title]: [
@@ -453,9 +479,16 @@ export class VsCustomizerContext implements ICustomizerContext {
               ],
               ['&:focus:after']: [
                 {
-                  border: !disabled ? `2px solid ${focusColor}` : 'none',
+                  border: 'none'
                 },
                 overrideHighContrastColor
+              ],
+              ['&:hover:focus .' + dropDownClassNames.title]: [
+                {
+                  color:isOpen ? CommonControlsColors.ComboBoxTextPressed : CommonControlsColors.ComboBoxTextHover,
+                  backgroundColor: isOpen ? CommonControlsColors.ComboBoxBackgroundPressed : CommonControlsColors.ComboBoxBackgroundHover,
+                  borderColor: isOpen ? CommonControlsColors.ComboBoxBorderPressed : CommonControlsColors.ComboBoxBorderHover
+                },
               ],
               ['&:active .' + dropDownClassNames.title]: [
                 !disabled && {
@@ -466,33 +499,45 @@ export class VsCustomizerContext implements ICustomizerContext {
                 overrideHighContrastBorderColor
               ],
 
-              //when rendering placeholder ( additional class applied) ------------------------------------------
-              ['&:hover .' + dropDownClassNames.titleIsPlaceHolder]:
-              !disabled && {
-                color:CommonControlsColors.ComboBoxTextHover,//necessary override
-              },
-              ['&:focus .' + dropDownClassNames.titleIsPlaceHolder]:
-                !disabled &&  {
-                  color:CommonControlsColors.ComboBoxTextFocused,//necessary override
-                
-                },
-              ['&:active .' + dropDownClassNames.titleIsPlaceHolder]:
-              !disabled && {
-                color:CommonControlsColors.ComboBoxTextPressed,//necessary override
-              },
+              // placeholder to do if use a placeholder
 
               //caretDown ----------------------------------------------------------------------------------------
-              ['&:hover .' + dropDownClassNames.caretDown]: !disabled && {color:CommonControlsColors.ComboBoxGlyphHover},
-              ['&:focus .' + dropDownClassNames.caretDown]: [
-                !disabled && {color:CommonControlsColors.ComboBoxGlyphFocused},
+              [`&:hover .${dropDownClassNames.caretDown}`]: !disabled && {
+                color:isOpen ? CommonControlsColors.ComboBoxGlyphPressed : CommonControlsColors.ComboBoxGlyphHover,
+                backgroundColor: isOpen ? CommonControlsColors.ComboBoxGlyphBackgroundPressed :CommonControlsColors.ComboBoxGlyphBackgroundHover,
+                borderColor: isOpen ? CommonControlsColors.ComboBoxSeparatorPressed: CommonControlsColors.ComboBoxSeparatorHover
+              
+              },
+              [`&:focus .${dropDownClassNames.caretDown}`]: [
+                !disabled && {
+                  color:CommonControlsColors.ComboBoxGlyphFocused,
+                  backgroundColor:CommonControlsColors.ComboBoxGlyphBackgroundFocused,
+                  borderColor:CommonControlsColors.ComboBoxSeparatorFocused
+                },
                 overrideHighContrastColor
               ],
-              ['&:active .' + dropDownClassNames.caretDown]: !disabled && {color:CommonControlsColors.ComboBoxGlyphPressed},
+              [`&:hover:focus .${dropDownClassNames.caretDown}`]: {
+                color:isOpen ? CommonControlsColors.ComboBoxGlyphPressed : CommonControlsColors.ComboBoxGlyphHover,
+                backgroundColor: isOpen ? CommonControlsColors.ComboBoxGlyphBackgroundPressed :CommonControlsColors.ComboBoxGlyphBackgroundHover,
+                borderColor: isOpen ? CommonControlsColors.ComboBoxSeparatorPressed: CommonControlsColors.ComboBoxSeparatorHover
+              
+              },
+              
+
+              [`&:active .${dropDownClassNames.caretDown}`]: !disabled && {
+                color:CommonControlsColors.ComboBoxGlyphPressed,
+                backgroundColor:CommonControlsColors.ComboBoxGlyphBackgroundPressed,
+                borderColor:CommonControlsColors.ComboBoxSeparatorPressed
+              },
 
     
             },
-          },
-          callout:{
+          },dropDownFocusStyle],
+
+          callout:[
+            overrideHighContrast(themeIsNotHighContrast,"borderWidth","borderStyle","borderColor"),
+            {
+            
             selectors: {
               ['.ms-Callout-main']: { 
                 border: `1px solid ${CommonControlsColors.ComboBoxListBorder}`,
@@ -500,22 +545,23 @@ export class VsCustomizerContext implements ICustomizerContext {
                 boxShadow:`0 3.2px 7.2px 0 ${CommonControlsColors.ComboBoxListBackgroundShadow}, 0 0.6px 1.8px 0 ${CommonControlsColors.ComboBoxListBackgroundShadow}`
               },
             },
-          },
+          }],
           dropdownItem:[
             {
-              color:CommonControlsColors.ComboBoxListItemText
+              color:CommonControlsColors.ComboBoxListItemText,
+              backgroundColor:CommonControlsColors.ComboBoxListBackground
             }, 
             getDropDownItemSelectors(false),
-            getFocusStyle(null as any, { inset: 1, highContrastStyle: buttonHighContrastFocus, borderColor: 'transparent', outlineColor:focusColor }),
-            overrideHighContrastBorderColor // ActionButtomn
+            dropDownItemFocusStyle,
+            overrideHighContrastBorderColor // ActionButton
           ],
           dropdownItemSelected:[
               {
-              backgroundColor:CommonControlsColors.ComboBoxTextInputSelection,
-              color:CommonControlsColors.ComboBoxListItemText
+                backgroundColor:CommonControlsColors.ComboBoxListBackground,
+                color: CommonControlsColors.ComboBoxListItemText
             },
             getDropDownItemSelectors(true),
-            getFocusStyle(null as any, { inset: 1, highContrastStyle: buttonHighContrastFocus, borderColor: 'transparent', outlineColor:focusColor }),
+            dropDownItemFocusStyle,
             overrideHighContrastItemAndTitleStateMixin,
             overrideHighContrastBorderColor // ActionButton
           ],
@@ -523,14 +569,22 @@ export class VsCustomizerContext implements ICustomizerContext {
           dropdownItemHeaderHidden:overrideHighContrastColor,
           title:[
               {
-              backgroundColor:CommonControlsColors.ComboBoxBackground,//override
-              borderColor:CommonControlsColors.ComboBoxBorder//override
+              backgroundColor:isOpen ? CommonControlsColors.ComboBoxBackgroundPressed : CommonControlsColors.ComboBoxBackground,//override
+              borderColor:isOpen ? CommonControlsColors.ComboBoxBorderPressed : CommonControlsColors.ComboBoxBorder//override
             }, 
             isRenderingPlaceholder && {color:EnvironmentColors.ControlEditHintText} //override
           ],
           caretDown:{
-            color:CommonControlsColors.ComboBoxGlyph,
-          }
+            color:isOpen ? CommonControlsColors.ComboBoxGlyphPressed : CommonControlsColors.ComboBoxGlyph,
+            borderLeft:`1px solid ${isOpen? CommonControlsColors.ComboBoxSeparatorPressed : CommonControlsColors.ComboBoxSeparator}`,
+            backgroundColor:isOpen ? CommonControlsColors.ComboBoxGlyphBackgroundPressed : CommonControlsColors.ComboBoxGlyphBackground,
+            paddingLeft:"5px",
+            paddingRight:"5px"
+          },
+          caretDownWrapper:{
+            right:1
+          },
+
         }
         }
       },
