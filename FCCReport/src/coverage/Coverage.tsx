@@ -63,7 +63,7 @@ const codeElementCoverageQuotaColumn = PercentageColumn.create("codeElementCover
 const groupHeaderRowClassName = "groupHeaderRow";
 
 export function Coverage(props:CoverageProps) {
-  const [sortDetails, setSortDetails] = useState<ColumnSort>({fieldName:undefined,ascending:true})
+  const [columnSort, setColumnSort] = useState<ColumnSort>({fieldName:undefined,ascending:true})
   const [filter, setFilter] = useState('');
   const [grouping,setGrouping] = useState(0);
   const adjustedColumns = useRef<IColumn[]>()
@@ -118,7 +118,7 @@ export function Coverage(props:CoverageProps) {
     return columns
   },[supportsBranchCoverage])
 
-  sortFilterGroupColumns(columns,filter,sortDetails,grouping);
+  sortFilterGroupColumns(columns,filter,columnSort,grouping);
   
   
   const groups = React.useMemo(():ICoverageGroup[] => {
@@ -134,11 +134,11 @@ export function Coverage(props:CoverageProps) {
 
   React.useMemo(() => {
     if(groups.length > 1){
-      const rootGroupsSort = sortDetails.fieldName ? sortDetails.fieldName : 'name';
-      const rootGroupAscending = sortDetails.fieldName ? sortDetails.ascending : true;
+      const rootGroupsSort = columnSort.fieldName ? columnSort.fieldName : 'name';
+      const rootGroupAscending = columnSort.fieldName ? columnSort.ascending : true;
       sortCoverageItems(groups,rootGroupsSort,rootGroupAscending)
     }
-  },[groups,sortDetails])
+  },[groups,columnSort])
 
   const [items, workaroundIssueGroups] = React.useMemo(() => {
     const items:ICoverageItem[] = [];
@@ -153,8 +153,8 @@ export function Coverage(props:CoverageProps) {
     groups.forEach(group => {
       group.filter(filter,props.hideFullyCovered);
   
-      if(sortDetails.fieldName){
-        group.sort(sortDetails.fieldName, sortDetails.ascending);
+      if(columnSort.fieldName){
+        group.sort(columnSort.fieldName, columnSort.ascending);
       }
       
       if(group instanceof ClassesGroup && group.items.length > 0){
@@ -186,7 +186,7 @@ export function Coverage(props:CoverageProps) {
 
     selection.initialize(workaroundIssueGroups, items);
     return [items,workaroundIssueGroups]
-  },[groups,filter,hideFullyCovered,sortDetails]);
+  },[groups,filter,hideFullyCovered,columnSort]);
   
   const groupNestingDepth = grouping > 0 ? 2 : 1;
   
@@ -299,7 +299,7 @@ export function Coverage(props:CoverageProps) {
 
         onColumnHeaderClick={(_, column) => {
           const coverageColumn:ICoverageColumn = column as ICoverageColumn;
-          setSortDetails((current) => {
+          setColumnSort((current) => {
             if(current.fieldName === coverageColumn!.fieldName){
               return {
                 fieldName:coverageColumn!.fieldName,
