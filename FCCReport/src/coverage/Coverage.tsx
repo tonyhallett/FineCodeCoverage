@@ -246,6 +246,11 @@ export function Coverage(props:CoverageProps) {
               }
               const groupIndex = selection.getGroupIndex(props!.group!);
               return <DetailsRow 
+                styles = {{
+                  fields:{
+                    alignItems:"center"
+                  },
+                }}
                 className={groupHeaderRowClassName}
                 selection={selection}
                 selectionMode={SelectionMode.single} 

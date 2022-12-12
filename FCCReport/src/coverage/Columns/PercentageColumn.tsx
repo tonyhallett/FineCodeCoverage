@@ -14,7 +14,6 @@ export class PercentageColumn {
     coverageColumn.onRender = (item: ICoverageItem) => {
       const quota: number | null = item[coverageColumn.fieldName] as any;//todo
       // <Stack horizontal horizontalAlign='space-between' verticalAlign='center'>
-
       return <Stack horizontal verticalAlign='center'>
           <VsStyledPercentage styles={{root:{display:"inline-block", width:"50px"}}} barHeight={2} percentage={quota} />
           <div>

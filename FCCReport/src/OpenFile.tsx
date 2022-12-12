@@ -1,4 +1,4 @@
-import { IIconProps } from '@fluentui/react';
+import { IIconProps, Link } from '@fluentui/react';
 import { VsStyledDetailsListCellText } from './vs styling/VsStyledDetailsListCellText';
 import { VsStyledActionButton } from './vs styling/VsStyledActionButton';
 
@@ -32,7 +32,14 @@ export type OpenFileProps = {
 export function OpenFile(props: OpenFileProps) {
   const ariaLabel = `Open ${props.toOpenAriaLabel} in Visual Studio`;
     return <>
-    <VsStyledDetailsListCellText style={{marginRight:'5px'}}>{props.display}</VsStyledDetailsListCellText>
+    <Link aria-label={ariaLabel} onClick={() => {
+      if (props.type === 'hotspot') {
+        openHotspotLine(props.filePath, props.methodLine);
+      } else {
+        openClassFiles(props.filePaths);
+      }
+    }}>{props.display}</Link>
+    {/* <VsStyledDetailsListCellText style={{marginRight:'5px'}}>{props.display}</VsStyledDetailsListCellText>
     <VsStyledActionButton ariaLabel={ariaLabel} iconProps={openFileInVsIconProps} onClick={() => {
       if (props.type === 'hotspot') {
         openHotspotLine(props.filePath, props.methodLine);
@@ -40,6 +47,6 @@ export function OpenFile(props: OpenFileProps) {
         openClassFiles(props.filePaths);
       }
     }}>
-    </VsStyledActionButton>
+    </VsStyledActionButton> */}
   </>
 }

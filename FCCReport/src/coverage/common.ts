@@ -1,1 +1,1 @@
-export const focusingCells = true;
+export const focusingCells = false;

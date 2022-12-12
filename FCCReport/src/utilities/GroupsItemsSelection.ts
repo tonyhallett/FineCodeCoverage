@@ -4,7 +4,7 @@ export class GroupsItemsSelection extends Selection {
   private itemsLength: number | undefined;
   private groups: IGroup[] = [];
   constructor() {
-    super({ selectionMode: SelectionMode.single });
+    super({ selectionMode: SelectionMode.single});
   }
   public initialize(groups: IGroup[], items: any[]) {
     this.groups = [];

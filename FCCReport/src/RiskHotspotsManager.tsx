@@ -1,4 +1,4 @@
-import { DetailsList, IColumn, IIconProps, SearchBox, IDropdownOption, Dropdown, SelectionMode, DetailsListLayoutMode, IDetailsHeaderProps, Sticky, Stack, Label } from '@fluentui/react';
+import { DetailsList, IColumn, IIconProps, SearchBox, IDropdownOption, Dropdown, SelectionMode, DetailsListLayoutMode, IDetailsHeaderProps, Sticky, Stack, Label, CheckboxVisibility } from '@fluentui/react';
 import React, { useRef, useState } from 'react';
 import { removeNamespaces } from './common';
 import { OpenFile } from './OpenFile';
@@ -341,7 +341,8 @@ export function RiskHotspotsManager(props: RiskHotspotsManagerProps) {
           }
         }
       }
-      selectionMode={SelectionMode.none} 
+      selectionMode={SelectionMode.single}
+      checkboxVisibility={CheckboxVisibility.hidden} 
       items={filteredAndSortedItems} 
       columns={columns} 
       layoutMode={DetailsListLayoutMode.fixedColumns}

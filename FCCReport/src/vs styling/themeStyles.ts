@@ -99,8 +99,8 @@ export function getActionButtonStyles(vsColors:CategoryColours,themeNotHighContr
     return actionButtonStyles
   }
 
-  export function getLinkStyle(props:ILinkStyleProps,vsColors:CategoryColours):DeepPartial<ILinkStyles>{
-    const {isDisabled} = props;
+  export function getLinkStyle(props:ILinkStyleProps,vsColors:CategoryColours, themeIsHighContrast:boolean):DeepPartial<ILinkStyles>{
+    const {isDisabled, isButton} = props;
     const {EnvironmentColors: environmentColors, CommonControlsColors} = vsColors;
     const focusColor = CommonControlsColors.FocusVisualText;
   
@@ -130,6 +130,13 @@ export function getActionButtonStyles(vsColors:CategoryColours,themeNotHighContr
           color: environmentColors.PanelHyperlink,
         },
   
+      },
+      isButton && !themeIsHighContrast && {
+        selectors:{
+          [HighContrastSelector]: {
+            color: false as any,
+          },
+        }
       }
     ]
     }}
@@ -618,7 +625,7 @@ export class VsCustomizerContext implements ICustomizerContext {
       },
       "Link":{
         styles:(linkStyleProps:ILinkStyleProps):DeepPartial<ILinkStyles> => {
-          return getLinkStyle(linkStyleProps,this.vsColors);
+          return getLinkStyle(linkStyleProps,this.vsColors, this.styling!.themeIsHighContrast);
         }
       },
       "Checkbox":{
@@ -1282,6 +1289,10 @@ export class VsCustomizerContext implements ICustomizerContext {
                 [`.${progressBarClass}`]:{
                   backgroundColor:rowTextColor
                 },
+                ['.ms-Fabric--isFocusVisible && .ms-DetailsRow-cell > .ms-Link:focus']: {
+                  boxShadow: `0 0 0 1px ${TreeViewColors.SelectedItemActiveText} inset`,
+                  outline: `none`,
+                },
                 "&:hover":{
                   background:rowBackground,//treeViewColors.Background, // mirroring vs, docs say "transparent",
                   color:rowTextColor,// environmentColors.CommandBarTextActive,
@@ -1325,6 +1336,11 @@ export class VsCustomizerContext implements ICustomizerContext {
                   {
                     color: TreeViewColors.SelectedItemInactiveText,
                     background: TreeViewColors.SelectedItemInactive,
+                    selectors:{
+                      ['.ms-DetailsRow-cell button.ms-Link']:{
+                        color:TreeViewColors.SelectedItemInactiveText
+                      },
+                    }
                   },
                   themeNotHighContrast && 
                   {
@@ -1388,6 +1404,9 @@ export class VsCustomizerContext implements ICustomizerContext {
                       color: TreeViewColors.SelectedItemActiveText,
                       background: TreeViewColors.SelectedItemActive,
                     },
+                    ['.ms-DetailsRow-cell button.ms-Link']:{
+                      color:TreeViewColors.SelectedItemActiveText
+                    },
                   },
                 },
                 '&:focus-within':{
@@ -1395,6 +1414,11 @@ export class VsCustomizerContext implements ICustomizerContext {
                   background: TreeViewColors.SelectedItemActive,
                   [`.${progressBarClass}`]:{
                     backgroundColor:TreeViewColors.SelectedItemActiveText
+                  },
+                  selectors: {
+                    ['.ms-DetailsRow-cell button.ms-Link']:{
+                      color:TreeViewColors.SelectedItemActiveText
+                    },
                   },
                 }
                 

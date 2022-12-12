@@ -73,6 +73,15 @@ function getCategoryColours():CategoryColours {
       VizSurfaceGreenMedium:"rgba(1,2,3,1)",
     },
     CommonControlsColors:{
+      ComboBoxGlyphBackground:"rgba(1,2,3,1)",
+      ComboBoxGlyphBackgroundFocused:"rgba(1,2,3,1)",
+      ComboBoxGlyphBackgroundHover:"rgba(1,2,3,1)",
+      ComboBoxGlyphBackgroundPressed:"rgba(1,2,3,1)",
+      ComboBoxListBackgroundShadow:"rgba(1,2,3,1)",
+      ComboBoxSeparator:"rgba(1,2,3,1)",
+      ComboBoxSeparatorFocused:"rgba(1,2,3,1)",
+      ComboBoxSeparatorHover:"rgba(1,2,3,1)",
+      ComboBoxSeparatorPressed:"rgba(1,2,3,1)",
       Button:"rgba(1,2,3,1)",
       ButtonBorder:"rgba(1,2,3,1)",
       ButtonBorderDisabled:"rgba(1,2,3,1)",
@@ -246,7 +255,8 @@ describe("Standalone", () => {
       const styling:Styling = {
         fontName:"Arial",
         fontSize:"12px",
-        categoryColours:getCategoryColours()
+        categoryColours:getCategoryColours(),
+        themeIsHighContrast:false
       }
       anyWindow.styling = styling;
       anyWindow.reportOptions = {
@@ -346,7 +356,8 @@ describe("Standalone", () => {
             data:{
               fontSize:"10px",
               fontName:"Arial",
-              categoryColours:getCategoryColours()
+              categoryColours:getCategoryColours(),
+              themeIsHighContrast:false
             }
           }
         }
