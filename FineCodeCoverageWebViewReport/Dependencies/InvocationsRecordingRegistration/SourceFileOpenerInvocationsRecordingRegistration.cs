@@ -1,4 +1,5 @@
 ﻿using FineCodeCoverage.Output.HostObjects;
+using FineCodeCoverage.Output.WebView;
 
 namespace FineCodeCoverageWebViewReport.InvocationsRecordingRegistration
 {
@@ -7,5 +8,9 @@ namespace FineCodeCoverageWebViewReport.InvocationsRecordingRegistration
         public string Name => SourceFileOpenerHostObjectRegistration.HostObjectName;
 
         public object HostObject => new SourceFileOpenerInvocationsHostObject();
+
+        public void InitializationCompleted(IWebViewInterface webViewInterface)
+        {
+        }
     }
 }

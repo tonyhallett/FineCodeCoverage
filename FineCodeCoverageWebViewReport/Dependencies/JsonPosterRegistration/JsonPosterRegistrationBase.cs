@@ -56,5 +56,9 @@ namespace FineCodeCoverageWebViewReport.JsonPosterRegistration
                     NullValueHandling = NullValueHandling.Ignore,
                 }));
         }
+
+        public void InitializationCompleted(IWebViewInterface webViewInterface)
+        {
+        }
     }
 }

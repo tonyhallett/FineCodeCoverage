@@ -24,6 +24,8 @@ namespace FineCodeCoverageTests.WebView_Tests
             public string Name => "HostObject1";
 
             public object HostObject => this;
+
+            public void InitializationCompleted(IWebViewInterface webViewInterface) { }
         }
 
         private class HostObjectRegistration2 : IWebViewHostObjectRegistration
@@ -31,6 +33,8 @@ namespace FineCodeCoverageTests.WebView_Tests
             public string Name => "HostObject2";
 
             public object HostObject => this;
+
+            public void InitializationCompleted(IWebViewInterface webViewInterface) { }
         }
 
         private readonly HostObjectRegistration1 hostObjectRegistration1 = new HostObjectRegistration1();
