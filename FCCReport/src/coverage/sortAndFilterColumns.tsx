@@ -1,5 +1,5 @@
 import { IColumn } from '@fluentui/react';
-import { nameColumn } from './Coverage';
+import { nameColumn } from './Columns/columns';
 import { ColumnSort } from "./ColumnSort";
 
 export function sortAndFilterColumns(columns: IColumn[], filter: string, sortDetails: ColumnSort,grouping:number) {

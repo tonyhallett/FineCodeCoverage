@@ -1,7 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, DetailsRow, IColumn, IDetailsGroupDividerProps, IDetailsHeaderProps, IFocusZoneProps, IGroupHeaderProps, IRenderFunction, ISearchBoxStyles, ISliderStyles, ProgressIndicator, ScrollablePane, SearchBox, SelectionMode, Slider, Stack, Sticky, TextField } from '@fluentui/react';
-import { OpenFile } from '../OpenFile';
-import { VsStyledDetailsListCellText } from '../vs styling/VsStyledDetailsListCellText';
+import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, DetailsRow, IColumn, IDetailsGroupDividerProps, IFocusZoneProps, IGroupHeaderProps, SearchBox, SelectionMode, Slider, Stack } from '@fluentui/react';
 import { getGroupingMax } from './getGroupingMax';
 import { sortAndFilterColumns as sortFilterGroupColumns } from './sortAndFilterColumns';
 import { ICoverageItem } from './ICoverageItem';
@@ -14,51 +12,11 @@ import { CoverageProps } from './CoverageProps';
 import { sortCoverageItems } from './sortCoverageItems';
 import { ColumnSort } from './ColumnSort';
 import { ICoverageColumn } from './Columns/ICoverageColumn';
-import { INameColumn } from './Columns/INameColumn';
-import { DataColumn } from './Columns/DataColumn';
-import { PercentageColumn } from './Columns/PercentageColumn';
 import { GroupsItemsSelection } from '../utilities/GroupsItemsSelection';
 import { useConst } from '@fluentui/react-hooks';
 import { focusingCells } from './common';
-import { CopyToClipboard } from '../helper components/CopyToCliboard';
-
-const useProFeature = false;
-
-export const nameColumn:INameColumn = {
-  key:'name',
-  name:'Name',
-  fieldName: "name",
-  minWidth:100,
-  onRender:(item:ICoverageItem) => {
-    if(!item.standalone && item.classPaths){
-      const toOpenAriaLabel = `class ${item.name}`;
-      return <OpenFile toOpenAriaLabel={toOpenAriaLabel} type='class' filePaths={item.classPaths}  display={item.name}/>
-      
-    }
-    return <CopyToClipboard>
-      <VsStyledDetailsListCellText data-is-focusable={focusingCells}>{item.name}</VsStyledDetailsListCellText>
-     </CopyToClipboard>
-  },
-  setFiltered(filtered:boolean){
-    this.isFiltered = filtered;
-    //this.name = filtered ? "Name ( class )" : "Name";
-  }
-}
-
-const coveredColumnDisplay = "Covered";
-const totalColumnDisplay = "Total";
-
-const coveredLinesColumn = DataColumn.create("coveredLines",coveredColumnDisplay);
-const coverableLinesColumn = DataColumn.create("coverableLines","Coverable");
-const uncoveredLinesColumn = DataColumn.create("uncoveredLines","Uncovered");
-const totalLinesColumn = DataColumn.create("totalLines",totalColumnDisplay);
-
-const lineCoverageQuotaColumn = PercentageColumn.create("coverageQuota","Line Coverage");
-const coveredBranchesColumn = DataColumn.create("coveredBranches",coveredColumnDisplay);
-const totalBranchesColumn = DataColumn.create("totalBranches",totalColumnDisplay);const branchCoverageQuotaColumn = PercentageColumn.create("branchCoverageQuota","Branch Coverage");
-const coveredCodeElementsColumn = DataColumn.create("coveredCodeElements",coveredColumnDisplay);
-const totalCodeElementsColumn = DataColumn.create("totalCodeElements",totalColumnDisplay);
-const codeElementCoverageQuotaColumn = PercentageColumn.create("codeElementCoverageQuota","Element Coverage");
+import { useRenderDetailsHeaderSticky } from '../utilities/hooks/useRenderDetailsHeaderSticky';
+import { getColumns } from './Columns/columns';
 
 const groupHeaderRowClassName = "groupHeaderRow";
 
@@ -71,51 +29,14 @@ export function Coverage(props:CoverageProps) {
   const {summaryResult, namespacedClasses, standalone, active, stickyCoverageTable, hideFullyCovered} = props;
   const {assemblies, supportsBranchCoverage} = summaryResult;
   
-  const onRenderDetailsHeader = React.useCallback((detailsHeaderProps: IDetailsHeaderProps | undefined, defaultRender: any) => {
-    detailsHeaderProps!.styles={
-      root:{
-        paddingTop:'0px' 
-      },
-    }
-    return active && stickyCoverageTable ? <Sticky>
-      {defaultRender(detailsHeaderProps)}
-    </Sticky> : defaultRender(detailsHeaderProps);
-  },[active, stickyCoverageTable]);
+  const onRenderDetailsHeader = useRenderDetailsHeaderSticky(active, stickyCoverageTable);
 
   const groupingMax = React.useMemo(() => {
     return getGroupingMax(assemblies);
   },[assemblies]);
 
   const columns = React.useMemo(() => {
-    const columns: IColumn[] = [
-      nameColumn,
-      coveredLinesColumn,
-      coverableLinesColumn,
-      uncoveredLinesColumn,
-      totalLinesColumn,
-      lineCoverageQuotaColumn
-    ]
-
-    if(supportsBranchCoverage){
-      columns.push(coveredBranchesColumn);
-      columns.push(totalBranchesColumn);
-      columns.push(branchCoverageQuotaColumn);
-    }
-
-    if(useProFeature){
-      columns.push(coveredCodeElementsColumn);
-      columns.push(totalCodeElementsColumn);
-      columns.push(codeElementCoverageQuotaColumn);
-    }
-    for(const col of columns){
-      col.isResizable = true,
-      col.calculatedWidth = 0;
-      col.flexGrow = undefined;
-    }
-
-    columns[columns.length-1].flexGrow = 1;
-
-    return columns
+    return getColumns(supportsBranchCoverage);
   },[supportsBranchCoverage])
 
   sortFilterGroupColumns(columns,filter,columnSort,grouping);

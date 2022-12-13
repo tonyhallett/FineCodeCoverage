@@ -4,7 +4,7 @@ import { CustomizerContext, ProgressIndicator, registerIcons, ScrollablePane } f
 import { LogMessage, MessageContext, Report, ReportOptions, Styling } from './types';
 import { ReportTab } from './ReportTab';
 import{ SortDownIcon, SortUpIcon, ClearFilterIcon, FilterIcon, ChevronDownIcon, createSvgIcon, ChevronRightMedIcon, TagIcon, BeerMugIcon, GitHubLogoIcon, ReviewSolidIcon, InfoIcon, WarningIcon, ErrorIcon, CompletedIcon, TableIcon, ProcessingIcon, OpenPaneIcon, NavigateExternalInlineIcon, ErrorBadgeIcon, RunningIcon, DeveloperToolsIcon, ProcessingCancelIcon, LogRemoveIcon, GroupedDescendingIcon } from'@fluentui/react-icons-mdl2';
-import { useRefInitOnce } from './utilities/hooks/useRefInitiOnce';
+import { useRefInitOnce } from './utilities/hooks/useRefInitOnce';
 import { addScrollBarStyles, addVsHighContrastBlocker, getBodyStyles, VsCustomizerContext } from './vs styling/themeStyles';
 import { useBodyStyling } from './utilities/hooks/useBody';
 

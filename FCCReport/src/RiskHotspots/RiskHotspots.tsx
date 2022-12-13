@@ -1,13 +1,10 @@
-import { RiskHotspotsResult, RiskHotspotsResultProps } from "./RiskHotspotsResult";
+import { RiskHotspotsResult, RiskHotspotsResultProps } from "./RiskHotspotsResult/RiskHotspotsResult";
 import { INoRiskHotspotsResultProps as NoRiskHotspotsResultProps, NoRiskHotspotsResult } from "./NoRiskHotspotsResult";
-import { Report } from './types';
-import { VsSTyledToolWindowText } from './vs styling/VsStyledToolWindowText';
+import { Report } from '../types';
+import { VsSTyledToolWindowText } from '../vs styling/VsStyledToolWindowText';
 
 export type RiskHotspotProps = 
   NoRiskHotspotsResultProps & Omit<RiskHotspotsResultProps,"riskHotspots"> & Pick<Report,'riskHotspotAnalysisResult'>
-  /* Pick<Report,'riskHotspotAnalysisResult'> & 
-  Pick<Report['summaryResult'],'assemblies'> & {standalone:boolean, active:boolean} &
-  Pick<ReportOptions,"namespacedClasses"|"stickyCoverageTable"> */
 
 export function RiskHotspots(props: RiskHotspotProps) {
   const { 

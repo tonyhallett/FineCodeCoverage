@@ -1,6 +1,6 @@
-import { RiskHotspotsAnalysisThresholds } from './types';
-import { SimpleTable } from './SimpleTable';
-import { VsSTyledToolWindowText } from './vs styling/VsStyledToolWindowText';
+import { RiskHotspotsAnalysisThresholds } from '../types';
+import { SimpleTable } from '../SimpleTable';
+import { VsSTyledToolWindowText } from '../vs styling/VsStyledToolWindowText';
 
 export interface INoRiskHotspotsResultProps { 
   riskHotspotsAnalysisThresholds: RiskHotspotsAnalysisThresholds 

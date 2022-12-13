@@ -85,7 +85,7 @@ namespace FineCodeCoverageTests.ReportTests
             var reportColoursProvider = new ReportColoursProvider(mockCategorizedNamedColoursProvider.Object, mockedVsColourTheme);
             List<CategorizedNamedColours> changedCategorizedNamedColours = null;
             reportColoursProvider.CategorizedNamedColoursChanged += (sender, changed) =>
-                changedCategorizedNamedColours = changed;
+                changedCategorizedNamedColours = changed.CategorizedNamedColours;
             _ = reportColoursProvider.GetCategorizedNamedColoursList();
 
             mockVsColourTheme.Raise(vsColourTheme => vsColourTheme.ThemeChanged += null, EventArgs.Empty);
@@ -124,7 +124,7 @@ namespace FineCodeCoverageTests.ReportTests
             );
             List<CategorizedNamedColours> changedCategorizedNamedColours = null;
             reportColoursProvider.CategorizedNamedColoursChanged += (sender, changed) =>
-                changedCategorizedNamedColours = changed;
+                changedCategorizedNamedColours = changed.CategorizedNamedColours;
 
             _ = reportColoursProvider.GetCategorizedNamedColoursList();
 

@@ -1,6 +1,6 @@
 import { ActionButton, ActivityItem, IActivityItemProps, Icon, IconButton, IStyle, Stack } from '@fluentui/react';
 import React, { CSSProperties } from 'react';
-import getFontFamily from './helpers/fontName';
+import getFontFamily from './utilities/fontName';
 import { Emphasis, LogMessage, MessageContext, Styling } from './types';
 import { VsStyledActionButton } from './vs styling/VsStyledActionButton';
 import { VsStyledActivityItem } from './vs styling/VsStyledActivityItem';

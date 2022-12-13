@@ -3,7 +3,7 @@ import { Pivot, PivotItem } from '@fluentui/react';
 import { Coverage } from "./coverage/Coverage";
 import { Log } from "./Log";
 import { Summary } from "./Summary";
-import { RiskHotspots } from "./RiskHotspots";
+import { RiskHotspots } from "./RiskHotspots/RiskHotspots";
 import { LogMessage, Report, ReportOptions } from './types';
 import { Feedback } from './Feedback';
 

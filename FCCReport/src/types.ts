@@ -67,7 +67,7 @@ export interface RiskHotspotAnalysisResult{
         display differently if false  
     */
     codeCodeQualityMetricsAvailable : boolean,
-    riskHotspots : RiskHotpot[]
+    riskHotspots : RiskHotspot[]
 }
   
   /*
@@ -78,7 +78,7 @@ export interface RiskHotspotAnalysisResult{
   */
   
   // applies to a method
-  export interface RiskHotpot{ 
+  export interface RiskHotspot{ 
     assemblyIndex: number,
     classIndex: number,
     methodMetric:MethodMetric,
