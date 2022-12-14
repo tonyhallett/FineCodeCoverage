@@ -1,14 +1,12 @@
-import { ActionButton, ActivityItem, IActivityItemProps, Icon, IconButton, IStyle, Stack } from '@fluentui/react';
-import React, { CSSProperties } from 'react';
-import getFontFamily from './utilities/fontName';
-import { Emphasis, LogMessage, MessageContext, Styling } from './types';
-import { VsStyledActionButton } from './vs styling/VsStyledActionButton';
-import { VsStyledActivityItem } from './vs styling/VsStyledActivityItem';
-import { VsSTyledToolWindowText } from './vs styling/VsStyledToolWindowText';
+import { IActivityItemProps, Icon, IStyle, Stack } from "@fluentui/react";
+import { Emphasis, LogMessage, MessageContext } from "./types";
+import { VsStyledActionButton } from "./vs-styling/VsStyledActionButton";
+import { VsStyledActivityItem } from "./vs-styling/VsStyledActivityItem";
+import { VsSTyledToolWindowText } from "./vs-styling/VsStyledToolWindowText";
 
-// use a map
-function getIconNameForContext(messageContext:MessageContext){
-  switch(messageContext){
+// todo use a map
+function getIconNameForContext(messageContext: MessageContext) {
+  switch (messageContext) {
     case MessageContext.Info:
       return "info";
     case MessageContext.Warning:
@@ -27,20 +25,20 @@ function getIconNameForContext(messageContext:MessageContext){
     case MessageContext.ReportGeneratorStart:
       return "table";
     case MessageContext.CoverageToolStart:
-      return "tool"
+      return "tool";
   }
 }
 
-function getIconNameForHostObjectMethod(hostObject:string,method:string){
-  if(hostObject === 'fccOutputPane'){
-    return 'openPane';
+function getIconNameForHostObjectMethod(hostObject: string, method: string) {
+  if (hostObject === "fccOutputPane") {
+    return "openPane";
   }
-  return 'navigate';
+  return "navigate";
 }
 
 // todo is this necessary ?
-function getActivityIconAriaLabelFromContext(messageContext:MessageContext){
-  switch(messageContext){
+function getActivityIconAriaLabelFromContext(messageContext: MessageContext) {
+  switch (messageContext) {
     case MessageContext.CoverageCancelled:
       return "Coverage Cancelled";
     case MessageContext.CoverageCompleted:
@@ -68,72 +66,97 @@ function getActivityIconAriaLabelFromContext(messageContext:MessageContext){
   }
 }
 
-export function Log(props:{logMessages:LogMessage[], clearLogMessages:() => void}) {
-  const {logMessages, clearLogMessages} = props;
-  const activityItemsOrBreaks:any[] = [];
-  logMessages.forEach((logMessage,i) => {
-    
-    const activityDescription:React.ReactNode[] =
-    logMessage.message.map((msgPart,j) => {
-      if(msgPart.type === 'emphasized' ){
-        const root:IStyle={
+export function Log(props: {
+  logMessages: LogMessage[];
+  clearLogMessages: () => void;
+}) {
+  const { logMessages, clearLogMessages } = props;
+  const activityItemsOrBreaks: any[] = [];
+  logMessages.forEach((logMessage, i) => {
+    const activityDescription: React.ReactNode[] = logMessage.message.map(
+      (msgPart, j) => {
+        if (msgPart.type === "emphasized") {
+          const root: IStyle = {};
+          if (msgPart.emphasis & Emphasis.Bold) {
+            root.fontWeight = "bold";
+          }
+          if (msgPart.emphasis & Emphasis.Italic) {
+            root.fontStyle = "italic";
+          }
+          if (msgPart.emphasis & Emphasis.Underline) {
+            root.textDecoration = "underline";
+          }
+          return (
+            <VsSTyledToolWindowText key={j} styles={{ root }}>
+              {msgPart.message}
+            </VsSTyledToolWindowText>
+          );
+        } else {
+          const actionButton = (
+            <VsStyledActionButton
+              key={j}
+              style={{ marginLeft: "10px" }}
+              ariaLabel={msgPart.ariaLabel}
+              iconProps={{
+                iconName: getIconNameForHostObjectMethod(
+                  msgPart.hostObject,
+                  msgPart.methodName
+                ),
+              }}
+              onClick={() => {
+                const hostObject = (window as any).chrome.webview.hostObjects[
+                  msgPart.hostObject
+                ];
+                const hostMethod: Function = hostObject[msgPart.methodName];
+                hostMethod.apply(null, msgPart.arguments);
+              }}
+            >
+              {msgPart.title}
+            </VsStyledActionButton>
+          );
+          return actionButton;
         }
-        if(msgPart.emphasis & Emphasis.Bold){
-          root.fontWeight='bold';
-        }
-        if(msgPart.emphasis & Emphasis.Italic){
-          root.fontStyle='italic';
-        }
-        if(msgPart.emphasis & Emphasis.Underline){
-          root.textDecoration = 'underline';
-        }
-        return <VsSTyledToolWindowText key={j} styles={
-          {root}
-        }>{msgPart.message}</VsSTyledToolWindowText>;
-      }else{
-        const actionButton = <VsStyledActionButton 
-        key={j} 
-        style={{marginLeft:'10px'}}
-        ariaLabel={msgPart.ariaLabel}
-        iconProps={{iconName:getIconNameForHostObjectMethod(msgPart.hostObject,msgPart.methodName)}} 
-        onClick={() => {
-          const hostObject = (window as any).chrome.webview.hostObjects[msgPart.hostObject];
-          const hostMethod:Function = hostObject[msgPart.methodName];
-          hostMethod.apply(null,msgPart.arguments);
-        }}>{msgPart.title}</VsStyledActionButton>
-        return actionButton;
       }
-    })
+    );
 
-    let activityItemProps:Partial<IActivityItemProps> = {
+    let activityItemProps: Partial<IActivityItemProps> = {
       activityDescription,
-      activityIcon:<Icon 
-        aria-label={getActivityIconAriaLabelFromContext(logMessage.context)} 
-        styles={
-          {root:{marginLeft:'10px'}}
-        } 
-        iconName={getIconNameForContext(logMessage.context)}/>,
-      styles:{
+      activityIcon: (
+        <Icon
+          aria-label={getActivityIconAriaLabelFromContext(logMessage.context)}
+          styles={{ root: { marginLeft: "10px" } }}
+          iconName={getIconNameForContext(logMessage.context)}
+        />
+      ),
+      styles: {
         root: {
-          alignItems:"center"
+          alignItems: "center",
         },
         activityTypeIcon: {
-          height:"16px"
-        }
+          height: "16px",
+        },
       },
-      
-      isCompact:false
-    }
-    
-    activityItemsOrBreaks.push(<VsStyledActivityItem {...activityItemProps} key={i}/>);
+
+      isCompact: false,
+    };
+
+    activityItemsOrBreaks.push(
+      <VsStyledActivityItem {...activityItemProps} key={i} />
+    );
 
     // works for ms code coverage but not for old as there are info messages before CoverageStart
     /* if(i !== 0 && logMessage.context === MessageContext.CoverageStart){
       activityItemsOrBreaks.push(<br key={`break${i}`}/>);
     } */
-  })
-  return <Stack horizontal verticalAlign='start'>
-    <VsStyledActionButton ariaLabel='Clear log messages' iconProps={{iconName:'logRemove'}} onClick={clearLogMessages}/>
-    <div>{activityItemsOrBreaks}</div>
-  </Stack>
+  });
+  return (
+    <Stack horizontal verticalAlign="start">
+      <VsStyledActionButton
+        ariaLabel="Clear log messages"
+        iconProps={{ iconName: "logRemove" }}
+        onClick={clearLogMessages}
+      />
+      <div>{activityItemsOrBreaks}</div>
+    </Stack>
+  );
 }

@@ -1,6 +1,6 @@
-export default function getFontFamily(fontFamily:string):string{
-    if(fontFamily.indexOf(' ')>-1){
-        return `"${fontFamily}"`;
-    }
-    return fontFamily;
+export default function getFontFamily(fontFamily: string): string {
+  if (fontFamily.indexOf(" ") > -1) {
+    return `"${fontFamily}"`;
+  }
+  return fontFamily;
 }

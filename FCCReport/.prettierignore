@@ -13,3 +13,4 @@ jest.config.js
 package.json
 package-lock.json
 tsconfig.json
+pretierrc.config.js

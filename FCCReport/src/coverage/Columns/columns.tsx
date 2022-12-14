@@ -1,7 +1,7 @@
 import { IColumn } from "@fluentui/react";
 import { CopyToClipboard } from "../../helper components/CopyToCliboard";
 import { OpenFile } from "../../OpenFile";
-import { VsStyledDetailsListCellText } from "../../vs styling/VsStyledDetailsListCellText";
+import { VsStyledDetailsListCellText } from "../../vs-styling/VsStyledDetailsListCellText";
 import { focusingCells } from "../common";
 import { ICoverageItem } from "../ICoverageItem";
 import { DataColumn } from "./DataColumn";

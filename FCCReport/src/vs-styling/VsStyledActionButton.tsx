@@ -1,10 +1,15 @@
-import { customizable, IButtonProps, BaseButton, nullRender } from "@fluentui/react";
+import {
+  customizable,
+  IButtonProps,
+  BaseButton,
+  nullRender,
+} from "@fluentui/react";
 import React from "react";
-import { getStyles } from '@fluentui/react/lib/components/Button/ActionButton/ActionButton.styles';
+import { getStyles } from "@fluentui/react/lib/components/Button/ActionButton/ActionButton.styles";
 
 export const vsStyledActionButtonScope = "VsStyledActionButton";
 
-@customizable(vsStyledActionButtonScope, ['theme', 'styles'], true)
+@customizable(vsStyledActionButtonScope, ["theme", "styles"], true)
 export class VsStyledActionButton extends React.Component<IButtonProps, {}> {
   public render(): JSX.Element {
     const { styles, theme } = this.props;
@@ -19,4 +24,3 @@ export class VsStyledActionButton extends React.Component<IButtonProps, {}> {
     );
   }
 }
- 

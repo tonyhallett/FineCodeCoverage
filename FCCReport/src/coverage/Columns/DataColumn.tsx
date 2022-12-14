@@ -1,4 +1,4 @@
-import { VsStyledDetailsListCellText } from '../../vs styling/VsStyledDetailsListCellText';
+import { VsStyledDetailsListCellText } from '../../vs-styling/VsStyledDetailsListCellText';
 import { ICoverageItem } from '../ICoverageItem';
 import { ICoverageItemBase } from '../ICoverageItemBase';
 import { focusingCells } from '../common';

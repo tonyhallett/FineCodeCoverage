@@ -1,9 +1,9 @@
 import { ICoverageItem } from '../ICoverageItem';
 import { ICoverageItemBase } from '../ICoverageItemBase';
-import { VsStyledPercentage } from '../../vs styling/VsStyledPercentage';
+import { VsStyledPercentage } from '../../vs-styling/VsStyledPercentage';
 import { CoverageColumn } from './CoverageColumn';
 import { focusingCells } from '../common';
-import { VsStyledDetailsListCellText } from '../../vs styling/VsStyledDetailsListCellText';
+import { VsStyledDetailsListCellText } from '../../vs-styling/VsStyledDetailsListCellText';
 import { Stack } from '@fluentui/react';
 import { CopyToClipboard } from '../../helper components/CopyToCliboard';
 
