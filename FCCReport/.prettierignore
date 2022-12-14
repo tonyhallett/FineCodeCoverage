@@ -1,0 +1,15 @@
+.parcel-cache
+.vscode
+coverage
+dist
+packages
+scripts
+src/html
+src/setupTests.ts
+.env.development
+.gitignore
+.parcelrc
+jest.config.js
+package.json
+package-lock.json
+tsconfig.json
