@@ -1,3 +1,3 @@
-import * as fs from 'fs'
+import * as fs from "fs";
 
-fs.writeFileSync('./dist/debug/watch.txt','');
+fs.writeFileSync("./dist/debug/watch.txt", "");

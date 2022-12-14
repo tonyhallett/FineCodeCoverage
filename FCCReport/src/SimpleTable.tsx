@@ -1,19 +1,19 @@
 import {
-  CheckboxVisibility,
-  customizable,
-  DetailsList,
-  DetailsRow,
-  IDetailsListProps,
-  IDetailsRowProps,
-  SelectionMode,
+    CheckboxVisibility,
+    customizable,
+    DetailsList,
+    DetailsRow,
+    IDetailsListProps,
+    IDetailsRowProps,
+    SelectionMode,
 } from "@fluentui/react";
 import React from "react";
 
 @customizable("SimpleTableRow", ["theme", "styles"], true)
 class SimpleTableRow extends React.Component<IDetailsRowProps, {}> {
-  public render(): JSX.Element {
-    return <DetailsRow {...this.props} />;
-  }
+    public render(): JSX.Element {
+        return <DetailsRow {...this.props} />;
+    }
 }
 
 /*
@@ -22,28 +22,28 @@ class SimpleTableRow extends React.Component<IDetailsRowProps, {}> {
     There would be other props removed
 */
 type SimpleTableProps = Omit<
-  IDetailsListProps,
-  | "role"
-  | "checkboxVisibility"
-  | "isHeaderVisible"
-  | "selectionMode"
-  | "focusZoneProps"
-  | "onRenderRow"
+    IDetailsListProps,
+    | "role"
+    | "checkboxVisibility"
+    | "isHeaderVisible"
+    | "selectionMode"
+    | "focusZoneProps"
+    | "onRenderRow"
 >;
 export function SimpleTable(props: SimpleTableProps) {
-  return (
-    <DetailsList
-      role="table"
-      checkboxVisibility={CheckboxVisibility.hidden}
-      isHeaderVisible={false}
-      selectionMode={SelectionMode.none}
-      onRenderRow={(props) => {
-        return <SimpleTableRow {...props!} />;
-      }}
-      focusZoneProps={{
-        disabled: true,
-      }}
-      {...props}
-    />
-  );
+    return (
+        <DetailsList
+            role="table"
+            checkboxVisibility={CheckboxVisibility.hidden}
+            isHeaderVisible={false}
+            selectionMode={SelectionMode.none}
+            onRenderRow={(props) => {
+                return <SimpleTableRow {...props!} />;
+            }}
+            focusZoneProps={{
+                disabled: true,
+            }}
+            {...props}
+        />
+    );
 }

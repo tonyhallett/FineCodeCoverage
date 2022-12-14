@@ -1,0 +1,12 @@
+{
+    "singleAttributePerLine": true,
+    "tabWidth": 4,
+    "overrides": [
+        {
+            "files": ".parcelrc",
+            "options": {
+                "parser": "json"
+            }
+        }
+    ]
+}

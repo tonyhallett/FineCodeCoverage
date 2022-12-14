@@ -2,25 +2,25 @@ import { IDetailsListProps, Sticky } from "@fluentui/react";
 import React from "react";
 
 export const useRenderDetailsHeaderSticky = (
-  active: boolean,
-  stickyCoverageTable: boolean
+    active: boolean,
+    stickyCoverageTable: boolean
 ) => {
-  const onRenderDetailsHeader: IDetailsListProps["onRenderDetailsHeader"] =
-    React.useCallback(
-      (detailsHeaderProps, defaultRender) => {
-        detailsHeaderProps!.styles = {
-          root: {
-            paddingTop: "0px",
-          },
-        };
-        return active && stickyCoverageTable ? (
-          <Sticky>{defaultRender(detailsHeaderProps)}</Sticky>
-        ) : (
-          defaultRender(detailsHeaderProps)
+    const onRenderDetailsHeader: IDetailsListProps["onRenderDetailsHeader"] =
+        React.useCallback(
+            (detailsHeaderProps, defaultRender) => {
+                detailsHeaderProps!.styles = {
+                    root: {
+                        paddingTop: "0px",
+                    },
+                };
+                return active && stickyCoverageTable ? (
+                    <Sticky>{defaultRender(detailsHeaderProps)}</Sticky>
+                ) : (
+                    defaultRender(detailsHeaderProps)
+                );
+            },
+            [active, stickyCoverageTable]
         );
-      },
-      [active, stickyCoverageTable]
-    );
 
-  return onRenderDetailsHeader;
+    return onRenderDetailsHeader;
 };

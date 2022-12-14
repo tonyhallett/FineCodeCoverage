@@ -2,15 +2,6 @@
 .vscode
 coverage
 dist
-packages
-scripts
+packages/parcel-resolver-react-profiling-alias/dist
 src/html
-src/setupTests.ts
 .env.development
-.gitignore
-.parcelrc
-jest.config.js
-package.json
-package-lock.json
-tsconfig.json
-pretierrc.config.js
