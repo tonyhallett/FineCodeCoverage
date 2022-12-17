@@ -9,7 +9,7 @@ import { Feedback } from "./Feedback";
 
 export type ReportTabProps = {
     standalone: boolean;
-    report: Report;
+    report: Report | undefined;
     reportOptions: ReportOptions;
     logMessages: LogMessage[];
     clearLogMessages: () => void;

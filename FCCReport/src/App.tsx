@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useState } from "react";
 import {
     Payload,
     webviewPayloadTypeListen,
-    webviewPayloadTypeUnlisten,
 } from "./webviewListener";
 import {
     CustomizerContext,
@@ -32,7 +31,6 @@ import {
     ReviewSolidIcon,
     InfoIcon,
     WarningIcon,
-    ErrorIcon,
     CompletedIcon,
     TableIcon,
     ProcessingIcon,
@@ -68,7 +66,7 @@ const VisualStudioIDELogo32Icon = createSvgIcon({
     displayName: "VisualStudioIDELogo32Icon",
 });
 
-const VisualStudioLogoIcon = createSvgIcon({
+/* const VisualStudioLogoIcon = createSvgIcon({
     svg: ({ classes }) => (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -79,7 +77,7 @@ const VisualStudioLogoIcon = createSvgIcon({
         </svg>
     ),
     displayName: "VisualStudioLogoIcon",
-});
+}); */
 
 registerIcons({
     icons: {
@@ -110,16 +108,23 @@ registerIcons({
     },
 });
 
-const anyWindow = window as any;
-
+type MockWebViewWindow = typeof window & {
+    invokeMessageEvent:(msgEvent: MessageEvent<Payload<unknown>>) => void,
+    chrome:{
+        webview:{
+            addEventListener:(_:string,listener: (msgEvent: MessageEvent<Payload<unknown>>) => void) => void
+        }
+    }
+}
 if (process.env.MOCK_WEBVIEW) {
+    const mockWebViewWindow = window as unknown as MockWebViewWindow;
     let reactListener: (msgEvent: MessageEvent<Payload<unknown>>) => void;
-    anyWindow.invokeMessageEvent = (
+    mockWebViewWindow.invokeMessageEvent = (
         msgEvent: MessageEvent<Payload<unknown>>
     ) => {
         reactListener(msgEvent);
     };
-    anyWindow.chrome.webview = {
+    mockWebViewWindow.chrome.webview = {
         addEventListener: (
             _: string,
             listener: (msgEvent: MessageEvent<Payload<unknown>>) => void
@@ -144,28 +149,41 @@ function logMessagesReducer(
 ): LogMessage[] {
     switch (action.type) {
         case "newMessage":
-            const newMessage = action.payload;
-            return [newMessage, ...logMessages];
+            return [action.payload, ...logMessages];
         default:
             return [];
     }
 }
 
+type PossiblyStandaloneWindow = typeof window & {
+    styling: Styling | undefined,
+    report : Report | undefined,
+    reportOptions : ReportOptions | undefined;
+}
+const x="x";
+const possiblyStandaloneWindow = window as unknown as PossiblyStandaloneWindow;
+
+const defaultReportOptions : ReportOptions = {
+    hideFullyCovered:false,
+    namespacedClasses:true,
+    stickyCoverageTable:false
+}
+
 function App() {
-    const standalone = !!anyWindow.styling;
+    const standalone = !!possiblyStandaloneWindow.styling;
     const [logMessages, logMessagesDispatch] = useReducer(
         logMessagesReducer,
         []
     );
-    const [stylingState, setStyling] = useState<Styling>(
-        standalone ? anyWindow.styling : undefined
+    const [stylingState, setStyling] = useState<Styling|undefined>(
+        possiblyStandaloneWindow.styling
     );
-    const [reportState, setReport] = useState<Report>(
-        standalone ? anyWindow.report : undefined
+    const [reportState, setReport] = useState<Report|undefined>(
+        possiblyStandaloneWindow.report
     );
     const [coverageRunning, setCoverageRunning] = useState(false);
     const [reportOptionsState, setReportOptions] = useState<ReportOptions>(
-        standalone ? anyWindow.reportOptions : {}
+        possiblyStandaloneWindow.reportOptions ?? defaultReportOptions
     );
 
     const clearLogMessages = React.useCallback(() => {
@@ -218,7 +236,7 @@ function App() {
         webviewPayloadTypeUnlisten("message",messageListener);
       } */
         }
-    }, []);
+    });
 
     const customizationStyling = useRefInitOnce(new VsCustomizerContext());
 
