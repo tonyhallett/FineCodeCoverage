@@ -1,8 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import {
-    Payload,
-    webviewPayloadTypeListen,
-} from "./webviewListener";
+import { webviewPayloadTypeListen } from "./webviewListener";
 import {
     CustomizerContext,
     ProgressIndicator,
@@ -51,6 +48,8 @@ import {
     VsCustomizerContext,
 } from "./vs-styling/themeStyles";
 import { useBodyStyling } from "./utilities/hooks/useBody";
+import { mockWebViewIfRequired } from "./mocking";
+import { logMessagesReducer } from "./logMessagesReducer";
 
 //https://github.com/microsoft/fluentui/issues/22895
 const VisualStudioIDELogo32Icon = createSvgIcon({
@@ -108,66 +107,15 @@ registerIcons({
     },
 });
 
-type MockWebViewWindow = typeof window & {
-    invokeMessageEvent:(msgEvent: MessageEvent<Payload<unknown>>) => void,
-    chrome:{
-        webview:{
-            addEventListener:(_:string,listener: (msgEvent: MessageEvent<Payload<unknown>>) => void) => void
-        }
-    }
-}
-if (process.env.MOCK_WEBVIEW) {
-    const mockWebViewWindow = window as unknown as MockWebViewWindow;
-    let reactListener: (msgEvent: MessageEvent<Payload<unknown>>) => void;
-    mockWebViewWindow.invokeMessageEvent = (
-        msgEvent: MessageEvent<Payload<unknown>>
-    ) => {
-        reactListener(msgEvent);
-    };
-    mockWebViewWindow.chrome.webview = {
-        addEventListener: (
-            _: string,
-            listener: (msgEvent: MessageEvent<Payload<unknown>>) => void
-        ) => {
-            reactListener = listener;
-        },
-    };
-}
-
-interface NewMessageAction {
-    type: "newMessage";
-    payload: LogMessage;
-}
-
-interface ClearMessagesAction {
-    type: "clear";
-}
-
-function logMessagesReducer(
-    logMessages: LogMessage[],
-    action: NewMessageAction | ClearMessagesAction
-): LogMessage[] {
-    switch (action.type) {
-        case "newMessage":
-            return [action.payload, ...logMessages];
-        default:
-            return [];
-    }
-}
+mockWebViewIfRequired();
 
 type PossiblyStandaloneWindow = typeof window & {
-    styling: Styling | undefined,
-    report : Report | undefined,
-    reportOptions : ReportOptions | undefined;
-}
-const x="x";
-const possiblyStandaloneWindow = window as unknown as PossiblyStandaloneWindow;
+    styling: Styling | undefined;
+    report: Report | undefined;
+    reportOptions: ReportOptions | undefined;
+};
 
-const defaultReportOptions : ReportOptions = {
-    hideFullyCovered:false,
-    namespacedClasses:true,
-    stickyCoverageTable:false
-}
+const possiblyStandaloneWindow = window as unknown as PossiblyStandaloneWindow;
 
 function App() {
     const standalone = !!possiblyStandaloneWindow.styling;
@@ -175,15 +123,19 @@ function App() {
         logMessagesReducer,
         []
     );
-    const [stylingState, setStyling] = useState<Styling|undefined>(
+    const [stylingState, setStyling] = useState<Styling | undefined>(
         possiblyStandaloneWindow.styling
     );
-    const [reportState, setReport] = useState<Report|undefined>(
+    const [reportState, setReport] = useState<Report | undefined>(
         possiblyStandaloneWindow.report
     );
     const [coverageRunning, setCoverageRunning] = useState(false);
     const [reportOptionsState, setReportOptions] = useState<ReportOptions>(
-        possiblyStandaloneWindow.reportOptions ?? defaultReportOptions
+        possiblyStandaloneWindow.reportOptions ?? {
+            hideFullyCovered: false,
+            namespacedClasses: true,
+            stickyCoverageTable: false,
+        }
     );
 
     const clearLogMessages = React.useCallback(() => {
@@ -240,25 +192,22 @@ function App() {
 
     const customizationStyling = useRefInitOnce(new VsCustomizerContext());
 
-    const bodyStyles = stylingState
-        ? getBodyStyles(stylingState.categoryColours)
-        : {};
-    useBodyStyling(bodyStyles);
-
     if (!stylingState) {
         return null;
     }
 
+    useBodyStyling(getBodyStyles(stylingState.categoryColours));
+
     customizationStyling.current =
         customizationStyling.current.getNext(stylingState);
-
-    const percentComplete = coverageRunning ? undefined : 0;
 
     return (
         <CustomizerContext.Provider value={customizationStyling.current}>
             <ScrollablePane>
                 {standalone ? null : (
-                    <ProgressIndicator percentComplete={percentComplete} />
+                    <ProgressIndicator
+                        percentComplete={coverageRunning ? undefined : 0}
+                    />
                 )}
                 <ReportTab
                     standalone={standalone}

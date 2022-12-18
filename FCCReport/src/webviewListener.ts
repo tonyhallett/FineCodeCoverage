@@ -1,54 +1,42 @@
-export interface Payload<T> {
-    type: string;
-    data: T;
-}
+import { VsChromeWebViewWindow, Payload } from "./webviewTypes";
 
-interface Webview {
-    addEventListener: (
-        type: string,
-        listener: (msgEvent: MessageEvent<any>) => void
-    ) => void;
-}
+type Listener<TPayload = unknown> = (payload: TPayload) => void;
+type VsMessageEvent<T> = MessageEvent<Payload<T>>;
 
-type Listener<TPayload = any> = (payload: TPayload) => void;
-
-const anyWindow = window as any;
+const chromeWebViewWindow = window as unknown as VsChromeWebViewWindow;
 
 let webViewListening = false;
-const listenerMap: Map<string, ((data: any) => void)[]> = new Map();
+const listenerMap: Map<string, Listener[]> = new Map();
 
 function addListener(payloadType: string, listener: Listener) {
-    if (!listenerMap.has(payloadType)) {
-        listenerMap.set(payloadType, []);
+    let listeners = listenerMap.get(payloadType);
+    if (!listeners) {
+        listeners = [];
+        listenerMap.set(payloadType, listeners);
     }
-    const listeners = listenerMap.get(payloadType)!;
     listeners.push(listener);
 }
 
 export function webviewPayloadTypeListen<TPayload>(
     payloadType: string,
-    listener: (payload: TPayload) => void
+    listener: Listener<TPayload>
 ) {
-    // undefined or null ?
-    const webview: Webview | undefined = anyWindow.chrome?.webview;
-    if (webview) {
-        addListener(payloadType, listener);
+    addListener(payloadType, listener as Listener);
 
-        if (!webViewListening) {
-            listenForWebViewMessage(webview);
-            webViewListening = true;
-        }
+    if (!webViewListening) {
+        listenForWebViewMessage();
+        webViewListening = true;
     }
 }
 
-function listenForWebViewMessage(webview: Webview) {
-    webview.addEventListener(
+function listenForWebViewMessage() {
+    chromeWebViewWindow.chrome.webview.addEventListener(
         "message",
-        (msgEvent: MessageEvent<Payload<unknown>>) => {
+        (msgEvent: VsMessageEvent<unknown>) => {
             const payload = msgEvent.data;
-            if (listenerMap.has(payload.type)) {
-                const listeners = listenerMap.get(payload.type)!;
-                for (let listener of listeners) {
+            const listeners = listenerMap.get(payload.type);
+            if (listeners) {
+                for (const listener of listeners) {
                     listener(payload.data);
                 }
             }
@@ -60,9 +48,8 @@ export function webviewPayloadTypeUnlisten<TPayload>(
     payloadType: string,
     listener: (payload: TPayload) => void
 ) {
-    if (listenerMap.has(payloadType)) {
-        // todo remove the chromewebview listener
-        const listeners = listenerMap.get(payloadType)!;
+    const listeners = listenerMap.get(payloadType);
+    if (listeners) {
         const newListeners = listeners.filter((l) => l !== listener);
         if (newListeners.length === 0) {
             listenerMap.delete(payloadType);

@@ -1,6 +1,10 @@
 import { ICommandBarItemProps } from "@fluentui/react";
 import React from "react";
 import { VsStyledActionButton } from "./vs-styling/VsStyledActionButton";
+import { VsChromeWebViewWindow } from "./webviewTypes";
+
+const vsWindow = window as unknown as VsChromeWebViewWindow;
+const fccResourcesNavigator = vsWindow.chrome.webview.hostObjects.fccResourcesNavigator;
 
 export function FeedbackBase() {
     const items: ICommandBarItemProps[] = [
@@ -10,9 +14,7 @@ export function FeedbackBase() {
             iconProps: { iconName: "beerMug" },
             ariaLabel: "Buy me a beer",
             onClick() {
-                (
-                    window as any
-                ).chrome.webview.hostObjects.fccResourcesNavigator.buyMeACoffee();
+                fccResourcesNavigator.buyMeACoffee();
             },
         },
         {
@@ -21,9 +23,7 @@ export function FeedbackBase() {
             iconProps: { iconName: "github" },
             ariaLabel: "Log issue or suggestion",
             onClick() {
-                (
-                    window as any
-                ).chrome.webview.hostObjects.fccResourcesNavigator.logIssueOrSuggestion();
+                fccResourcesNavigator.logIssueOrSuggestion();
             },
         },
         {
@@ -32,9 +32,7 @@ export function FeedbackBase() {
             iconProps: { iconName: "review" },
             ariaLabel: "Review",
             onClick() {
-                (
-                    window as any
-                ).chrome.webview.hostObjects.fccResourcesNavigator.rateAndReview();
+                fccResourcesNavigator.rateAndReview();
             },
         },
     ];

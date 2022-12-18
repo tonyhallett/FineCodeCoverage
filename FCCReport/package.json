@@ -14,7 +14,7 @@
         "build-prod": "parcel build src/html/build/index.html --dist-dir dist/build",
         "build-dev": "rimraf dist/debug/*&&set REACT_PROFILING=true&& parcel build src/html/debug/index.html --dist-dir dist/debug&& npm run build-dev-completed",
         "build": "npm run build-parcel-plugin && npm run build-dev && npm run build-prod",
-        "build-verbose":"parcel build src/html/build/index.html --dist-dir dist/build --log-level verbose",
+        "build-verbose": "parcel build src/html/build/index.html --dist-dir dist/build --log-level verbose",
         "build-dev-completed": "ts-node scripts/dev-build-completed-notification.ts",
         "build-parcel-plugin": "tsc --project packages/parcel-resolver-react-profiling-alias",
         "test": "jest",
