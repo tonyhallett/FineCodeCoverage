@@ -328,7 +328,7 @@ export interface Emphasized {
 export interface FCCLink {
     hostObject: string;
     methodName: string;
-    arguments?: any[];
+    arguments?: unknown[];
     title: string;
     ariaLabel: string;
     type: "fcclink";

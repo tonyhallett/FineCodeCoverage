@@ -3,6 +3,7 @@ import { Emphasis, LogMessage, MessageContext } from "./types";
 import { VsStyledActionButton } from "./vs-styling/VsStyledActionButton";
 import { VsStyledActivityItem } from "./vs-styling/VsStyledActivityItem";
 import { VsSTyledToolWindowText } from "./vs-styling/VsStyledToolWindowText";
+import { VsChromeWebViewWindow } from "./webviewTypes";
 
 // todo use a map
 function getIconNameForContext(messageContext: MessageContext) {
@@ -29,7 +30,7 @@ function getIconNameForContext(messageContext: MessageContext) {
     }
 }
 
-function getIconNameForHostObjectMethod(hostObject: string, method: string) {
+function getIconNameForHostObjectMethod(hostObject: string) {
     if (hostObject === "fccOutputPane") {
         return "openPane";
     }
@@ -71,7 +72,8 @@ export function Log(props: {
     clearLogMessages: () => void;
 }) {
     const { logMessages, clearLogMessages } = props;
-    const activityItemsOrBreaks: any[] = [];
+    
+    const activityItems: React.ReactElement[] = [];
     logMessages.forEach((logMessage, i) => {
         const activityDescription: React.ReactNode[] = logMessage.message.map(
             (msgPart, j) => {
@@ -103,15 +105,15 @@ export function Log(props: {
                             iconProps={{
                                 iconName: getIconNameForHostObjectMethod(
                                     msgPart.hostObject,
-                                    msgPart.methodName
                                 ),
                             }}
                             onClick={() => {
-                                const hostObject = (window as any).chrome
+                                const hostObject = (window as unknown as VsChromeWebViewWindow).chrome
                                     .webview.hostObjects[msgPart.hostObject];
-                                const hostMethod: Function =
+                                const hostMethod =
                                     hostObject[msgPart.methodName];
-                                hostMethod.apply(null, msgPart.arguments);
+                                const hostArguments = msgPart.arguments ?? [];
+                                hostMethod(...hostArguments)
                             }}
                         >
                             {msgPart.title}
@@ -122,7 +124,7 @@ export function Log(props: {
             }
         );
 
-        let activityItemProps: Partial<IActivityItemProps> = {
+        const activityItemProps: Partial<IActivityItemProps> = {
             activityDescription,
             activityIcon: (
                 <Icon
@@ -145,17 +147,12 @@ export function Log(props: {
             isCompact: false,
         };
 
-        activityItemsOrBreaks.push(
+        activityItems.push(
             <VsStyledActivityItem
                 {...activityItemProps}
                 key={i}
             />
         );
-
-        // works for ms code coverage but not for old as there are info messages before CoverageStart
-        /* if(i !== 0 && logMessage.context === MessageContext.CoverageStart){
-      activityItemsOrBreaks.push(<br key={`break${i}`}/>);
-    } */
     });
     return (
         <Stack
@@ -167,7 +164,7 @@ export function Log(props: {
                 iconProps={{ iconName: "logRemove" }}
                 onClick={clearLogMessages}
             />
-            <div>{activityItemsOrBreaks}</div>
+            <div>{activityItems}</div>
         </Stack>
     );
 }

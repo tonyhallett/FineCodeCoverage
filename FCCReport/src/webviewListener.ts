@@ -1,7 +1,6 @@
-import { VsChromeWebViewWindow, Payload } from "./webviewTypes";
+import { VsChromeWebViewWindow } from "./webviewTypes";
 
 type Listener<TPayload = unknown> = (payload: TPayload) => void;
-type VsMessageEvent<T> = MessageEvent<Payload<T>>;
 
 const chromeWebViewWindow = window as unknown as VsChromeWebViewWindow;
 
@@ -32,7 +31,7 @@ export function webviewPayloadTypeListen<TPayload>(
 function listenForWebViewMessage() {
     chromeWebViewWindow.chrome.webview.addEventListener(
         "message",
-        (msgEvent: VsMessageEvent<unknown>) => {
+        (msgEvent) => {
             const payload = msgEvent.data;
             const listeners = listenerMap.get(payload.type);
             if (listeners) {

@@ -3,7 +3,7 @@ import { ICoverageItem } from '../ICoverageItem';
 import { ICoverageItemBase } from '../ICoverageItemBase';
 import { focusingCells } from '../common';
 import { CoverageColumn } from './CoverageColumn';
-import { CopyToClipboard } from '../../helper components/CopyToCliboard';
+import { CopyToClipboard } from '../../helper-components/CopyToCliboard';
 
 export class DataColumn{
   // because fluentui creates a new IColumn with object spread

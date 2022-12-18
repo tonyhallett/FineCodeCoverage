@@ -1,4 +1,4 @@
-import { ICommandBarItemProps } from "@fluentui/react";
+import { IIconProps } from "@fluentui/react";
 import React from "react";
 import { VsStyledActionButton } from "./vs-styling/VsStyledActionButton";
 import { VsChromeWebViewWindow } from "./webviewTypes";
@@ -6,8 +6,17 @@ import { VsChromeWebViewWindow } from "./webviewTypes";
 const vsWindow = window as unknown as VsChromeWebViewWindow;
 const fccResourcesNavigator = vsWindow.chrome.webview.hostObjects.fccResourcesNavigator;
 
+
+interface IFeedbackItem{
+    key:string,
+    text:string,
+    iconProps:IIconProps,
+    ariaLabel:string,
+    onClick:() => void
+}
+
 export function FeedbackBase() {
-    const items: ICommandBarItemProps[] = [
+    const items: IFeedbackItem[] = [
         {
             key: "buyBeer",
             text: "Buy beer",
@@ -43,7 +52,7 @@ export function FeedbackBase() {
                 <VsStyledActionButton
                     key={props.key}
                     style={{ marginRight: "5px" }}
-                    onClick={props.onClick as any}
+                    onClick={props.onClick}
                     iconProps={props.iconProps}
                 >
                     {props.text}{" "}

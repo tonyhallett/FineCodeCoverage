@@ -5,7 +5,7 @@ import { CoverageColumn } from './CoverageColumn';
 import { focusingCells } from '../common';
 import { VsStyledDetailsListCellText } from '../../vs-styling/VsStyledDetailsListCellText';
 import { Stack } from '@fluentui/react';
-import { CopyToClipboard } from '../../helper components/CopyToCliboard';
+import { CopyToClipboard } from '../../helper-components/CopyToCliboard';
 
 export class PercentageColumn {
   // because fluentui creates a new IColumn with object spread

@@ -1,16 +1,15 @@
-import { makeStyles, useDocument } from "@fluentui/react";
+import { IStyle, makeStyles, useDocument } from "@fluentui/react";
 import React from "react";
 
-export function useBodyStyling(bodyStyles: any) {
+export function useBodyStyling(bodyStyles: IStyle) {
     const bodyClasses = useBodyStyles(bodyStyles)();
     useApplyClassToBody([bodyClasses.body]);
 }
 
-//todo type
-const useBodyStyles = (bodyStyles: any) => {
+const useBodyStyles = (bodyStyles: IStyle) => {
     return makeStyles({
         body: bodyStyles,
-    } as Record<string, any>);
+    });
 };
 
 function useApplyClassToBody(classesToApply: string[]): void {

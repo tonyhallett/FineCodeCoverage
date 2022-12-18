@@ -12,25 +12,15 @@ function possiblyNullDisplay(num: number | null): string {
     return num.toString();
 }
 
-function possiblyNullDisplayCallback(
-    num: number | null,
-    cb: (n: number) => string
-): string {
-    if (num === null) {
-        return "n/a";
-    }
-    return cb(num);
-}
-
 function possiblyNullPercentage(
     percentage: number | null,
-    numerator: number,
-    denominator: number
+    numerator: number | null,
+    denominator: number | null
 ) {
-    return possiblyNullDisplayCallback(
-        percentage,
-        (p) => `${p}% (${numerator} of ${denominator})`
-    );
+    if (percentage === null) {
+        return "n/a";
+    }
+    return `${percentage}% (${numerator as number} of ${denominator as number})`
 }
 
 export function Summary(props: SummaryProps) {
@@ -44,15 +34,9 @@ export function Summary(props: SummaryProps) {
     let numClasses = 0;
     let numFiles = 0;
     assemblies.forEach((assembly) => {
-        if (!assembly.classes) {
-            alert("no classes");
-        }
         assembly.classes.forEach((cl) => {
             numClasses++;
-            if (!cl.files) {
-                alert("no files");
-            }
-            cl.files.forEach((_file) => {
+            cl.files.forEach(() => {
                 numFiles++;
             });
         });
@@ -98,8 +82,8 @@ export function Summary(props: SummaryProps) {
         key: "Branch coverage :",
         display: possiblyNullPercentage(
             summaryResult.branchCoverageQuota,
-            summaryResult.coveredBranches!,
-            summaryResult.totalBranches!
+            summaryResult.coveredBranches,
+            summaryResult.totalBranches
         ),
     });
 

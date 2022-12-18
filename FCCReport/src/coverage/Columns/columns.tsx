@@ -1,5 +1,5 @@
 import { IColumn } from "@fluentui/react";
-import { CopyToClipboard } from "../../helper components/CopyToCliboard";
+import { CopyToClipboard } from "../../helper-components/CopyToCliboard";
 import { OpenFile } from "../../OpenFile";
 import { VsStyledDetailsListCellText } from "../../vs-styling/VsStyledDetailsListCellText";
 import { focusingCells } from "../common";

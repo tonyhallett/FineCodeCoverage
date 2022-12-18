@@ -9,9 +9,9 @@ import {
     within,
 } from "@testing-library/react";
 import App from "./App";
-import { Payload } from "./webviewListener";
 import userEvent from "@testing-library/user-event";
 import { CategoryColours, Report, Styling } from "./types";
+import { Payload } from "./webviewTypes";
 
 /*
   https://jestjs.io/docs/26.x/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom

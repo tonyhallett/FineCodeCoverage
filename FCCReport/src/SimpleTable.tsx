@@ -10,7 +10,7 @@ import {
 import React from "react";
 
 @customizable("SimpleTableRow", ["theme", "styles"], true)
-class SimpleTableRow extends React.Component<IDetailsRowProps, {}> {
+class SimpleTableRow extends React.Component<IDetailsRowProps> {
     public render(): JSX.Element {
         return <DetailsRow {...this.props} />;
     }
@@ -38,7 +38,7 @@ export function SimpleTable(props: SimpleTableProps) {
             isHeaderVisible={false}
             selectionMode={SelectionMode.none}
             onRenderRow={(props) => {
-                return <SimpleTableRow {...props!} />;
+                return props ? <SimpleTableRow {...props} /> : null;
             }}
             focusZoneProps={{
                 disabled: true,

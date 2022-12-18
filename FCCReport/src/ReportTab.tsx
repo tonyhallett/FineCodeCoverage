@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Pivot, PivotItem } from "@fluentui/react";
 import { Coverage } from "./coverage/Coverage";
 import { Log } from "./Log";
@@ -115,12 +115,11 @@ export function ReportTab(props: ReportTabProps) {
                     marginTop: "5px", // necessary or the focus indicator is truncated
                 },
             }}
-            getTabId={(itemKey, _) => itemKey}
+            getTabId={(itemKey) => itemKey}
             focusZoneProps={{
                 isCircularNavigation: true,
                 onFocus: (evt) => {
-                    var targetId = evt.target.id;
-                    setSelectedTabKey(targetId);
+                    setSelectedTabKey(evt.target.id);
                 },
             }}
             selectedKey={selectedTabKey}

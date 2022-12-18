@@ -5,10 +5,13 @@ export const useRenderDetailsHeaderSticky = (
     active: boolean,
     stickyCoverageTable: boolean
 ) => {
-    const onRenderDetailsHeader: IDetailsListProps["onRenderDetailsHeader"] =
-        React.useCallback(
+    const onRenderDetailsHeader =
+        React.useCallback<NonNullable<IDetailsListProps["onRenderDetailsHeader"]>>(
             (detailsHeaderProps, defaultRender) => {
-                detailsHeaderProps!.styles = {
+                if(detailsHeaderProps === undefined || defaultRender === undefined){
+                    return null;
+                }
+                detailsHeaderProps.styles = {
                     root: {
                         paddingTop: "0px",
                     },

@@ -18,8 +18,7 @@ export class VsStyledPercentage extends React.Component<
         percentage: number | null;
         styles?: IProgressIndicatorProps["styles"];
         barHeight?: number;
-    },
-    {}
+    }
 > {
     public render(): JSX.Element {
         const { percentage, styles, barHeight } = this.props;

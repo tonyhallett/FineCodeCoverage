@@ -1,12 +1,13 @@
-import { Selection, IGroup, SelectionMode } from "@fluentui/react";
+import { Selection, IGroup, SelectionMode, IObjectWithKey } from "@fluentui/react";
 
-export class GroupsItemsSelection extends Selection {
-    private itemsLength: number | undefined;
+export class GroupsItemsSelection<TItem extends IObjectWithKey> extends Selection {
+    private itemsLength = 0
     private groups: IGroup[] = [];
     constructor() {
         super({ selectionMode: SelectionMode.single });
     }
-    public initialize(groups: IGroup[], items: any[]) {
+    
+    public initialize(groups: IGroup[], items: TItem[]) {
         this.groups = [];
         groups.forEach((group) => this.addGroup(group));
         this.setItemsPrivate(items);
@@ -19,33 +20,20 @@ export class GroupsItemsSelection extends Selection {
         }
     }
 
-    public setItems(): void {}
+    public setItems(): void {
+        //ok
+    }
 
-    private setItemsPrivate(items: any[]) {
+    private setItemsPrivate(items: IObjectWithKey[]) {
         this.itemsLength = items.length;
-        super.setItems(items.concat(this.groups), false);
+        const groups = this.groups as IObjectWithKey[];
+        super.setItems(items.concat(groups), false);
     }
 
     public getGroupIndex(group: IGroup): number {
         const items = this.getItems();
         const groups = items.slice(this.itemsLength);
-        let groupIndex = groups.findIndex((g) => g.key === group.key);
-        return groupIndex + this.itemsLength!;
-    }
-
-    setKeySelected(
-        key: string,
-        isSelected: boolean,
-        shouldAnchor: boolean
-    ): void {
-        super.setKeySelected(key, isSelected, shouldAnchor);
-    }
-
-    setIndexSelected(
-        index: number,
-        isSelected: boolean,
-        shouldAnchor: boolean
-    ): void {
-        super.setIndexSelected(index, isSelected, shouldAnchor);
+        const groupIndex = groups.findIndex((g) => g.key === group.key);
+        return groupIndex + this.itemsLength;
     }
 }
