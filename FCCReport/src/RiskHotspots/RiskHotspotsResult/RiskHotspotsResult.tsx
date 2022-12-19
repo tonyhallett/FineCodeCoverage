@@ -22,6 +22,7 @@ import {
 import { useRenderDetailsHeaderSticky } from "../../utilities/hooks/useRenderDetailsHeaderSticky";
 import { getColumns, ISortableColumn } from "./columns";
 import { allAssembliesOption, filterItems } from "./filtering";
+import { HotspotItem } from "./hotspotItem";
 import { parseRiskHotspots } from "./parseRiskHotspots";
 import { ColumnSort, sort } from "./sorting";
 
@@ -74,46 +75,54 @@ export function RiskHotspotsResult(props: RiskHotspotsResultProps) {
         stickyCoverageTable
     );
 
-    const searchBoxOnChange: ISearchBoxProps["onChange"] = React.useCallback(
-        (_, newValue) => setClassDisplayFilter(newValue),
+    const searchBoxOnChange = React.useCallback<
+        NonNullable<ISearchBoxProps["onChange"]>
+    >((_, newValue) => setClassDisplayFilter(newValue), []);
+
+    const assemblyFilterDropDownOnChange = React.useCallback<
+        NonNullable<IDropdownProps["onChange"]>
+    >(
+        (_, option) =>
+            setSelectedAssemblyFilterOption(
+                option as IDropdownOption<Assembly>
+            ),
         []
     );
 
-    const assemblyFilterDropDownOnChange: IDropdownProps["onChange"] =
-        React.useCallback(
-            (_, option) => setSelectedAssemblyFilterOption(option!),
-            []
-        );
+    const detailsListOnRenderRow = React.useCallback<
+        NonNullable<IDetailsListProps["onRenderRow"]>
+    >((rowProps, defaultRender) => {
+        if (rowProps === undefined || defaultRender === undefined) {
+            return null;
+        }
+        rowProps.styles = {
+            fields: {
+                alignItems: "center",
+            },
+        };
+        return defaultRender(rowProps);
+    }, []);
 
-    const detailsListOnRenderRow: IDetailsListProps["onRenderRow"] =
-        React.useCallback((rowProps, defaultRender) => {
-            rowProps!.styles = {
-                fields: {
-                    alignItems: "center",
-                },
-            };
-            return defaultRender!(rowProps);
-        }, []);
-
-    const detailsListOnColumnHeaderClick: IDetailsListProps["onColumnHeaderClick"] =
-        React.useCallback((_, column) => {
-            const sortableColumn = column as ISortableColumn;
-            setColumnSort((current) => {
-                if (
-                    current &&
-                    current.columnIdentifier === sortableColumn.columnIdentifier
-                ) {
-                    return {
-                        columnIdentifier: sortableColumn.columnIdentifier,
-                        ascending: !current.ascending,
-                    };
-                }
+    const detailsListOnColumnHeaderClick = React.useCallback<
+        NonNullable<IDetailsListProps["onColumnHeaderClick"]>
+    >((_, column) => {
+        const sortableColumn = column as ISortableColumn<HotspotItem>;
+        setColumnSort((current) => {
+            if (
+                current &&
+                current.columnIdentifier === sortableColumn.columnIdentifier
+            ) {
                 return {
-                    columnIdentifier: sortableColumn.columnIdentifier!,
-                    ascending: true,
+                    columnIdentifier: sortableColumn.columnIdentifier,
+                    ascending: !current.ascending,
                 };
-            });
-        }, []);
+            }
+            return {
+                columnIdentifier: sortableColumn.columnIdentifier,
+                ascending: true,
+            };
+        });
+    }, []);
 
     const [items, metricNames, assemblyFilterDropDownOptions] =
         React.useMemo(() => {
@@ -133,7 +142,7 @@ export function RiskHotspotsResult(props: RiskHotspotsResultProps) {
         return filterItems(
             items,
             selectedAssemblyFilterOption,
-            allAssembliesOption.key!,
+            allAssembliesOption.key,
             classDisplayFilter
         );
     }, [items, classDisplayFilter, selectedAssemblyFilterOption]);

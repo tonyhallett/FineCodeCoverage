@@ -1,12 +1,19 @@
-import { Selection, IGroup, SelectionMode, IObjectWithKey } from "@fluentui/react";
+import {
+    Selection,
+    IGroup,
+    SelectionMode,
+    IObjectWithKey,
+} from "@fluentui/react";
 
-export class GroupsItemsSelection<TItem extends IObjectWithKey> extends Selection {
-    private itemsLength = 0
+export class GroupsItemsSelection<
+    TItem extends IObjectWithKey
+> extends Selection {
+    private itemsLength = 0;
     private groups: IGroup[] = [];
     constructor() {
         super({ selectionMode: SelectionMode.single });
     }
-    
+
     public initialize(groups: IGroup[], items: TItem[]) {
         this.groups = [];
         groups.forEach((group) => this.addGroup(group));

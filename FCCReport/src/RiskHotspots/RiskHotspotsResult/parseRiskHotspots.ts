@@ -42,7 +42,7 @@ export function parseRiskHotspots(
         const methodMetric = riskHotspot.methodMetric;
         const metrics = methodMetric.metrics;
         const methodLine = methodMetric.line;
-        const methodDisplay = methodMetric.shortName; // todo check the views - if necessary long form for method name
+        const methodDisplay = methodMetric.shortName;
 
         const classDisplay = namespacedClasses
             ? _class.displayName
@@ -62,7 +62,10 @@ export function parseRiskHotspots(
             }
         });
 
-        const key = `${filePath}${methodLine}`;
+        const key =
+            methodLine === null
+                ? `${filePath}${methodMetric.fullName}`
+                : `${filePath}${methodMetric.fullName}${methodLine}`;
         const hotspotItem: HotspotItem = {
             key,
             assemblyDisplay: assembly.shortName,

@@ -72,7 +72,7 @@ export function Log(props: {
     clearLogMessages: () => void;
 }) {
     const { logMessages, clearLogMessages } = props;
-    
+
     const activityItems: React.ReactElement[] = [];
     logMessages.forEach((logMessage, i) => {
         const activityDescription: React.ReactNode[] = logMessage.message.map(
@@ -104,16 +104,19 @@ export function Log(props: {
                             ariaLabel={msgPart.ariaLabel}
                             iconProps={{
                                 iconName: getIconNameForHostObjectMethod(
-                                    msgPart.hostObject,
+                                    msgPart.hostObject
                                 ),
                             }}
                             onClick={() => {
-                                const hostObject = (window as unknown as VsChromeWebViewWindow).chrome
-                                    .webview.hostObjects[msgPart.hostObject];
+                                const hostObject = (
+                                    window as unknown as VsChromeWebViewWindow
+                                ).chrome.webview.hostObjects[
+                                    msgPart.hostObject
+                                ];
                                 const hostMethod =
                                     hostObject[msgPart.methodName];
                                 const hostArguments = msgPart.arguments ?? [];
-                                hostMethod(...hostArguments)
+                                hostMethod(...hostArguments);
                             }}
                         >
                             {msgPart.title}

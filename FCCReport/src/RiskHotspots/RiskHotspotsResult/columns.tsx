@@ -1,38 +1,38 @@
 import { IColumn } from "@fluentui/react";
 import { OpenFile } from "../../OpenFile";
 import { RiskHotspotsAnalysisThresholds } from "../../types";
+import { caseInsensitiveStringFieldSort } from "../../utilities/sorting";
+import { KeysOfType } from "../../utilities/types";
 import { HotspotItem } from "./hotspotItem";
-import { stringFieldSort } from "./sorting";
 
-export interface ISortableColumn extends IColumn {
-    sortItems: (items: any[], ascending: boolean) => any[];
+export interface ISortableColumn<T> extends IColumn {
+    sortItems: (items: T[], ascending: boolean) => T[];
     columnIdentifier: string;
 }
 
-// todo typescript mapping of key to be of string type
-
-function hotspotItemColumnFactory(
-    fieldName: keyof HotspotItem,
-    name: string
-): ISortableColumn {
-    const column: ISortableColumn = {
+function hotspotItemColumnFactory<
+    TField extends KeysOfType<HotspotItem, string>
+>(fieldName: TField, name: string): ISortableColumn<HotspotItem> {
+    const column: ISortableColumn<HotspotItem> = {
         key: fieldName,
         name: name,
         columnIdentifier: fieldName,
         fieldName,
         minWidth: 100,
         sortItems: (items: HotspotItem[], ascending: boolean) => {
-            return stringFieldSort(items, ascending, fieldName);
+            return caseInsensitiveStringFieldSort(items, ascending, fieldName);
         },
     };
     return column;
 }
 
-function renderingHotspotItemColumnFactory(
-    fieldName: keyof HotspotItem,
+function renderingHotspotItemColumnFactory<
+    TField extends KeysOfType<HotspotItem, string>
+>(
+    fieldName: TField,
     name: string,
     onRender: (item: HotspotItem) => React.ReactElement
-): ISortableColumn {
+): ISortableColumn<HotspotItem> {
     const column = hotspotItemColumnFactory(fieldName, name);
     column.onRender = onRender;
     return column;
@@ -82,11 +82,17 @@ export const methodColumn = renderingHotspotItemColumnFactory(
     }
 );
 
+function sortPossiblyNull(first: number | null, second: number | null): number {
+    first = first ?? 0;
+    second = second ?? 0;
+    return first - second;
+}
+
 export function getColumns(
     metricColumnNames: string[],
     riskHotspotAnalysisThresholds: RiskHotspotsAnalysisThresholds
-): ISortableColumn[] {
-    const columns: ISortableColumn[] = [
+): ISortableColumn<HotspotItem>[] {
+    const columns: ISortableColumn<HotspotItem>[] = [
         assemblyColumn,
         classColumn,
         methodColumn,
@@ -112,7 +118,7 @@ export function getColumns(
                 ? metricColumnName
                 : `${metricColumnName} (${threshold})`;
 
-        const metricColumn: ISortableColumn = {
+        const metricColumn: ISortableColumn<HotspotItem> = {
             key: metricColumnName,
             name: columnName,
             minWidth: 100,
@@ -128,10 +134,9 @@ export function getColumns(
             },
             sortItems: (items: HotspotItem[], ascending: boolean) => {
                 return items.sort((item1, item2) => {
-                    // for now assuming has a value
-                    const value1 = item1.metrics[metricColumnName].value!;
-                    const value2 = item2.metrics[metricColumnName].value!;
-                    let result = value1 - value2;
+                    const value1 = item1.metrics[metricColumnName].value;
+                    const value2 = item2.metrics[metricColumnName].value;
+                    let result = sortPossiblyNull(value1, value2);
                     if (!ascending) {
                         result = -result;
                     }

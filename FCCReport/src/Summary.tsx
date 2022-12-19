@@ -20,7 +20,9 @@ function possiblyNullPercentage(
     if (percentage === null) {
         return "n/a";
     }
-    return `${percentage}% (${numerator as number} of ${denominator as number})`
+    return `${percentage}% (${numerator as number} of ${
+        denominator as number
+    })`;
 }
 
 export function Summary(props: SummaryProps) {

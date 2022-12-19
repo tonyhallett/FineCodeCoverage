@@ -10,17 +10,14 @@ export const allAssembliesOption: IDropdownOption<Assembly> = {
 
 function filterByAssembly(
     items: HotspotItem[],
-    selectedAssemblyFilterOption: IDropdownOption<Assembly> | undefined,
+    selectedAssemblyFilterOption: IDropdownOption<Assembly>,
     allAssembliesKey: string | number
 ): HotspotItem[] {
     let filteredByAssembly = items;
     assemblyColumn.isFiltered = false;
-    if (
-        selectedAssemblyFilterOption &&
-        selectedAssemblyFilterOption.key !== allAssembliesKey
-    ) {
+    if (selectedAssemblyFilterOption.key !== allAssembliesKey) {
         filteredByAssembly = items.filter(
-            (item) => item.assembly === selectedAssemblyFilterOption.data!
+            (item) => item.assembly === selectedAssemblyFilterOption.data
         );
         assemblyColumn.isFiltered = true;
     }
@@ -48,10 +45,10 @@ function filterByClass(
 
 export function filterItems(
     items: HotspotItem[],
-    selectedAssemblyFilterOption: IDropdownOption<Assembly> | undefined,
+    selectedAssemblyFilterOption: IDropdownOption<Assembly>,
     allAssembliesKey: string | number,
     classDisplayFilter: string | undefined
-): any[] {
+): HotspotItem[] {
     const filteredByAssembly = filterByAssembly(
         items,
         selectedAssemblyFilterOption,

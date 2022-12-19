@@ -4,15 +4,15 @@ import { VsStyledActionButton } from "./vs-styling/VsStyledActionButton";
 import { VsChromeWebViewWindow } from "./webviewTypes";
 
 const vsWindow = window as unknown as VsChromeWebViewWindow;
-const fccResourcesNavigator = vsWindow.chrome.webview.hostObjects.fccResourcesNavigator;
+const fccResourcesNavigator =
+    vsWindow.chrome.webview.hostObjects.fccResourcesNavigator;
 
-
-interface IFeedbackItem{
-    key:string,
-    text:string,
-    iconProps:IIconProps,
-    ariaLabel:string,
-    onClick:() => void
+interface IFeedbackItem {
+    key: string;
+    text: string;
+    iconProps: IIconProps;
+    ariaLabel: string;
+    onClick: () => void;
 }
 
 export function FeedbackBase() {

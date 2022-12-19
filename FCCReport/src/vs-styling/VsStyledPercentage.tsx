@@ -13,13 +13,11 @@ export interface IPercentageProps {
 export const vsStyledPercentageScope = "VsStyledPercentage";
 
 @customizable(vsStyledPercentageScope, ["theme", "styles"], true)
-export class VsStyledPercentage extends React.Component<
-    {
-        percentage: number | null;
-        styles?: IProgressIndicatorProps["styles"];
-        barHeight?: number;
-    }
-> {
+export class VsStyledPercentage extends React.Component<{
+    percentage: number | null;
+    styles?: IProgressIndicatorProps["styles"];
+    barHeight?: number;
+}> {
     public render(): JSX.Element {
         const { percentage, styles, barHeight } = this.props;
         if (percentage === null) {

@@ -11,9 +11,7 @@ export function openHotspotLine(filePath: string, line: number | null) {
 }
 
 export function openClassFiles(filePaths: string[]) {
-    vsWindow.chrome.webview.hostObjects.sourceFileOpener.openFiles(
-        filePaths
-    );
+    vsWindow.chrome.webview.hostObjects.sourceFileOpener.openFiles(filePaths);
 }
 
 export const openFileInVsIconProps: IIconProps = { iconName: "OpenFile" };
@@ -37,17 +35,17 @@ export type OpenFileProps = {
 export function OpenFile(props: OpenFileProps) {
     const ariaLabel = `Open ${props.toOpenAriaLabel} in Visual Studio`;
     return (
-            <Link
-                aria-label={ariaLabel}
-                onClick={() => {
-                    if (props.type === "hotspot") {
-                        openHotspotLine(props.filePath, props.methodLine);
-                    } else {
-                        openClassFiles(props.filePaths);
-                    }
-                }}
-            >
-                {props.display}
-            </Link>
+        <Link
+            aria-label={ariaLabel}
+            onClick={() => {
+                if (props.type === "hotspot") {
+                    openHotspotLine(props.filePath, props.methodLine);
+                } else {
+                    openClassFiles(props.filePaths);
+                }
+            }}
+        >
+            {props.display}
+        </Link>
     );
 }
