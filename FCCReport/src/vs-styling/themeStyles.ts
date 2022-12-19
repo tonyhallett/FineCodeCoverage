@@ -17,13 +17,10 @@ import {
     IDetailsRowStyles,
     IDropdownStyleProps,
     IDropdownStyles,
-    IGroupHeaderStyleProps,
     IGroupHeaderStyles,
-    ILabelStyleProps,
     ILabelStyles,
     ILinkStyleProps,
     ILinkStyles,
-    IModalStyleProps,
     IModalStyles,
     IPivotStyleProps,
     IPivotStyles,
@@ -34,10 +31,9 @@ import {
     ISearchBoxStyleProps,
     ISearchBoxStyles,
     IsFocusVisibleClassName,
-    ISliderStyleProps,
     ISliderStyles,
+    IStyle,
     ITextStyles,
-    styled,
 } from "@fluentui/react";
 import {
     cbGlobalClassNames,
@@ -56,12 +52,26 @@ import { vsStyledDetailsListCellTextScope } from "./VsStyledDetailsListCellText"
 import { CSSProperties } from "react";
 const reactToCSS = require("react-style-object-to-css");
 
-export const buttonHighContrastFocus = {
+type RemovingHighContrast<Type> = {
+    [Property in keyof Type]: false;
+};
+
+export const buttonHighContrastFocus: IRawStyle = {
     left: -2,
     top: -2,
     bottom: -2,
     right: -2,
     outlineColor: "ButtonText",
+};
+
+export const removingButtonHighContrastFocus: RemovingHighContrast<
+    typeof buttonHighContrastFocus
+> = {
+    left: false,
+    top: false,
+    bottom: false,
+    right: false,
+    outlineColor: false,
 };
 
 function getVsFocusStyle(vsColors: CategoryColours) {
@@ -101,14 +111,14 @@ export function getActionButtonStyles(
         themeNotHighContrast,
         "color"
     );
-    const focusHighContrastStyle: any = themeNotHighContrast
-        ? {
+    const focusHighContrastStyle: IRawStyle = themeNotHighContrast
+        ? ({
               left: false,
               top: false,
               bottom: false,
               right: false,
               outlineColor: false,
-          }
+          } as any)
         : buttonHighContrastFocus;
     const actionButtonStyles: IButtonStyles = {
         root: [
