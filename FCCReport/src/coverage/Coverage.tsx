@@ -19,6 +19,10 @@ import { useRenderDetailsHeaderSticky } from '../utilities/hooks/useRenderDetail
 import { getColumns } from './Columns/columns';
 
 const groupHeaderRowClassName = "groupHeaderRow";
+const dataIsFocusable = {
+  "data-is-focusable":true,
+}
+
 
 export function Coverage(props:CoverageProps) {
   const [columnSort, setColumnSort] = useState<ColumnSort>({fieldName:undefined,ascending:true})
@@ -170,7 +174,7 @@ export function Coverage(props:CoverageProps) {
               
               const unsafeExpandButtonProps = {
                 ...expandButtonProps,                
-                'data-is-focusable':'true'
+                ...dataIsFocusable
               }
               // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
               definedProps.expandButtonProps = unsafeExpandButtonProps as any;
@@ -182,9 +186,7 @@ export function Coverage(props:CoverageProps) {
               const notFocusingCellsFocusZoneProps:IFocusZoneProps = {
                 disabled:true
               }
-              const focusZoneProps = focusingCells ? {
-                "data-is-focusable":true,
-              }: notFocusingCellsFocusZoneProps;
+              const focusZoneProps = focusingCells ? dataIsFocusable: notFocusingCellsFocusZoneProps;
 
               const groupIndex = selection.getGroupIndex(group);
 
