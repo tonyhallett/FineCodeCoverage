@@ -18,6 +18,7 @@ export class VsStyledActionButton extends React.Component<IButtonProps> {
             <BaseButton
                 {...this.props}
                 variantClassName="ms-Button--action ms-Button--command"
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- decorator ensures theme
                 styles={getStyles(theme!, styles)}
                 onRenderDescription={nullRender}
             />

@@ -192,11 +192,13 @@ function App() {
 
     const customizationStyling = useRefInitOnce(new VsCustomizerContext());
 
+    useBodyStyling(
+        stylingState ? getBodyStyles(stylingState.categoryColours) : {}
+    );
+
     if (!stylingState) {
         return null;
     }
-
-    useBodyStyling(getBodyStyles(stylingState.categoryColours));
 
     customizationStyling.current =
         customizationStyling.current.getNext(stylingState);

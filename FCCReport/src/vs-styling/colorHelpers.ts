@@ -1,5 +1,4 @@
 import {
-    assign,
     clamp,
     getColorFromRGBA,
     hsv2rgb,
@@ -39,9 +38,8 @@ export function lightenOrDarken(
 ): IColor {
     let hsv = { h: color.h, s: color.s, v: color.v };
     hsv = lighten ? _lighten(hsv, factor) : _darken(hsv, factor);
-    return getColorFromRGBA(
-        assign(hsv2rgb(hsv.h, hsv.s, hsv.v), { a: color.a })
-    );
+    const rgba = { ...hsv2rgb(hsv.h, hsv.s, hsv.v), a: color.a };
+    return getColorFromRGBA(rgba);
 }
 
 function _lighten(hsv: IHSV, factor: number): IHSV {

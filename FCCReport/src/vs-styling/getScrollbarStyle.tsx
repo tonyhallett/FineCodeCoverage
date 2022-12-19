@@ -1,8 +1,8 @@
 import { CSSProperties, SVGAttributes } from "react";
 
-type BackgroundColor = CSSProperties["backgroundColor"];
-type BorderColor = CSSProperties["borderColor"];
-type SvgFill = SVGAttributes<SVGSVGElement>["fill"];
+type BackgroundColor = NonNullable<CSSProperties["backgroundColor"]>;
+type BorderColor = NonNullable<CSSProperties["borderColor"]>;
+type SvgFill = NonNullable<SVGAttributes<SVGSVGElement>["fill"]>;
 
 /* forcedColorAdjust:"none" as when vs allows high contrast EnvironmentColors has the high contrast colors*/
 export function getScrollbarStyle(
@@ -85,13 +85,9 @@ export function getScrollbarStyle(
         };
     }
 
-    function getBorder(borderColor: BorderColor) {
+    /* function getBorder(borderColor: BorderColor) {
         return {};
-        /* return {
-      // box shadow ?
-      border:`1px solid ${borderColor}`
     } */
-    }
 
     return {
         "::-webkit-scrollbar": {
@@ -102,13 +98,13 @@ export function getScrollbarStyle(
         "::-webkit-scrollbar-corner": {
             forcedColorAdjust: "none",
             backgroundColor: trackColor,
-            ...getBorder(scrollBarBorderColor),
+            //...getBorder(scrollBarBorderColor),
         },
         // the track (progress bar) of the scrollbar, where there is a gray bar on top of a white bar
         "::-webkit-scrollbar-track": {
             backgroundColor: trackColor,
             forcedColorAdjust: "none",
-            ...getBorder(scrollBarBorderColor),
+            //...getBorder(scrollBarBorderColor),
         },
 
         // what press to slide
@@ -142,7 +138,7 @@ export function getScrollbarStyle(
             height: `${scrollbarSize}px`,
             width: `${scrollbarSize}px`,
             backgroundColor: arrowBackgroundColor,
-            ...getBorder(scrollBarBorderColor),
+            //...getBorder(scrollBarBorderColor),
             display: "block",
             backgroundSize: `${thumbSize}px`,
             backgroundRepeat: "no-repeat",
@@ -150,11 +146,11 @@ export function getScrollbarStyle(
         },
         "::-webkit-scrollbar-button:single-button:hover": {
             backgroundColor: arrowBackgroundHoverColor,
-            ...getBorder(arrowBorderHoverColor),
+            //...getBorder(arrowBorderHoverColor),
         },
         "::-webkit-scrollbar-button:single-button:active": {
             backgroundColor: arrowBackgroundActiveColor,
-            ...getBorder(arrowBorderActiveColor),
+            //...getBorder(arrowBorderActiveColor),
         },
         ...getArrowStyles(true),
         ...getArrowStyles(false),
