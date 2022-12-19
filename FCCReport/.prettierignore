@@ -1,6 +1,6 @@
 .parcel-cache
 .vscode
-coverage
+/coverage
 dist
 packages/parcel-resolver-react-profiling-alias/dist
 src/html

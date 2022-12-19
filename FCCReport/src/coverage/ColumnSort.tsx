@@ -1,7 +1,6 @@
-import { ICoverageItemBase } from './ICoverageItemBase';
-
+import { ICoverageItemBase } from "./ICoverageItemBase";
 
 export interface ColumnSort {
-  fieldName: keyof ICoverageItemBase | undefined;
-  ascending: boolean;
+    fieldName: keyof ICoverageItemBase | undefined;
+    ascending: boolean;
 }

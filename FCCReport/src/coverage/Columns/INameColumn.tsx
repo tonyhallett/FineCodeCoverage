@@ -1,5 +1,5 @@
-import { ICoverageColumn } from './ICoverageColumn';
+import { ICoverageColumn } from "./ICoverageColumn";
 
 export interface INameColumn extends ICoverageColumn {
-  setFiltered: (filtered: boolean) => void;
+    setFiltered: (filtered: boolean) => void;
 }
