@@ -42,8 +42,8 @@ export function sortCoverageItems(
   fieldName: keyof ICoverageItemBase,
   ascending: boolean
 ) {
-  let smaller: number = ascending ? -1 : 1;
-  let bigger: number = ascending ? 1 : -1;
+  const smaller: number = ascending ? -1 : 1;
+  const bigger: number = ascending ? 1 : -1;
   let sortMethod = numericSort;
   if (nullableQuotaFields.some(nullableQuotaField => nullableQuotaField === fieldName)) {
     sortMethod = numericNullableSort;

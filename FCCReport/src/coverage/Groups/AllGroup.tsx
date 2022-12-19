@@ -1,4 +1,4 @@
-import { Assembly } from '../../types';
+import { Assembly, Class } from '../../types';
 import { ClassesGroup } from './ClassesGroup';
 
 export class AllGroup extends ClassesGroup {
@@ -7,7 +7,7 @@ export class AllGroup extends ClassesGroup {
     super(AllGroup.getClasses(assemblies), namespacedClasses, "All", standalone, "All class coverage");
   }
   static getClasses(assemblies: Assembly[]) {
-    const classes: any = []; // todo typing
+    const classes: Class[] = []; // todo typing
     assemblies.forEach(assembly => {
       assembly.classes.forEach(cls => {
         classes.push(cls);

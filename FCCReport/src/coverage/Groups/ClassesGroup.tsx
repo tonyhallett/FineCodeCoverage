@@ -11,29 +11,29 @@ export class ClassesGroup implements ICoverageGroup {
   key: string;
   classPaths: undefined;
   // will be set from outside
-  count: number = 0;
-  startIndex: number = 0;
+  count = 0;
+  startIndex = 0;
 
   // todo - this is common typing 
-  coveredLines: number = 0;
-  coverableLines: number = 0;
-  uncoveredLines: number = 0;
-  totalLines: number = 0;
+  coveredLines = 0;
+  coverableLines = 0;
+  uncoveredLines = 0;
+  totalLines = 0;
   coverageQuota: number | null;
 
-  coveredBranches: number = 0;
-  totalBranches: number = 0;
+  coveredBranches = 0;
+  totalBranches = 0;
   branchCoverageQuota: number | null;
 
-  coveredCodeElements: number = 0;
-  totalCodeElements: number = 0;
+  coveredCodeElements = 0;
+  totalCodeElements = 0;
   codeElementCoverageQuota: number | null;
   private _items: ICoverageItem[] = [];
   level: number;
   items: ICoverageItem[] = [];
   ariaLabel: string;
 
-  constructor(classes: Class[], namespacedClasses: boolean, name: string, standalone: boolean, ariaLabel: string, level: number = 0) {
+  constructor(classes: Class[], namespacedClasses: boolean, name: string, standalone: boolean, ariaLabel: string, level = 0) {
     this.level = level;
     this.name = name;
     this.key = name;

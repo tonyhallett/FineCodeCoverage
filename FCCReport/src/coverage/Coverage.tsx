@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, DetailsRow, IColumn, IDetailsGroupDividerProps, IFocusZoneProps, IGroupHeaderProps, SearchBox, SelectionMode, Slider, Stack } from '@fluentui/react';
+import { CheckboxVisibility, DetailsList, DetailsListLayoutMode, DetailsRow, IColumn, IDetailsGroupDividerProps, IDetailsRowProps, IFocusZoneProps, IGroup, IGroupHeaderProps, SearchBox, SelectionMode, Slider, Stack } from '@fluentui/react';
 import { getGroupingMax } from './getGroupingMax';
 import { sortAndFilterColumns as sortFilterGroupColumns } from './sortAndFilterColumns';
 import { ICoverageItem } from './ICoverageItem';
@@ -22,7 +22,7 @@ const groupHeaderRowClassName = "groupHeaderRow";
 
 export function Coverage(props:CoverageProps) {
   const [columnSort, setColumnSort] = useState<ColumnSort>({fieldName:undefined,ascending:true})
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState<string>();
   const [grouping,setGrouping] = useState(0);
   const adjustedColumns = useRef<IColumn[]>()
   const selection = useConst(() => new GroupsItemsSelection());
@@ -39,7 +39,7 @@ export function Coverage(props:CoverageProps) {
     return getColumns(supportsBranchCoverage);
   },[supportsBranchCoverage])
 
-  sortFilterGroupColumns(columns,filter,columnSort,grouping);
+  sortFilterGroupColumns(columns,filter ?? '',columnSort,grouping);
   
   
   const groups = React.useMemo(():ICoverageGroup[] => {
@@ -51,7 +51,7 @@ export function Coverage(props:CoverageProps) {
       default:
         return assemblies.map(assembly => new NamespacedGroup(assembly, namespacedClasses,grouping,standalone));
     }
-  },[assemblies, namespacedClasses,grouping])
+  },[assemblies, namespacedClasses,grouping, standalone])
 
   React.useMemo(() => {
     if(groups.length > 1){
@@ -72,7 +72,7 @@ export function Coverage(props:CoverageProps) {
     }
 
     groups.forEach(group => {
-      group.filter(filter,props.hideFullyCovered);
+      group.filter(filter ?? '',hideFullyCovered);
   
       if(columnSort.fieldName){
         group.sort(columnSort.fieldName, columnSort.ascending);
@@ -97,8 +97,12 @@ export function Coverage(props:CoverageProps) {
             ...group,
             children:classesGroupsWithItems,
             count:groupCount,
-            filter:() => {},
-            sort:() => {}
+            filter:() => {
+              //ok
+            }, 
+            sort:() => {
+              //ok
+            }
           }
           workaroundIssueGroups.push(workaroundGroup);
         }
@@ -107,7 +111,7 @@ export function Coverage(props:CoverageProps) {
 
     selection.initialize(workaroundIssueGroups, items);
     return [items,workaroundIssueGroups]
-  },[groups,filter,hideFullyCovered,columnSort]);
+  },[groups,filter,hideFullyCovered,columnSort, selection]);
   
   const groupNestingDepth = grouping > 0 ? 2 : 1;
   
@@ -134,7 +138,7 @@ export function Coverage(props:CoverageProps) {
       <SearchBox styles={{ root: { width: 200, marginRight:10} }} 
         iconProps={{iconName:'filter'}} 
         value={filter} 
-        onChange={(_,newFilter) => setFilter(newFilter!)}/>
+        onChange={(_,newFilter) => setFilter(newFilter)}/>
     </Stack>
       <DetailsList 
         styles={
@@ -156,16 +160,34 @@ export function Coverage(props:CoverageProps) {
         groupProps={{
           showEmptyGroups:false,
           headerProps:{
-            onRenderTitle:(props:IGroupHeaderProps|undefined) => {
+            onRenderTitle:(props) => {
+              const definedProps = props as IGroupHeaderProps;
+              const group = definedProps.group as IGroup;
+
+              const expandButtonProps:IGroupHeaderProps["expandButtonProps"] = {
+                'aria-label': 'expand collapse group',
+              }
+              
+              const unsafeExpandButtonProps = {
+                ...expandButtonProps,                
+                'data-is-focusable':'true'
+              }
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+              definedProps.expandButtonProps = unsafeExpandButtonProps as any;
+              
               // groupNestingDepth used for aria
-              const groupLevel = props!.groupLevel === undefined ? 0 : props!.groupLevel;
+              const groupLevel = definedProps.groupLevel === undefined ? 0 : definedProps.groupLevel;
+
               const headerGroupNestingDepth = groupNestingDepth- groupLevel - 1;
-              const focusZoneProps:IFocusZoneProps = focusingCells ? {
-                "data-is-focusable":true,
-              } as any : {
+              const notFocusingCellsFocusZoneProps:IFocusZoneProps = {
                 disabled:true
               }
-              const groupIndex = selection.getGroupIndex(props!.group!);
+              const focusZoneProps = focusingCells ? {
+                "data-is-focusable":true,
+              }: notFocusingCellsFocusZoneProps;
+
+              const groupIndex = selection.getGroupIndex(group);
+
               return <DetailsRow 
                 styles = {{
                   fields:{
@@ -176,18 +198,21 @@ export function Coverage(props:CoverageProps) {
                 selection={selection}
                 selectionMode={SelectionMode.single} 
                 checkboxVisibility={CheckboxVisibility.hidden}
-                focusZoneProps={focusZoneProps} 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+                focusZoneProps={focusZoneProps as any} 
                 groupNestingDepth={headerGroupNestingDepth} 
-                item={props!.group} 
+                item={group} 
                 columns={adjustedColumns.current} 
                 itemIndex={groupIndex}
                 />
             }
           },
-          onRenderHeader: (props:IDetailsGroupDividerProps|undefined,defaultRender) => {
-            adjustedColumns.current = props!.columns;
+          onRenderHeader: (props,defaultRender) => {
+            const definedProps = props as IDetailsGroupDividerProps;
+            const definedDefaultRender = defaultRender as NonNullable<typeof defaultRender>;
+            adjustedColumns.current = definedProps.columns;
             if(focusingCells){
-              props!.onGroupHeaderKeyUp = ev => {
+              definedProps.onGroupHeaderKeyUp = ev => {
                 const leftOrRightArrow = ev.code === 'ArrowRight' || ev.code === 'ArrowLeft';
                 if(leftOrRightArrow){
                   const groupHeaderRow = (ev.target as Element).closest(`.${groupHeaderRowClassName}`);
@@ -198,37 +223,36 @@ export function Coverage(props:CoverageProps) {
                 
   
               }
-              props!.expandButtonProps = {
-                'aria-label': 'expand collapse group',
-                'data-is-focusable':'true'
-              } as any
-              return defaultRender!(props)
+              
+              
             }
-            return defaultRender!(props);
+            return definedDefaultRender(definedProps);
           }
         }}
         onRenderRow={(rowProps, defaultRender) => {
-          //rowProps!.groupNestingDepth = // todo calculate
-          rowProps!.styles = {
+          const definedProps = rowProps as IDetailsRowProps;
+          const definedDefaultRender = defaultRender as NonNullable<typeof defaultRender>;
+          //definedProps!.groupNestingDepth = // todo calculate
+          definedProps.styles = {
             fields:{
               alignItems:"center"
             },
           }
-          return defaultRender!(rowProps);
+          return definedDefaultRender(rowProps);
         }}
         onRenderDetailsHeader={onRenderDetailsHeader}
 
         onColumnHeaderClick={(_, column) => {
-          const coverageColumn:ICoverageColumn = column as ICoverageColumn;
+          const coverageColumn = column as ICoverageColumn;
           setColumnSort((current) => {
-            if(current.fieldName === coverageColumn!.fieldName){
+            if(current.fieldName === coverageColumn.fieldName){
               return {
-                fieldName:coverageColumn!.fieldName,
+                fieldName:coverageColumn.fieldName,
                 ascending: !current.ascending
               }
             }
             return {
-              fieldName:coverageColumn?.fieldName,
+              fieldName:coverageColumn.fieldName,
               ascending:true
             }
           })

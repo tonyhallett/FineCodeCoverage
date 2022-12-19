@@ -11,26 +11,26 @@ export class NamespacedGroup implements ICoverageGroup {
   key: string;
   classPaths: undefined;
   // will be set from outside
-  count: number = 0;
-  startIndex: number = 0;
+  count = 0;
+  startIndex = 0;
 
   // todo - this is common typing 
-  coveredLines: number = 0;
-  coverableLines: number = 0;
-  uncoveredLines: number = 0;
-  totalLines: number = 0;
+  coveredLines = 0;
+  coverableLines = 0;
+  uncoveredLines = 0;
+  totalLines = 0;
   coverageQuota: number | null;
 
-  coveredBranches: number = 0;
-  totalBranches: number = 0;
+  coveredBranches = 0;
+  totalBranches = 0;
   branchCoverageQuota: number | null;
 
-  coveredCodeElements: number = 0;
-  totalCodeElements: number = 0;
+  coveredCodeElements = 0;
+  totalCodeElements = 0;
   codeElementCoverageQuota: number | null;
 
   children: ClassesGroup[] = [];
-  level: 0 = 0;
+  readonly level = 0;
   ariaLabel: string;
   constructor(assembly: Assembly, namespacedClasses: boolean, grouping: number, isStandalone: boolean) {
     this.name = assembly.shortName;
@@ -39,10 +39,11 @@ export class NamespacedGroup implements ICoverageGroup {
     const map: Map<string, Class[]> = new Map();
     assembly.classes.forEach(cls => {
       const namespaceGroupingName = this.getGrouping(cls.displayName, grouping);
-      if (!map.has(namespaceGroupingName)) {
-        map.set(namespaceGroupingName, []);
+      let classes = map.get(namespaceGroupingName)
+      if (classes === undefined) {
+        classes = [];
+        map.set(namespaceGroupingName, classes);
       }
-      const classes = map.get(namespaceGroupingName)!;
       classes.push(cls);
     });
     map.forEach((classes, groupingName) => {
