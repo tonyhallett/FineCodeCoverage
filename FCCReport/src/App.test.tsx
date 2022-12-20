@@ -1,16 +1,13 @@
-import React from "react";
 import {
     act,
     fireEvent,
-    getByRole,
     render,
     screen,
-    waitFor,
     within,
 } from "@testing-library/react";
 import App from "./App";
 import userEvent from "@testing-library/user-event";
-import { CategoryColours, Report, Styling } from "./types";
+import { CategoryColours, Styling } from "./types";
 import { Payload } from "./webviewTypes";
 
 /*

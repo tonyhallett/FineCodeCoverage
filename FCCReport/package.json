@@ -49,6 +49,7 @@
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-react": "^7.31.11",
         "eslint-plugin-react-hooks": "^4.6.0",
+        "jest": "27.5.1",
         "parcel": "^2.5.0",
         "parcel-resolver-react-profiling-alias": "file:packages/parcel-resolver-react-profiling-alias",
         "prettier": "2.8.1",

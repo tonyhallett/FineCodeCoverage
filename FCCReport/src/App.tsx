@@ -180,15 +180,8 @@ function App() {
                 "coverageStopped",
                 coverageStoppedListener
             );
-
-            /* return function cleanUp(){
-        webviewPayloadTypeUnlisten("styling",stylingListener);
-        webviewPayloadTypeUnlisten("Report",reportListener);
-        webviewPayloadTypeUnlisten("ReportOptions",reportOptionsListener);
-        webviewPayloadTypeUnlisten("message",messageListener);
-      } */
         }
-    });
+    }, [standalone]);
 
     const customizationStyling = useRefInitOnce(new VsCustomizerContext());
 
