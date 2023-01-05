@@ -12,11 +12,22 @@ namespace FineCodeCoverage.Core.ReportGenerator.Colours
     [Export(typeof(IVsColourTheme))]
     internal class VsColorThemeWrapper : IVsColourTheme
     {
-        private readonly IVsColorThemeService colorThemeService;
+        private IVsColorThemeService colorThemeService;
+        private IVsColorThemeService ColorThemeService
+        {
+            get
+            {
+                ThreadHelper.ThrowIfNotOnUIThread();
+                if (colorThemeService == null)
+                {
+                    colorThemeService = Package.GetGlobalService(typeof(SVsColorThemeService)) as IVsColorThemeService;
+                }
+                return colorThemeService;
+            }
+        }
 
         public VsColorThemeWrapper()
         {
-            colorThemeService = Package.GetGlobalService(typeof(SVsColorThemeService)) as IVsColorThemeService;
             VSColorTheme.ThemeChanged += VSColorTheme_ThemeChanged;
         }
 
@@ -25,7 +36,7 @@ namespace FineCodeCoverage.Core.ReportGenerator.Colours
         private void VSColorTheme_ThemeChanged(ThemeChangedEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ThemeChanged?.Invoke(this, new ColourThemeChangedArgs { ThemeId = colorThemeService.CurrentTheme.ThemeId });
+            ThemeChanged?.Invoke(this, new ColourThemeChangedArgs { ThemeId = ColorThemeService.CurrentTheme.ThemeId });
         }
 
         public Color GetThemedColour(ThemeResourceKey themeResourceKey)
