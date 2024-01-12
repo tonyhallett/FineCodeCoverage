@@ -31,6 +31,7 @@
         string[] Exclude { get; set; }
         string[] ExcludeByAttribute { get; set; }
         string[] ExcludeByFile { get; set; }
+        bool ExcludeKnownTestingFrameworks { get; set; }
         string[] Include { get; set; }
         bool RunInParallel { get; set; }
         int RunWhenTestsExceed { get; set; }

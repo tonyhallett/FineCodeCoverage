@@ -78,6 +78,13 @@ namespace FineCodeCoverage.Options
         @"Specifies whether to report code coverage of the test assembly
 		")]
         public bool IncludeTestAssembly { get; set; }
+
+        [Category(commonExcludeIncludeCategory)]
+        [Description(
+        @"Specifies whether to report code coverage of known test framework assemblies
+		")]
+        public bool ExcludeKnownTestingFrameworks { get; set; }
+
         #endregion
 
         #region old exclude include

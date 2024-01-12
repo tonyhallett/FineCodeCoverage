@@ -694,5 +694,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         public bool ShowToolWindowToolbar { get; set; }
         public bool Hide0Coverable { get; set; }
         public bool Hide0Coverage { get; set; }
+        public bool ExcludeKnownTestingFrameworks { get; set; }
     }
 }

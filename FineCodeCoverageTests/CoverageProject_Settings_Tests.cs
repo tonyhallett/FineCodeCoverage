@@ -1,3 +1,4 @@
+using AutoMoq;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Options;
@@ -588,6 +589,8 @@ namespace Test
 
     public class CoverageProjectSettingsManager_Tests
     {
+        public object ExcludeKnownTestingFrameworks { get; private set; }
+
         [Test]
         public async Task Should_Provide_The_Merged_Result_Using_Global_Options()
         {
@@ -606,7 +609,8 @@ namespace Test
                 mockAppOptionsProvider.Object,
                 new Mock<ICoverageProjectSettingsProvider>().Object,
                 new Mock<IFCCSettingsFilesProvider>().Object,
-                mockSettingsMerger.Object
+                mockSettingsMerger.Object,
+                null
             );
 
             var coverageProjectSettings = await coverageProjectSettingsManager.GetSettingsAsync(
@@ -637,7 +641,8 @@ namespace Test
                 new Mock<IAppOptionsProvider>().Object,
                 new Mock<ICoverageProjectSettingsProvider>().Object,
                 mockFCCSettingsFilesProvider.Object,
-                mockSettingsMerger.Object
+                mockSettingsMerger.Object,
+                null
             );
 
             
@@ -667,13 +672,81 @@ namespace Test
                 new Mock<IAppOptionsProvider>().Object,
                 mockCoverageProjectSettingsProvider.Object,
                 new Mock<IFCCSettingsFilesProvider>().Object,
-                mockSettingsMerger.Object
+                mockSettingsMerger.Object,
+                null
             );
 
 
             
             var coverageProjectSettings = await coverageProjectSettingsManager.GetSettingsAsync(coverageProject);
             Assert.AreSame(mergedSettings, coverageProjectSettings);
+        }
+
+        [Test]
+        public async Task Should_Exclude_Known_Testing_Frameworks_If_Merged_Option_Is_True_Async()
+        {
+            var autoMoqer = new AutoMoqer();
+            var coverageProjectSettingsManager = autoMoqer.Create<CoverageProjectSettingsManager>();
+            var mockSettingMerger = autoMoqer.GetMock<ISettingsMerger>();
+
+            var mergedAppOptions = new AppOptions()
+            {
+                ExcludeKnownTestingFrameworks = true
+            };
+            mockSettingMerger.Setup(settingsMerger => settingsMerger.Merge(It.IsAny<IAppOptions>(), It.IsAny<List<XElement>>(), It.IsAny<XElement>())).Returns(mergedAppOptions);
+            
+            var excludedAppOptions = new AppOptions();
+            autoMoqer.GetMock<IKnownTestingFrameworksExcluder>().Setup(excluder => excluder.Exclude(mergedAppOptions)).Returns(excludedAppOptions);
+
+            var settings = await coverageProjectSettingsManager.GetSettingsAsync(new Mock<ICoverageProject>().Object);
+            Assert.That(settings, Is.SameAs(excludedAppOptions));
+        }
+    }
+
+    public class KnownTestingFrameworksExcluder_Tests
+    {
+        [Test]
+        public void Should_Exclude_Known_Testing_Frameworks()
+        {
+            var appOptions = new AppOptions()
+            {
+                ExcludeKnownTestingFrameworks = true,
+                Exclude = new string[] { "old-exclude-me" },
+                ModulePathsExclude = new string[] { "ms-exclude-me" }
+            };
+            var knownTestingFrameworksExcluder = new KnownTestingFrameworksExcluder();
+            var excludedAppOptions = knownTestingFrameworksExcluder.Exclude(appOptions);
+
+            // todo test that does not change any other properties
+            /*
+                This applies to OpenCover too.  The Type-Filter includes the namespace 
+             
+                https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/MSBuildIntegration.md
+                Filters
+                Coverlet gives the ability to have fine grained control over what gets excluded using "filter expressions".
+
+                Syntax: /p:Exclude=[Assembly-Filter]Type-Filter
+
+                Wildcards
+
+                * => matches zero or more characters
+                ? => the prefixed character is optional
+
+                https://learn.microsoft.com/en-us/visualstudio/test/customizing-code-coverage-analysis?view=vs-2022#include-or-exclude-assemblies-and-members
+                The Exclude section takes precedence over the Include section: if an assembly is listed in both Include and Exclude, it will not be included in code coverage.
+                
+                <ModulePaths>
+                  <Exclude>
+                   <ModulePath>.*Fabrikam.Math.UnitTest.dll</ModulePath>
+                   <!-- Add more ModulePath nodes here. -->
+                  </Exclude>
+                </ModulePaths>
+
+
+                ModulePath	Matches assemblies specified by assembly name or file path.
+            */
+            Assert.That(excludedAppOptions.Exclude, Is.EqualTo(new string[] { "old-exclude-me", "[NUnit3.TestAdapter]*" }));
+            Assert.That(excludedAppOptions.ModulePathsExclude, Is.EqualTo(new string[] { "ms-exclude-me", ".*\\NUnit3.TestAdapter.dll$" }));
         }
     }
 }

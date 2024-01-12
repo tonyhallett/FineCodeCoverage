@@ -205,5 +205,6 @@ namespace FineCodeCoverage.Options
 
         public bool IncludeReferencedProjects { get; set; }
         public bool ShowToolWindowToolbar { get; set; }
+        public bool ExcludeKnownTestingFrameworks { get; set; }
     }
 }
