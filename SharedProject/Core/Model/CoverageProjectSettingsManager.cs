@@ -14,6 +14,12 @@ namespace FineCodeCoverage.Engine.Model
         IAppOptions Exclude(IAppOptions appOptions);
     }
 
+    /*
+        If decide to add this feature
+        https://github.com/dariusz-wozniak/List-of-Testing-Tools-and-Frameworks-for-.NET/blob/master/README.md
+
+    */
+
     [Export(typeof(IKnownTestingFrameworksExcluder))]
     internal class KnownTestingFrameworksExcluder : IKnownTestingFrameworksExcluder
     {
