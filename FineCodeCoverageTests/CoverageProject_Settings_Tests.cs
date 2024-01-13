@@ -748,5 +748,13 @@ namespace Test
             Assert.That(excludedAppOptions.Exclude, Is.EqualTo(new string[] { "old-exclude-me", "[NUnit3.TestAdapter]*" }));
             Assert.That(excludedAppOptions.ModulePathsExclude, Is.EqualTo(new string[] { "ms-exclude-me", ".*\\NUnit3.TestAdapter.dll$" }));
         }
+
+        [Test]
+        public void Should_Not_Throw_If_AppOptions_Property_Null()
+        {
+            var knownTestingFrameworksExcluder = new KnownTestingFrameworksExcluder();
+            var appOptions = new AppOptions();
+            knownTestingFrameworksExcluder.Exclude(appOptions);
+        }
     }
 }
