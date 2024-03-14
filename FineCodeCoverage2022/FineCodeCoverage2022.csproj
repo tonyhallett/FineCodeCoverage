@@ -183,12 +183,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ReportGeneratorPlugins\ReportGeneratorPlugins.csproj">
-      <Project>{14fb668b-4b70-41e4-964b-405e5c9a6a58}</Project>
-      <Name>ReportGeneratorPlugins</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="..\Shared Files\Resources\ClearUICommand.png">
       <Link>Resources\ClearUICommand.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>

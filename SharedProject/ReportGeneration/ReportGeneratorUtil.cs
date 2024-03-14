@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Options;
-using ReportGeneratorPlugins;
 using System.Threading;
 using System.Xml.Linq;
 using Palmmedia.ReportGenerator.Core.CodeAnalysis;
@@ -14,7 +12,7 @@ using Palmmedia.ReportGenerator.Core.Logging;
 
 namespace FineCodeCoverage.ReportGeneration
 {
-	[Export(typeof(IReportGeneratorUtil))]
+    [Export(typeof(IReportGeneratorUtil))]
 	internal partial class ReportGeneratorUtil : 
 		IReportGeneratorUtil
 	{
@@ -22,8 +20,8 @@ namespace FineCodeCoverage.ReportGeneration
 		private readonly IAppOptionsProvider appOptionsProvider;
         private readonly IReportGenerator reportGenerator;
         private readonly IReportConfigurationFactory reportConfigurationFactory;
-       
-		private List<string> errorMessages = new List<string>();
+        private readonly IHtmlFilesToFolder htmlFilesToFolder;
+        private List<string> errorMessages = new List<string>();
         private readonly string capturingReportBuilderPluginAssemblyLocation = typeof(CapturingReportBuilder).Assembly.Location;
     
 		[ImportingConstructor]
@@ -31,13 +29,15 @@ namespace FineCodeCoverage.ReportGeneration
 			ILogger logger,
 			IAppOptionsProvider appOptionsProvider,
 			IReportGenerator reportGenerator,
-			IReportConfigurationFactory reportConfigurationFactory
+			IReportConfigurationFactory reportConfigurationFactory,
+			IHtmlFilesToFolder htmlFilesToFolder
 		)
 		{
 			this.appOptionsProvider = appOptionsProvider;
 			this.logger = logger;
             this.reportGenerator = reportGenerator;
             this.reportConfigurationFactory = reportConfigurationFactory;
+            this.htmlFilesToFolder = htmlFilesToFolder;
             reportGenerator.SetLogger((verbosityLevel, message) =>
 			{
 				if (verbosityLevel == VerbosityLevel.Error)
@@ -63,8 +63,8 @@ namespace FineCodeCoverage.ReportGeneration
 					reportOutputFolder,
 					Enumerable.Empty<string>(),
 					null,
-					new List<string> {  "Cobertura", CapturingReportBuilder.CapturingReportType, FccLightReportBuilder.REPORT_TYPE },
-                    new List<string> { capturingReportBuilderPluginAssemblyLocation, typeof(FccLightReportBuilder).Assembly.Location },
+					new List<string> {  "Cobertura", CapturingReportBuilder.CapturingReportType, "HtmlInline_AzurePipelines" },
+                    new List<string> { capturingReportBuilderPluginAssemblyLocation},
                     Enumerable.Empty<string>(),
 					Enumerable.Empty<string>(),
 					Enumerable.Empty<string>(),
@@ -87,7 +87,7 @@ namespace FineCodeCoverage.ReportGeneration
 				errorMessages.Clear();
 				throw new Exception("ReportGenerator error");
 			}
-
+			htmlFilesToFolder.Collate(reportOutputFolder);
 			var reportGeneratorResult = new ReportGeneratorResult { 
 				SummaryResult = CapturingReportBuilder.SummaryResult, UnifiedXmlFile = unifiedXmlFile };
 
