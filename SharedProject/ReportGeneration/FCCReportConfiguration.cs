@@ -5,7 +5,7 @@ namespace FineCodeCoverage.ReportGeneration
     internal class FCCReportConfiguration
     {
         public FCCReportConfiguration(
-            IEnumerable<string> reportFilePatterns,
+            IEnumerable<string> coverageOutputFiles,
             string targetDirectory,
             IEnumerable<string> sourceDirectories,
             string historyDirectory,
@@ -18,7 +18,7 @@ namespace FineCodeCoverage.ReportGeneration
             string tag
         )
         {
-            this.ReportFilePatterns = reportFilePatterns;
+            this.CoverageOutputFiles = coverageOutputFiles;
             this.TargetDirectory = targetDirectory;
             this.SourceDirectories = sourceDirectories;
             this.HistoryDirectory = historyDirectory;
@@ -31,7 +31,7 @@ namespace FineCodeCoverage.ReportGeneration
             this.Tag = tag;
         }
 
-        public IEnumerable<string> ReportFilePatterns { get; }
+        public IEnumerable<string> CoverageOutputFiles { get; }
         public string TargetDirectory { get; }
         public IEnumerable<string> SourceDirectories { get; }
         public string HistoryDirectory { get; }

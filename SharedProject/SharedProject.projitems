@@ -134,7 +134,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IShellPackageLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\ShellPackageLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\HotspotsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\HtmlFilesToFolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\IHotspotsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\IHtmlFilesToFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\ReportGenerator\CapturingReportBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ColourUtilities\LighnessApplier.cs" />

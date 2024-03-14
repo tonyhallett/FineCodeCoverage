@@ -146,6 +146,7 @@
     <Compile Include="OpenCoverExeArgumentsProvider_Tests.cs" />
     <Compile Include="OpenCoverUtil_Tests.cs" />
     <Compile Include="Initialization\PackageLoader_Tests.cs" />
+    <Compile Include="ReportGeneration\ReportGeneratorUtil_Tests.cs" />
     <Compile Include="ShownToolWindowHistory_Tests.cs" />
     <Compile Include="TestHelpers\ExportsInitializable.cs" />
     <Compile Include="TestHelpers\MefOrderAssertions.cs" />

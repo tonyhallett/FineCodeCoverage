@@ -10,7 +10,7 @@ namespace FineCodeCoverage.ReportGeneration
         public IReportConfiguration Create(FCCReportConfiguration fccReportConfiguration)
         {
             return new ReportConfiguration(
-                fccReportConfiguration.ReportFilePatterns,
+                fccReportConfiguration.CoverageOutputFiles,
                 fccReportConfiguration.TargetDirectory,
                 fccReportConfiguration.SourceDirectories,
                 fccReportConfiguration.HistoryDirectory,
