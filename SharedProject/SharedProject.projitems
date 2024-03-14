@@ -412,7 +412,6 @@
     <Resource Include="$(MSBuildThisFileDirectory)Resources\OutputToolWindowPackage.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Editor\.editorconfig" />
     <None Include="$(MSBuildThisFileDirectory)Output\Directory.Build.props" />
   </ItemGroup>
   <ItemGroup>
