@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.Composition;
-using FineCodeCoverage.Core.Initialization;
+using FineCodeCoverage.Initialization;
 using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Engine;
 using FineCodeCoverage.Engine.Model;
+using FineCodeCoverage.Engine.Messages;
 
 namespace FineCodeCoverage.Editor.DynamicCoverage
 {

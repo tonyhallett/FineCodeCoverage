@@ -11,7 +11,7 @@ using FineCodeCoverage.Engine;
 using System.Linq;
 using System.Threading;
 using FineCodeCoverageTests.TestHelpers;
-using FineCodeCoverage.Engine.ReportGenerator;
+using FineCodeCoverage.ReportGeneration;
 using FineCodeCoverage.Core.Utilities;
 using System.IO;
 using System;
@@ -170,14 +170,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage
             Assert.AreEqual(MsCodeCoverageCollectionStatus.Error, status);
         }
 
-        [Test]
-        public async Task Should_Report_End_Of_CoverageRun_If_Error_Async()
-        {
-            var exception = new Exception("Msg");
-            await Throw_Exception_From_UserRunSettingsService_Analyse_Async(exception);
-            autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.EndOfCoverageRun());
-        }
-
         private Task<MsCodeCoverageCollectionStatus> Throw_Exception_From_UserRunSettingsService_Analyse_Async(Exception exception)
         {
             SetupIUserRunSettingsServiceAnalyseAny().Throws(exception);
@@ -256,7 +248,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         public async Task Should_Combined_Log_Collecting_With_RunSettings_When_Only_Suitable_RunSettings_Async()
         {
             await IsCollecting_With_Suitable_RunSettings_Only_Async();
-            VerifyCombinedLogMessage("Ms code coverage with user runsettings");
+            VerifyLogMessage("Ms code coverage with user runsettings");
         }
 
         private Task<MsCodeCoverageCollectionStatus> IsCollecting_With_Suitable_RunSettings_Only_Async()
@@ -321,7 +313,7 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         [Test]
         public Task Should_Combined_Log_When_Successfully_Generate_RunSettings_From_Templates_Async()
         {
-            return Successful_RunSettings_From_Templates_CombinedLog_Test_Async(
+            return Successful_RunSettings_From_Templates_Log_Test_Async(
                 new List<string> { }, 
                 new List<string> { "Ms code coverage" }
             );
@@ -330,13 +322,13 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         [Test]
         public Task Should_Combined_Log_With_Custom_Template_Paths_When_Successfully_Generate_RunSettings_From_Templates_Async()
         {
-            return Successful_RunSettings_From_Templates_CombinedLog_Test_Async(
+            return Successful_RunSettings_From_Templates_Log_Test_Async(
                 new List<string> { "Custom path 1", "Custom path 2","Custom path 2" },
                 new List<string> { "Ms code coverage - custom template paths","Custom path 1", "Custom path 2"}
             );
         }
 
-        private async Task Successful_RunSettings_From_Templates_CombinedLog_Test_Async(List<string> customTemplatePaths,List<string> expectedLoggerMessages)
+        private async Task Successful_RunSettings_From_Templates_Log_Test_Async(List<string> customTemplatePaths,List<string> expectedLoggerMessages)
         {
             SetupIUserRunSettingsServiceAnalyseAny().Returns(new UserRunSettingsAnalysisResult(true, true));
 
@@ -355,7 +347,6 @@ namespace FineCodeCoverageTests.MsCodeCoverage
             await msCodeCoverageRunSettingsService.IsCollectingAsync(testOperation);
            
             autoMocker.Verify<ILogger>(logger => logger.Log(expectedLoggerMessages));
-            autoMocker.Verify<IReportGeneratorUtil>(reportGeneratorUtil => reportGeneratorUtil.LogCoverageProcess("Ms code coverage"));
         }
 
         [Test]
@@ -498,13 +489,11 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         private void VerifyLogException(string reason, Exception exception)
         {
             autoMocker.Verify<ILogger>(l => l.Log(reason, exception.ToString()));
-            autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(reason));
         }
 
-        private void VerifyCombinedLogMessage(string message)
+        private void VerifyLogMessage(string message)
         {
             autoMocker.Verify<ILogger>(l => l.Log(message));
-            autoMocker.Verify<IReportGeneratorUtil>(reportGenerator => reportGenerator.LogCoverageProcess(message));
         }
 
         private string InitializeFCCMsTestAdapterPath()

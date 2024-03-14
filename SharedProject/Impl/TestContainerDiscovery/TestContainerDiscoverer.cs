@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using FineCodeCoverage.Engine;
-using FineCodeCoverage.Engine.ReportGenerator;
+using FineCodeCoverage.ReportGeneration;
 using FineCodeCoverage.Options;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
@@ -12,7 +12,7 @@ using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.Utilities;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
 using System.Threading;
-using FineCodeCoverage.Core.Initialization;
+using FineCodeCoverage.Initialization;
 
 namespace FineCodeCoverage.Impl
 {
@@ -80,7 +80,7 @@ namespace FineCodeCoverage.Impl
             operationState.StateChanged += OperationState_StateChanged;
         }
 
-        internal Action<Func<System.Threading.Tasks.Task>> RunAsync = (taskProvider) =>
+        internal Action<Func<Task>> RunAsync = (taskProvider) =>
         {
             ThreadHelper.JoinableTaskFactory.Run(taskProvider);
         };
@@ -99,8 +99,7 @@ namespace FineCodeCoverage.Impl
             var settings = appOptionsProvider.Get();
             if (CoverageDisabled(settings))
             {
-                CombinedLog("Coverage not collected as FCC disabled.");
-                reportGeneratorUtil.EndOfCoverageRun();
+                logger.Log("Coverage not collected as FCC disabled.");
                 return;
             }
 
@@ -118,15 +117,9 @@ namespace FineCodeCoverage.Impl
                 }
                 else
                 {
-                    CombinedLog("Coverage collected when tests finish. RunInParallel option true for immediate");
+                    logger.Log("Coverage collected when tests finish. RunInParallel option true for immediate");
                 }
             }
-        }
-        
-        private void CombinedLog(string message)
-        {
-            reportGeneratorUtil.LogCoverageProcess(message);
-            logger.Log(message);
         }
 
         private async Task TestExecutionFinishedAsync(IOperation operation)
@@ -174,8 +167,7 @@ namespace FineCodeCoverage.Impl
         {
             if (!settings.RunWhenTestsFail && testOperation.FailedTests > 0)
             {
-                CombinedLog($"Skipping coverage due to failed tests.  Option {nameof(AppOptions.RunWhenTestsFail)} is false");
-                reportGeneratorUtil.EndOfCoverageRun();
+                logger.Log($"Skipping coverage due to failed tests.  Option {nameof(AppOptions.RunWhenTestsFail)} is false");
                 return false;
             }
 
@@ -185,8 +177,7 @@ namespace FineCodeCoverage.Impl
             {
                 if (totalTests <= runWhenTestsExceed)
                 {
-                    CombinedLog($"Skipping coverage as total tests ({totalTests}) <= {nameof(AppOptions.RunWhenTestsExceed)} ({runWhenTestsExceed})");
-                    reportGeneratorUtil.EndOfCoverageRun();
+                    logger.Log($"Skipping coverage as total tests ({totalTests}) <= {nameof(AppOptions.RunWhenTestsExceed)} ({runWhenTestsExceed})");
                     return false;
                 }
             }
@@ -208,8 +199,7 @@ namespace FineCodeCoverage.Impl
 
         private Task CoverageCancelledAsync(string logMessage, IOperation operation)
         {
-            CombinedLog(logMessage);
-            reportGeneratorUtil.EndOfCoverageRun(); // not necessarily true but get desired result
+            logger.Log(logMessage);
             fccEngine.StopCoverage();
             return NotifyMsCodeCoverageTestExecutionNotFinishedIfCollectingAsync(operation);
         }

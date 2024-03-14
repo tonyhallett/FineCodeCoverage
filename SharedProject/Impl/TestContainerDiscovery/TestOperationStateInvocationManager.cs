@@ -1,4 +1,4 @@
-﻿using FineCodeCoverage.Core.Initialization;
+﻿using FineCodeCoverage.Initialization;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
 using System.ComponentModel.Composition;
 

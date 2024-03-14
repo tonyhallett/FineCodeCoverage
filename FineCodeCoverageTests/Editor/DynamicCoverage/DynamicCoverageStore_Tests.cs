@@ -1,7 +1,7 @@
 ﻿using AutoMoq;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Editor.DynamicCoverage;
-using FineCodeCoverage.Engine;
+using FineCodeCoverage.Engine.Messages;
 using FineCodeCoverage.Options;
 using Microsoft.VisualStudio.Settings;
 using Moq;

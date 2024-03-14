@@ -2,7 +2,7 @@
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Media;
-using FineCodeCoverage.Core.Initialization;
+using FineCodeCoverage.Initialization;
 using FineCodeCoverage.Editor.DynamicCoverage;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;

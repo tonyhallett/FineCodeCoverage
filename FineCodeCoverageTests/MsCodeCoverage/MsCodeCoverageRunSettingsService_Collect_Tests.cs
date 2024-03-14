@@ -12,7 +12,7 @@ using FineCodeCoverage.Engine;
 using System.Threading.Tasks;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
 using FineCodeCoverageTests.TestHelpers;
-using FineCodeCoverage.Engine.ReportGenerator;
+using FineCodeCoverage.ReportGeneration;
 using FineCodeCoverage.Engine.Model;
 using FineCodeCoverage.Options;
 
@@ -123,13 +123,10 @@ namespace FineCodeCoverageTests.MsCodeCoverage
         }
 
         [Test]
-        public async Task Should_Combined_Log_When_No_Cobertura_Files_Async()
+        public async Task Should_Log_When_No_Cobertura_Files_Async()
         {
             await RunAndProcessReportAsync(null, Array.Empty<string>());
             autoMocker.Verify<ILogger>(logger => logger.Log("No cobertura files for ms code coverage."));
-            autoMocker.Verify<IReportGeneratorUtil>(
-                reportGenerator => reportGenerator.LogCoverageProcess("No cobertura files for ms code coverage.")
-            );
         }
 
         [Test]

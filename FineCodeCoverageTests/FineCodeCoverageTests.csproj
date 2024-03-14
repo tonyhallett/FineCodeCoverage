@@ -127,7 +127,7 @@
     <Compile Include="Editor\DynamicCoverage\TrackedLines_Test.cs" />
     <Compile Include="Editor\DynamicCoverage\TrackingSpanRange_Tests.cs" />
     <Compile Include="FileLineCoverage_Tests.cs" />
-    <Compile Include="FirstTimeToolWindowOpener_Tests.cs" />
+    <Compile Include="Initialization\FirstTimeToolWindowOpener_Tests.cs" />
     <Compile Include="MsCodeCoverage\ShimCopier_Tests.cs" />
     <Compile Include="MsCodeCoverage\TemplatedRunSettingsService_Tests.cs" />
     <Compile Include="MsCodeCoverage\CustomRunSettingsTemplateProvider_Tests.cs" />
@@ -145,7 +145,7 @@
     <Compile Include="MsCodeCoverage\RunSettingsTemplateReplacementsFactory_Tests.cs" />
     <Compile Include="OpenCoverExeArgumentsProvider_Tests.cs" />
     <Compile Include="OpenCoverUtil_Tests.cs" />
-    <Compile Include="PackageLoader_Tests.cs" />
+    <Compile Include="Initialization\PackageLoader_Tests.cs" />
     <Compile Include="ShownToolWindowHistory_Tests.cs" />
     <Compile Include="TestHelpers\ExportsInitializable.cs" />
     <Compile Include="TestHelpers\MefOrderAssertions.cs" />
@@ -165,14 +165,13 @@
     <Compile Include="DotNetToolList_Tests.cs" />
     <Compile Include="ProcessResponseProcessor_Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FCCEngine_Tests.cs" />
+    <Compile Include="Engine\FCCEngine_Tests.cs" />
     <Compile Include="CoverageProject_Settings_Tests.cs" />
-    <Compile Include="Initializer_Tests.cs" />
+    <Compile Include="Initialization\Initializer_Tests.cs" />
     <Compile Include="CoverletUtil_Tests.cs" />
     <Compile Include="CoverletConsole_Tests.cs" />
     <Compile Include="RunSettingsCoverletConfigurationFactory_Tests.cs" />
     <Compile Include="RunSettingsCoverletConfiguration_Tests.cs" />
-    <Compile Include="ScriptManager_Tests.cs" />
     <Compile Include="ReferencedProject_Tests.cs" />
     <Compile Include="TestContainerDiscovery_Tests.cs" />
   </ItemGroup>

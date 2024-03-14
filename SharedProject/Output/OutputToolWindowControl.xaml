@@ -11,13 +11,4 @@
 	d:DesignWidth="500"
 	d:DesignHeight="300"
 	>
-
-	<WebBrowser
-		Name="FCCOutputBrowser"
-		VerticalAlignment="Stretch"
-		HorizontalAlignment="Stretch"
-		Opacity="0"
-        Visibility="Hidden"
-		/>
-	
 </UserControl>

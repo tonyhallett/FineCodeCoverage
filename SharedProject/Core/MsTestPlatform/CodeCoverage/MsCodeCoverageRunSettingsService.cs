@@ -11,10 +11,9 @@ using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
 using System.Xml.XPath;
 using FineCodeCoverage.Options;
-using FineCodeCoverage.Engine.ReportGenerator;
+using FineCodeCoverage.ReportGeneration;
 using System.Threading.Tasks;
 using FineCodeCoverage.Core.Utilities.VsThreading;
-using FineCodeCoverage.Output;
 
 namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
 {
@@ -62,7 +61,6 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
         private readonly ICoverageToolOutputManager coverageOutputManager;
         private readonly IShimCopier shimCopier;
         private readonly ILogger logger;
-        private readonly IReportGeneratorUtil reportGeneratorUtil;
         private IFCCEngine fccEngine;
 
         private const string zipPrefix = "microsoft.codecoverage";
@@ -94,8 +92,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             IUserRunSettingsService userRunSettingsService,
             ITemplatedRunSettingsService templatedRunSettingsService,
             IShimCopier shimCopier,
-            ILogger logger,
-            IReportGeneratorUtil reportGeneratorUtil
+            ILogger logger
             )
         {
             this.toolUnzipper = toolUnzipper;
@@ -103,7 +100,6 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             this.coverageOutputManager = coverageOutputManager;
             this.shimCopier = shimCopier;
             this.logger = logger;
-            this.reportGeneratorUtil = reportGeneratorUtil;
             this.userRunSettingsService = userRunSettingsService;
             this.templatedRunSettingsService = templatedRunSettingsService;
         }
@@ -124,20 +120,18 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             if( runMsCodeCoverage == RunMsCodeCoverage.No)
             {
                 logger.Log($"See option {nameof(IAppOptions.RunMsCodeCoverage)} for a better ( Beta ) experience.  {FCCGithub.Readme}");
-                reportGeneratorUtil.LogCoverageProcess($"See option {nameof(IAppOptions.RunMsCodeCoverage)} for a better ( Beta ) experience. View readme.");
             }
             else
             {
                 await TrySetUpForCollectionAsync(testOperation.SolutionDirectory);
             }
             
-            ReportEndOfCoverageRunIfError();
             return collectionStatus;
         }
 
         private async Task TrySetUpForCollectionAsync(string solutionDirectory)
         {
-            IUserRunSettingsAnalysisResult analysisResult = await TryAnalyseUserRunSettingsAsync();
+            IUserRunSettingsAnalysisResult analysisResult = TryAnalyseUserRunSettings();
             if (analysisResult.Ok())
             {
                 await SetUpForCollectionAsync(
@@ -165,14 +159,6 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             CopyShimWhenCollecting(coverageProjectsForShim);
         }
 
-        private void ReportEndOfCoverageRunIfError()
-        {
-            if (collectionStatus == MsCodeCoverageCollectionStatus.Error)
-            {
-                reportGeneratorUtil.EndOfCoverageRun();
-            }
-        }
-
         private Task InitializeIsCollectingAsync(ITestOperation testOperation)
         {
             runMsCodeCoverage = appOptionsProvider.Get().RunMsCodeCoverage;
@@ -181,28 +167,28 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             return CleanUpAsync(testOperation);
         }
 
-        private async Task<IUserRunSettingsAnalysisResult> TryAnalyseUserRunSettingsAsync()
+        private IUserRunSettingsAnalysisResult TryAnalyseUserRunSettings()
         {
             IUserRunSettingsAnalysisResult analysisResult = null;
             try
             {
-                analysisResult = await AnalyseUserRunSettingsAsync();
+                analysisResult = AnalyseUserRunSettings();
             }
             catch (Exception exc)
             {
-                await ExceptionAnalysingUserRunSettingsAsync(exc);
+                ExceptionAnalysingUserRunSettings(exc);
             }
 
             return analysisResult;
         }
 
-        private Task ExceptionAnalysingUserRunSettingsAsync(Exception exc)
+        private void ExceptionAnalysingUserRunSettings(Exception exc)
         {
             collectionStatus = MsCodeCoverageCollectionStatus.Error;
-            return CombinedLogExceptionAsync(exc, "Exception analysing runsettings files");
+            LogException(exc, "Exception analysing runsettings files");
         }
 
-        private async Task<IUserRunSettingsAnalysisResult> AnalyseUserRunSettingsAsync()
+        private IUserRunSettingsAnalysisResult AnalyseUserRunSettings()
         {
             var analysisResult = userRunSettingsService.Analyse(
                     coverageProjectsByType.RunSettings,
@@ -212,7 +198,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
 
             if (analysisResult.Suitable)
             {
-                await CollectingIfUserRunSettingsOnlyAsync();
+                CollectingIfUserRunSettingsOnly();
             }
 
             return analysisResult;
@@ -240,7 +226,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
                 fccMsTestAdapterPath
             );
 
-            await ProcessTemplateGenerationResultAsync(generationResult, coverageProjectsForShim);
+            ProcessTemplateGenerationResult(generationResult, coverageProjectsForShim);
         }
 
 
@@ -249,39 +235,37 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             return coverageProjectsByType.HasTemplated() && (useMsCodeCoverage || runSettingsSpecifiedMsCodeCoverage);
         }
 
-        private async Task ProcessTemplateGenerationResultAsync(IProjectRunSettingsFromTemplateResult generationResult, List<ICoverageProject> coverageProjectsForShim)
+        private void ProcessTemplateGenerationResult(IProjectRunSettingsFromTemplateResult generationResult, List<ICoverageProject> coverageProjectsForShim)
         {
             if (generationResult.ExceptionReason == null)
             {
-                await CollectingWithTemplateAsync(generationResult, coverageProjectsForShim);
+                CollectingWithTemplate(generationResult, coverageProjectsForShim);
             }
             else
             {
                 var exceptionReason = generationResult.ExceptionReason;
-                await CombinedLogExceptionAsync(exceptionReason.Exception, exceptionReason.Reason);
+                LogException(exceptionReason.Exception, exceptionReason.Reason);
                 collectionStatus = MsCodeCoverageCollectionStatus.Error;
             }
         }
 
-        private async Task CollectingWithTemplateAsync(IProjectRunSettingsFromTemplateResult generationResult, List<ICoverageProject> coverageProjectsForShim)
+        private void CollectingWithTemplate(IProjectRunSettingsFromTemplateResult generationResult, List<ICoverageProject> coverageProjectsForShim)
         {
             coverageProjectsForShim.AddRange(generationResult.CoverageProjectsWithFCCMsTestAdapter);
-            await CombinedLogAsync(() =>
-            {
-                var leadingMessage = generationResult.CustomTemplatePaths.Any() ? $"{msCodeCoverageMessage} - custom template paths" : msCodeCoverageMessage;
-                var loggerMessages = new List<string> { leadingMessage }.Concat(generationResult.CustomTemplatePaths.Distinct());
-                logger.Log(loggerMessages);
-                reportGeneratorUtil.LogCoverageProcess(msCodeCoverageMessage);
-            });
+
+            var leadingMessage = generationResult.CustomTemplatePaths.Any() ? $"{msCodeCoverageMessage} - custom template paths" : msCodeCoverageMessage;
+            var loggerMessages = new List<string> { leadingMessage }.Concat(generationResult.CustomTemplatePaths.Distinct());
+            logger.Log(loggerMessages);
+
             collectionStatus = MsCodeCoverageCollectionStatus.Collecting;
         }
 
-        private async Task CollectingIfUserRunSettingsOnlyAsync()
+        private void CollectingIfUserRunSettingsOnly()
         {
             if (!coverageProjectsByType.HasTemplated())
             {
                 collectionStatus = MsCodeCoverageCollectionStatus.Collecting;
-                await CombinedLogAsync($"{msCodeCoverageMessage} with user runsettings");
+                logger.Log($"{msCodeCoverageMessage} with user runsettings");
             }
         }
 
@@ -345,7 +329,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
             var coberturaFiles = GetCoberturaFiles(operation);
             if (coberturaFiles.Length == 0)
             {
-                await CombinedLogAsync("No cobertura files for ms code coverage.");
+                logger.Log("No cobertura files for ms code coverage.");
             }
 
             fccEngine.RunAndProcessReport(coberturaFiles);
@@ -368,28 +352,10 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
         }
 
         #region Logging
-        private async Task CombinedLogAsync(string message)
-        {
-            await CombinedLogAsync(() =>
-            {
-                logger.Log(message);
-                reportGeneratorUtil.LogCoverageProcess(message);
-            });
-        }
 
-        private async Task CombinedLogAsync(Action action)
+        private void LogException(Exception ex, string reason)
         {
-            await threadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            action();
-        }
-
-        private Task CombinedLogExceptionAsync(Exception ex, string reason)
-        {
-            return CombinedLogAsync(() =>
-            {
-                logger.Log(reason, ex.ToString());
-                reportGeneratorUtil.LogCoverageProcess(reason);
-            });
+            logger.Log(reason, ex.ToString());
         }
 
         #endregion

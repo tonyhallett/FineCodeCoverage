@@ -1,10 +1,8 @@
-﻿using FineCodeCoverage.Core.Utilities;
-
-namespace FineCodeCoverage.Output
+﻿namespace FineCodeCoverage.Output
 {
     internal class OutputToolWindowContext
     {
-		public IEventAggregator EventAggregator { get; set; }
+		public ReportViewModel ReportViewModel { get; set; }
         public bool ShowToolbar { get; set; }
 	}
 }

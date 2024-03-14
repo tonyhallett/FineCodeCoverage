@@ -4,7 +4,6 @@ using FineCodeCoverage;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Shell;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.Shell.Interop;
 using System.ComponentModel.Composition;
 using Microsoft;

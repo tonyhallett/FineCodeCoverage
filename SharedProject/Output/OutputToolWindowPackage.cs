@@ -11,9 +11,7 @@ using Microsoft;
 using FineCodeCoverage.Engine;
 using EnvDTE80;
 using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Core.Initialization;
-using FineCodeCoverage.Impl;
-using FineCodeCoverage.Editor.Management;
+using FineCodeCoverage.Initialization;
 
 namespace FineCodeCoverage.Output
 {
@@ -67,7 +65,7 @@ namespace FineCodeCoverage.Output
         {
 			return new OutputToolWindowContext
 			{
-				EventAggregator = componentModel.GetService<IEventAggregator>(),
+				ReportViewModel = componentModel.GetService<ReportViewModel>(),
 				ShowToolbar = componentModel.GetService<IAppOptionsProvider>().Get().ShowToolWindowToolbar
 			};
 		}
@@ -108,6 +106,7 @@ namespace FineCodeCoverage.Output
         {
 			return Task.FromResult<object>(GetOutputToolWindowContext());
 		}
+
         public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType)
 		{
 			return (toolWindowType == typeof(OutputToolWindow).GUID) ? this : null;

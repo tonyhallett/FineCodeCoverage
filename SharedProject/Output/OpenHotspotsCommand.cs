@@ -3,7 +3,7 @@ using System.ComponentModel.Design;
 using System.IO;
 using EnvDTE80;
 using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Engine;
+using FineCodeCoverage.Engine.Messages;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using SharedProject.Core.CoverageToolOutput;
