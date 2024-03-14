@@ -1,7 +1,7 @@
-﻿using FineCodeCoverage.Core.Utilities;
-using System.ComponentModel.Composition;
+﻿using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
+using FineCodeCoverage.Core.Utilities;
 
 namespace FineCodeCoverage.Initialization
 {
@@ -28,11 +28,11 @@ namespace FineCodeCoverage.Initialization
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (
-                initializedFromTestContainerDiscoverer.InitializedFromTestContainerDiscoverer &&
-                !shownToolWindowHistory.HasShownToolWindow
+                this.initializedFromTestContainerDiscoverer.InitializedFromTestContainerDiscoverer &&
+                !this.shownToolWindowHistory.HasShownToolWindow
             )
             {
-                await toolWindowOpener.OpenToolWindowAsync();
+                await this.toolWindowOpener.OpenToolWindowAsync();
             }
         }
     }

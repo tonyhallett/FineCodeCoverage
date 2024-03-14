@@ -7,6 +7,5 @@ namespace FineCodeCoverage.Initialization
     {
         Task InitializeAsync(CancellationToken cancellationToken);
     }
-
 }
 

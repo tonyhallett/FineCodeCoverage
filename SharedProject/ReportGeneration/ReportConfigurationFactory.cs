@@ -7,9 +7,7 @@ namespace FineCodeCoverage.ReportGeneration
     [Export(typeof(IReportConfigurationFactory))]
     internal class ReportConfigurationFactory : IReportConfigurationFactory
     {
-        public IReportConfiguration Create(FCCReportConfiguration fccReportConfiguration)
-        {
-            return new ReportConfiguration(
+        public IReportConfiguration Create(FCCReportConfiguration fccReportConfiguration) => new ReportConfiguration(
                 fccReportConfiguration.CoverageOutputFiles,
                 fccReportConfiguration.TargetDirectory,
                 fccReportConfiguration.SourceDirectories,
@@ -22,6 +20,5 @@ namespace FineCodeCoverage.ReportGeneration
                 fccReportConfiguration.VerbosityLevel,
                 fccReportConfiguration.Tag
             );
-        }
     }
 }

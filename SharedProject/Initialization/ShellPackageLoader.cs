@@ -1,7 +1,7 @@
 ﻿using System;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell;
 using System.ComponentModel.Composition;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Initialization
@@ -15,20 +15,16 @@ namespace FineCodeCoverage.Initialization
         public ShellPackageLoader(
             [Import(typeof(SVsServiceProvider))]
              IServiceProvider serviceProvider
-        )
-        {
-            this.serviceProvider = serviceProvider;
-        }
+        ) => this.serviceProvider = serviceProvider;
         public async Task LoadPackageAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            if (serviceProvider.GetService(typeof(SVsShell)) is IVsShell shell)
+            if (this.serviceProvider.GetService(typeof(SVsShell)) is IVsShell shell)
             {
-                var packageToBeLoadedGuid = PackageGuids.guidOutputToolWindowPackage;
-                shell.LoadPackage(ref packageToBeLoadedGuid, out var _);
+                Guid packageToBeLoadedGuid = PackageGuids.guidOutputToolWindowPackage;
+                _ = shell.LoadPackage(ref packageToBeLoadedGuid, out _);
             }
         }
-
     }
 }

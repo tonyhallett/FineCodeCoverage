@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using FineCodeCoverage.Options;
-using Palmmedia.ReportGenerator.Core.CodeAnalysis;
-using System.Xml.Linq;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Xml.Linq;
+using FineCodeCoverage.Options;
+using Palmmedia.ReportGenerator.Core.CodeAnalysis;
 
 namespace FineCodeCoverage.ReportGeneration
 {
@@ -17,15 +17,9 @@ namespace FineCodeCoverage.ReportGeneration
         [ImportingConstructor]
         public HotspotsService(
             IAppOptionsProvider appOptionsProvider
-        )
-        {
-            this.appOptionsProvider = appOptionsProvider;
-        }
+        ) => this.appOptionsProvider = appOptionsProvider;
 
-        public RiskHotspotsAnalysisThresholds GetRiskHotspotsAnalysisThresholds()
-        {
-            return GetRiskHotspotsAnalysisThresholds(appOptionsProvider.Get());
-        }
+        public RiskHotspotsAnalysisThresholds GetRiskHotspotsAnalysisThresholds() => this.GetRiskHotspotsAnalysisThresholds(this.appOptionsProvider.Get());
 
         public void WriteHotspotsToXml(IReadOnlyCollection<RiskHotspot> hotspots, string path)
         {
@@ -58,5 +52,4 @@ namespace FineCodeCoverage.ReportGeneration
             MetricThresholdForNPathComplexity = appOptions.ThresholdForNPathComplexity
         };
     }
-
 }

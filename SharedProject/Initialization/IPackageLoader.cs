@@ -6,6 +6,5 @@ namespace FineCodeCoverage.Initialization
     {
         Task LoadPackageAsync(System.Threading.CancellationToken cancellationToken);
     }
-
 }
 

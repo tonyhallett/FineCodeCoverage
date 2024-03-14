@@ -3,11 +3,11 @@ using System.Threading;
 
 namespace FineCodeCoverage.ReportGeneration
 {
-    interface IReportGeneratorUtil
+    internal interface IReportGeneratorUtil
     {
         ReportGeneratorResult Generate(
-            IEnumerable<string> coverOutputFiles, 
-            string reportOutputFolder, 
+            IEnumerable<string> coverOutputFiles,
+            string reportOutputFolder,
             CancellationToken cancellationToken
         );
     }

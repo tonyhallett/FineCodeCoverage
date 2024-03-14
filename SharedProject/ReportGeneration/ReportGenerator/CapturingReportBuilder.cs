@@ -14,11 +14,11 @@ namespace FineCodeCoverage.ReportGeneration
         public IReportContext ReportContext { get; set; }
 
         public void CreateClassReport(Class @class, IEnumerable<FileAnalysis> fileAnalyses) { }
-    
+
         public void CreateSummaryReport(SummaryResult summaryResult)
         {
             SummaryResult = summaryResult;
-            RiskHotspotAnalysisResult = ReportContext.RiskHotspotAnalysisResult;
+            RiskHotspotAnalysisResult = this.ReportContext.RiskHotspotAnalysisResult;
         }
 
         public static SummaryResult SummaryResult { get; set; }

@@ -21,8 +21,8 @@ namespace FineCodeCoverage.Initialization
 
         [ImportingConstructor]
         public Initializer(
-            IFCCEngine fccEngine, 
-            ILogger logger, 
+            IFCCEngine fccEngine,
+            ILogger logger,
             ICoverageProjectFactory coverageProjectFactory,
             IFirstTimeToolWindowOpener firstTimeToolWindowOpener,
             [ImportMany]
@@ -39,35 +39,33 @@ namespace FineCodeCoverage.Initialization
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                logger.Log($"Initializing");
+                this.logger.Log($"Initializing");
 
                 cancellationToken.ThrowIfCancellationRequested();
-                coverageProjectFactory.Initialize();
+                this.coverageProjectFactory.Initialize();
 
-                fccEngine.Initialize(cancellationToken);
+                this.fccEngine.Initialize(cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
-                logger.Log($"Initialized");
+                this.logger.Log($"Initialized");
 
-                
-                await firstTimeToolWindowOpener.OpenIfFirstTimeAsync(cancellationToken);
+                await this.firstTimeToolWindowOpener.OpenIfFirstTimeAsync(cancellationToken);
             }
             catch (Exception exception)
             {
-                InitializeStatus = InitializeStatus.Error;
-                InitializeExceptionMessage = exception.Message;
+                this.InitializeStatus = InitializeStatus.Error;
+                this.InitializeExceptionMessage = exception.Message;
                 if (!cancellationToken.IsCancellationRequested)
                 {
-                    logger.Log($"Failed Initialization", exception);
+                    this.logger.Log($"Failed Initialization", exception);
                 }
             }
 
-            if(InitializeStatus != InitializeStatus.Error)
+            if (this.InitializeStatus != InitializeStatus.Error)
             {
-                InitializeStatus = InitializeStatus.Initialized;
+                this.InitializeStatus = InitializeStatus.Initialized;
             }
         }
-        
     }
 }
 

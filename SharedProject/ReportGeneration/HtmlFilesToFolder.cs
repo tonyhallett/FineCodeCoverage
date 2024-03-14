@@ -17,9 +17,9 @@ namespace FineCodeCoverage.ReportGeneration
         private static void Collate(string reportOutputFolder, string directoryName)
         {
             var directory = new DirectoryInfo(reportOutputFolder);
-            var htmlReportDirectory = directory.CreateSubdirectory(directoryName);
+            DirectoryInfo htmlReportDirectory = directory.CreateSubdirectory(directoryName);
 
-            foreach (var htmlFile in directory.EnumerateFiles("*.html"))
+            foreach (FileInfo htmlFile in directory.EnumerateFiles("*.html"))
             {
                 htmlFile.MoveTo(Path.Combine(htmlReportDirectory.FullName, htmlFile.Name));
             }
@@ -27,9 +27,8 @@ namespace FineCodeCoverage.ReportGeneration
 
         private static void DeleteHtm(string reportOutputFolder)
         {
-            var path = Path.Combine(reportOutputFolder, "index.htm");
+            string path = Path.Combine(reportOutputFolder, "index.htm");
             File.Delete(path);
         }
     }
-
 }
