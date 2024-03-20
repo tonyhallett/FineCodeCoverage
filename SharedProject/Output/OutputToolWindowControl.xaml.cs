@@ -13,8 +13,8 @@ namespace FineCodeCoverage.Output
         /// </summary>
         public OutputToolWindowControl(ReportViewModel reportViewModel)
 		{
-			this.DataContext = reportViewModel;
-			InitializeComponent();
+            this.DataContext = new TreeGridViewModel();
+            this.InitializeComponent();
 		}
     }
 }

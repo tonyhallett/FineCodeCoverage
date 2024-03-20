@@ -6,9 +6,48 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	Opacity="0"
+    xmlns:tg="clr-namespace:TreeGrid;assembly=TreeGrid"
+    xmlns:vsShell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+    xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
 	mc:Ignorable="d"
 	d:DesignWidth="500"
 	d:DesignHeight="300"
 	>
+    <tg:TreeGridControl 
+        TreeGridControlBackground="{DynamicResource {x:Static vsShell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+        TreeViewBackground="{DynamicResource {x:Static vsShell:TreeViewColors.BackgroundBrushKey}}"
+        HeaderGridLines="{DynamicResource {x:Static vsShell:EnvironmentColors.FileTabInactiveBorderBrushKey}}"
+        HeaderBackground="{DynamicResource {x:Static vsShell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+        HeaderForeground="{DynamicResource {x:Static vsShell:EnvironmentColors.ToolWindowTextBrushKey}}"
+        ViewModel="{Binding}"
+        vsShell:ImageThemingUtilities.ImageBackgroundColor="{DynamicResource {x:Static vsShell:EnvironmentColors.ToolWindowBackgroundColorKey}}"
+    >
+        <tg:TreeGridControl.ItemTemplate>
+            <DataTemplate>
+                <StackPanel>
+                    <TextBlock Tag="FirstColumn"  Text="{Binding Name}"/>
+                    <TextBlock Tag="SecondColumn" Text="To"/>
+                    <TextBlock Tag="ThirdColumn" Text="World" />
+                </StackPanel>
+            </DataTemplate>
+        </tg:TreeGridControl.ItemTemplate>
+        <tg:TreeGridControl.HierarchicalDataTemplate>
+            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                <DockPanel>
+                    <imaging:CrispImage DockPanel.Dock="Left" FrameworkElement.Margin="5 2 5 2" FrameworkElement.Height="16"
+                                RenderOptions.BitmapScalingMode="HighQuality" Moniker="{Binding ImageMoniker}"/>
+                    <Border Padding="0 2 0 2" Background="{Binding Background}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{Binding AdjustedWidth}"/>
+                            </Grid.ColumnDefinitions>
+                            <tg:TreeItemContentControl Content="{Binding}" 
+                                ContentTemplate="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type tg:TreeGridControl},AncestorLevel=1},Path=ItemTemplate}" />
+                        </Grid>
+                    </Border>
+                </DockPanel>
+            </HierarchicalDataTemplate>
+        </tg:TreeGridControl.HierarchicalDataTemplate>
+        
+    </tg:TreeGridControl>
 </UserControl>

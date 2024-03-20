@@ -133,7 +133,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCGithub.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IShellPackageLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\ShellPackageLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\ColumnManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\DemoTreeItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\ThemedTreeGridColours.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\TreeGridViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\VisualStudioTreeItemBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\HotspotsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\HtmlFilesToFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\IHotspotsService.cs" />
@@ -410,9 +415,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="$(MSBuildThisFileDirectory)Resources\OutputToolWindowPackage.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Output\Directory.Build.props" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Core\Cobertura\Report\" />

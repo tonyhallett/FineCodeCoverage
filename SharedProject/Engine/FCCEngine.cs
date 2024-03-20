@@ -180,12 +180,59 @@ namespace FineCodeCoverage.Engine
 
         private void RaiseNewReport(SummaryResult summaryResult) => this.eventAggregator.SendMessage(new NewReportMessage(summaryResult));
 
+        private void LogSummaryResult(SummaryResult summaryResult)
+        {
+            var sb = new System.Text.StringBuilder();
+            int depth;
+            void AppendLine(string line) => sb.AppendLine(new string(' ', depth * 2) + line);
+            foreach (Assembly assembly in summaryResult.Assemblies)
+            {
+                depth = 0;
+                AppendLine($"Assembly: {assembly.Name}");
+                AppendLine($"Assembly: {assembly.ShortName}");
+                depth = 2;
+                foreach(Palmmedia.ReportGenerator.Core.Parser.Analysis.Class cls in assembly.Classes)
+                {
+                    
+                    AppendLine($"Class: {cls.Name}");
+                    AppendLine($"Class: {cls.DisplayName}");
+                    depth = 4;
+                    foreach(CodeFile codeFile in cls.Files)
+                    {
+                        AppendLine($"CodeFile path - {codeFile.Path}");
+                        // I might need to
+                        //codeFile.LineVisitStatus
+                        // codeFile.LineCoverage
+                        //codeFile.BranchesByLine
+                        //codeFile.CodeElements
+                        depth = 6;
+                        foreach(CodeElement codeElement in codeFile.CodeElements)
+                        {
+                            AppendLine($"CodeElement ${codeElement.CodeElementType} - {codeElement.Name}/{codeElement.FullName}");
+                            AppendLine($"First/Last Line - {codeElement.FirstLine},{codeElement.LastLine}");
+                            AppendLine("");
+                        }
+
+                        AppendLine("");
+                    }
+
+                    AppendLine("");
+                }
+
+                AppendLine("");
+
+            }
+
+            string toLog = sb.ToString();
+            this.logger.Log(toLog);
+        }
+
         private ReportResult RunAndProcessReport(string[] coverOutputFiles, CancellationToken vsShutdownLinkedCancellationToken)
         {
             string reportOutputFolder = this.coverageOutputManager.GetReportOutputFolder();
             vsShutdownLinkedCancellationToken.ThrowIfCancellationRequested();
             ReportGeneratorResult result = this.reportGeneratorUtil.Generate(coverOutputFiles, reportOutputFolder, vsShutdownLinkedCancellationToken);
-
+            this.LogSummaryResult(result.SummaryResult);
             vsShutdownLinkedCancellationToken.ThrowIfCancellationRequested();
             this.logger.Log("Processing cobertura");
             IFileLineCoverage coverageLines = this.coberturaUtil.ProcessCoberturaXml(result.UnifiedXmlFile);
