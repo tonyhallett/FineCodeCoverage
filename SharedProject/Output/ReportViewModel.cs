@@ -31,7 +31,7 @@ namespace FineCodeCoverage.Output
         [ImportingConstructor]
         public ReportViewModel(
             IEventAggregator eventAggregator,
-            ISourceFileOpener2 sourceFileOpener
+            ISourceFileOpener sourceFileOpener
         )
         {
             _ = eventAggregator.AddListener(this);
@@ -39,7 +39,7 @@ namespace FineCodeCoverage.Output
             this.sourceFileOpener = sourceFileOpener;
         }
         private readonly ObservableCollection<AssemblyTreeItem> _items = new ObservableCollection<AssemblyTreeItem>();
-        private readonly ISourceFileOpener2 sourceFileOpener;
+        private readonly ISourceFileOpener sourceFileOpener;
 
         protected override ReportColumnManager ColumnManagerImpl { get; set; } = new ReportColumnManager();
 
