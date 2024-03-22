@@ -80,10 +80,7 @@ namespace FineCodeCoverage.Output
             }
         }
 
-        public override void Sort(int displayIndex)
-        {
-
-        }
+        public override void Sort(int displayIndex) => this.ColumnManagerImpl.SortColumns(displayIndex);
         protected override void LeafTreeItemDoubleClick(ReportTreeItemBase treeItem)
         {
             var codeElementTreeItem = treeItem as CodeElementTreeItem;
