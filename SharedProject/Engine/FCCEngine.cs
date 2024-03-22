@@ -228,12 +228,14 @@ namespace FineCodeCoverage.Engine
         private void DisplayCoverageResult(Task<ReportResult> t, object state)
         {
             var displayCoverageResultState = (CoverageTaskState)state;
+            CoverageEndedStatus coverageEndedStatus = CoverageEndedStatus.Success;
             if (!this.IsVsShutdown)
             {
                 switch (t.Status)
                 {
                     case TaskStatus.Canceled:
                         this.LogReloadCoverageStatus(ReloadCoverageStatus.Cancelled);
+                        coverageEndedStatus = CoverageEndedStatus.Cancelled;
                         break;
                     case TaskStatus.Faulted:
                         Exception innerException = t.Exception.InnerExceptions[0];
@@ -241,6 +243,7 @@ namespace FineCodeCoverage.Engine
                             this.GetLogReloadCoverageStatusMessage(ReloadCoverageStatus.Error),
                             innerException
                         );
+                        coverageEndedStatus = CoverageEndedStatus.Faulted;
                         break;
                     case TaskStatus.RanToCompletion:
                         this.LogReloadCoverageStatus(ReloadCoverageStatus.Done);
@@ -254,6 +257,7 @@ namespace FineCodeCoverage.Engine
                 }
             }
 
+            this.eventAggregator.SendMessage(new CoverageEndedMessage(coverageEndedStatus));
             displayCoverageResultState.CleanUp?.Invoke();
             displayCoverageResultState.CancellationTokenSource.Dispose();
         }

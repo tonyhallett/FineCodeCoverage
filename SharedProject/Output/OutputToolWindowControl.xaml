@@ -13,7 +13,66 @@
 	d:DesignWidth="500"
 	d:DesignHeight="300"
 	>
-    <tg:TreeGridControl 
+    <StackPanel>
+        <StackPanel.Resources>
+            <vsShell:VisibleIfEqualValueConverter x:Key="VisibleIfEqualValueConverter" VisibilityIfNotEqual="Hidden"/>
+        </StackPanel.Resources>
+        <ProgressBar Height="2" Foreground="{DynamicResource ResourceKey=VsBrush.Highlight}" Visibility="{Binding CoverageRunning, Converter={StaticResource VisibleIfEqualValueConverter}, ConverterParameter=true}" IsIndeterminate="true">
+            <ProgressBar.Style>
+                <Style TargetType="{x:Type ProgressBar}">
+                    <Setter Property="FrameworkElement.MinWidth" Value="2"/>
+                    <Setter Property="FrameworkElement.MinHeight" Value="2"/>
+                    <Setter Property="FrameworkElement.UseLayoutRounding" Value="True"/>
+                    <Setter Property="UIElement.SnapsToDevicePixels" Value="True"/>
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ProgressBar}">
+                                <Grid x:Name="TemplateRoot" SnapsToDevicePixels="True">
+                                    <Border  BorderThickness="0"/>
+                                    <Rectangle x:Name="PART_Track" />
+                                    <Decorator x:Name="PART_Indicator" HorizontalAlignment="Left">
+                                        <Grid ClipToBounds="True">
+                                            <Rectangle x:Name="Animation" Fill="{TemplateBinding Control.Foreground}"
+                           RenderTransformOrigin="0.5,0.5">
+                                                <UIElement.RenderTransform>
+                                                    <TransformGroup>
+                                                        <ScaleTransform/>
+                                                        <SkewTransform/>
+                                                        <RotateTransform/>
+                                                        <TranslateTransform/>
+                                                    </TransformGroup>
+                                                </UIElement.RenderTransform>
+                                            </Rectangle>
+                                        </Grid>
+                                    </Decorator>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Indeterminate">
+                                                <Storyboard RepeatBehavior="Forever">
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Animation"
+                                                   Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                        <EasingDoubleKeyFrame KeyTime="0" Value="0.25"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.25"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:2" Value="0.25"/>
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                    <PointAnimationUsingKeyFrames Storyboard.TargetName="Animation"
+                                                  Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+                                                        <EasingPointKeyFrame KeyTime="0" Value="-0.5,0.5"/>
+                                                        <EasingPointKeyFrame KeyTime="0:0:1" Value="0.5,0.5"/>
+                                                        <EasingPointKeyFrame KeyTime="0:0:2" Value="1.5,0.5"/>
+                                                    </PointAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ProgressBar.Style>
+        </ProgressBar>
+        <tg:TreeGridControl 
         TreeGridControlBackground="{DynamicResource {x:Static vsShell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
         TreeViewBackground="{DynamicResource {x:Static vsShell:TreeViewColors.BackgroundBrushKey}}"
         HeaderGridLines="{DynamicResource {x:Static vsShell:EnvironmentColors.FileTabInactiveBorderBrushKey}}"
@@ -49,4 +108,5 @@
         </tg:TreeGridControl.HierarchicalDataTemplate>
         
     </tg:TreeGridControl>
+    </StackPanel>
 </UserControl>

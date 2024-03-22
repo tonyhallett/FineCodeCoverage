@@ -13,6 +13,8 @@ using Microsoft.VisualStudio.Utilities;
 using FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage;
 using System.Threading;
 using FineCodeCoverage.Initialization;
+using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Engine.Messages;
 
 namespace FineCodeCoverage.Impl
 {
@@ -24,6 +26,8 @@ namespace FineCodeCoverage.Impl
     {
 #pragma warning disable 67
         public event EventHandler TestContainersUpdated;
+
+        private readonly IEventAggregator eventAggregator;
 #pragma warning restore 67
         private readonly IFCCEngine fccEngine;
         private readonly ITestOperationStateInvocationManager testOperationStateInvocationManager;
@@ -35,6 +39,7 @@ namespace FineCodeCoverage.Impl
         private bool cancelling;
         private MsCodeCoverageCollectionStatus msCodeCoverageCollectionStatus;
         private bool runningInParallel;
+        private bool coverageDisabledWhenStarting;
         private IAppOptions settings;
         
         internal Task initializeTask;
@@ -50,7 +55,7 @@ namespace FineCodeCoverage.Impl
         (
             [Import(typeof(IOperationState))]
             IOperationState operationState,
-
+            IEventAggregator eventAggregator,
             IFCCEngine fccEngine,
             ITestOperationStateInvocationManager testOperationStateInvocationManager,
             IPackageLoader packageLoader,
@@ -62,6 +67,7 @@ namespace FineCodeCoverage.Impl
         {
             this.appOptionsProvider = appOptionsProvider;
             this.msCodeCoverageRunSettingsService = msCodeCoverageRunSettingsService;
+            this.eventAggregator = eventAggregator;
             this.fccEngine = fccEngine;
             this.testOperationStateInvocationManager = testOperationStateInvocationManager;
             this.testOperationFactory = testOperationFactory;
@@ -75,6 +81,11 @@ namespace FineCodeCoverage.Impl
             };
             _ = packageLoader.LoadPackageAsync(CancellationToken.None);
             operationState.StateChanged += OperationState_StateChanged;
+        }
+
+        private enum CollectWhenTestExecutionFinished
+        { 
+            Yes, Disabled, CoverageConditionsNotMet, RunningInParallel, MsCodeCoverageErrored
         }
 
         internal Action<Func<Task>> RunAsync = (taskProvider) =>
@@ -94,7 +105,8 @@ namespace FineCodeCoverage.Impl
             StopCoverage();
             msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.NotCollecting;
             var settings = appOptionsProvider.Get();
-            if (CoverageDisabled(settings))
+            coverageDisabledWhenStarting = CoverageDisabled(settings);
+            if (coverageDisabledWhenStarting)
             {
                 logger.Log("Coverage not collected as FCC disabled.");
                 return;
@@ -105,6 +117,7 @@ namespace FineCodeCoverage.Impl
             {
                 if (settings.RunInParallel)
                 {
+                    RaiseCoverageStarted(true);
                     runningInParallel = true;
                     fccEngine.ReloadCoverage(() =>
                     {
@@ -114,37 +127,83 @@ namespace FineCodeCoverage.Impl
                 }
                 else
                 {
+                    RaiseCoverageStarted(false);
                     logger.Log("Coverage collected when tests finish. RunInParallel option true for immediate");
                 }
             }
+
+            if(msCodeCoverageCollectionStatus == MsCodeCoverageCollectionStatus.Collecting)
+            {
+                RaiseCoverageStarted();
+            }
+        }
+
+        private void RaiseCoverageStarted(bool pending = false)
+        {
+            eventAggregator.SendMessage(new CoverageStartingMessage(pending));
+        }
+
+        private void RaiseCoverageEnded(CollectWhenTestExecutionFinished endReason)
+        {
+            CoverageEndedStatus coverageEndedStatus = CoverageEndedStatus.Faulted;
+            switch (endReason)
+            {
+                case CollectWhenTestExecutionFinished.Disabled:
+                    coverageEndedStatus = CoverageEndedStatus.Disabled;
+                    break;
+                case CollectWhenTestExecutionFinished.CoverageConditionsNotMet:
+                    coverageEndedStatus = CoverageEndedStatus.ConditionsNotMet;
+                    break;
+            }
+
+            eventAggregator.SendMessage(new CoverageEndedMessage(coverageEndedStatus));
         }
 
         private async Task TestExecutionFinishedAsync(IOperation operation)
         {
             var (should, testOperation) = ShouldConditionallyCollectWhenTestExecutionFinished(operation);
-            if (should)
+            if (should == CollectWhenTestExecutionFinished.Yes)
             {
                 await TestExecutionFinishedCollectionAsync(operation, testOperation);
             }
+            else
+            {
+                if (!coverageDisabledWhenStarting && should != CollectWhenTestExecutionFinished.RunningInParallel)
+                {
+                    RaiseCoverageEnded(should);
+                }
+            }
         }
 
-        private (bool should, ITestOperation testOperation) ShouldConditionallyCollectWhenTestExecutionFinished(IOperation operation)
+        private (CollectWhenTestExecutionFinished should, ITestOperation testOperation) ShouldConditionallyCollectWhenTestExecutionFinished(IOperation operation)
         {
-            if (ShouldNotCollectWhenTestExecutionFinished())
+            CollectWhenTestExecutionFinished collectWhenTestExecutionFinished = ShouldNotCollectWhenTestExecutionFinished();
+            if (collectWhenTestExecutionFinished != CollectWhenTestExecutionFinished.Yes)
             {
-                return (false, null);
+                return (collectWhenTestExecutionFinished, null);
             }
             
             var testOperation = testOperationFactory.Create(operation);
             
-            var shouldCollect = CoverageConditionsMet(testOperation);
-            return (shouldCollect, testOperation);
+            var coverageConditionsMet = CoverageConditionsMet(testOperation);
+            return (coverageConditionsMet ? CollectWhenTestExecutionFinished.Yes : CollectWhenTestExecutionFinished.CoverageConditionsNotMet, testOperation);
         }
 
-        private bool ShouldNotCollectWhenTestExecutionFinished()
+        private CollectWhenTestExecutionFinished ShouldNotCollectWhenTestExecutionFinished()
         {
+            if (runningInParallel)
+            {
+                return CollectWhenTestExecutionFinished.RunningInParallel;
+            }
+
+            if (MsCodeCoverageErrored)
+            {
+                return CollectWhenTestExecutionFinished.MsCodeCoverageErrored;
+            }
+
             settings = appOptionsProvider.Get();
-            return CoverageDisabled(settings) || runningInParallel || MsCodeCoverageErrored;
+            var disabled = CoverageDisabled(settings);
+            return disabled ? CollectWhenTestExecutionFinished.Disabled : CollectWhenTestExecutionFinished.Yes;
             
         }
 

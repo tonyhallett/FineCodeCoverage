@@ -69,6 +69,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\IEnvironmentVariable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\IFCCEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IMessageBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\CoverageStartingMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\NewCoverageLinesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\ReportFilesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\ReloadCoverageStatus.cs" />

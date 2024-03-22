@@ -2,7 +2,7 @@
 
 namespace TreeGrid
 {
-    public abstract class TreeGridViewModelBase<TTreeItem,TColumnManager> : ITreeGridViewModel 
+    public abstract class TreeGridViewModelBase<TTreeItem,TColumnManager> : ObservableBase, ITreeGridViewModel 
         where TTreeItem : ITreeItem
         where TColumnManager: IColumnManager
     {

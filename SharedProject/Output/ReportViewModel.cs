@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
-using System.IO;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine;
 using FineCodeCoverage.Engine.Messages;
@@ -24,7 +23,10 @@ namespace FineCodeCoverage.Output
     }
 
     [Export(typeof(ReportViewModel))]
-    internal class ReportViewModel : TreeGridViewModelBase<ReportTreeItemBase, ReportColumnManager>, IListener<NewReportMessage>
+    internal class ReportViewModel : TreeGridViewModelBase<ReportTreeItemBase, ReportColumnManager>, 
+        IListener<NewReportMessage>,
+        IListener<CoverageStartingMessage>,
+        IListener<CoverageEndedMessage>
     {
         //ReportColumnManager to be injected by interface
         // Factory for the specific tree items
@@ -34,6 +36,7 @@ namespace FineCodeCoverage.Output
             ISourceFileOpener sourceFileOpener
         )
         {
+            this.TreeViewAutomationName = "Coverage Report Tree";
             _ = eventAggregator.AddListener(this);
             this.SetItems(this._items);
             this.sourceFileOpener = sourceFileOpener;
@@ -42,6 +45,13 @@ namespace FineCodeCoverage.Output
         private readonly ISourceFileOpener sourceFileOpener;
 
         protected override ReportColumnManager ColumnManagerImpl { get; set; } = new ReportColumnManager();
+        
+        private bool coverageRunning;
+        public bool CoverageRunning
+        {
+            get => this.coverageRunning;
+            set => this.Set(ref this.coverageRunning, value, nameof(this.CoverageRunning));
+        }
 
         public void Handle(NewReportMessage message)
         {
@@ -84,5 +94,7 @@ namespace FineCodeCoverage.Output
         }
 
         public static bool IsRelativePath(string path) => Uri.IsWellFormedUriString(path, UriKind.Relative);
+        public void Handle(CoverageStartingMessage message) => this.CoverageRunning = true;
+        public void Handle(CoverageEndedMessage message) => this.CoverageRunning = false;
     }
 }
