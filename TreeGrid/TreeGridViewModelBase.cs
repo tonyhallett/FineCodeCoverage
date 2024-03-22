@@ -6,8 +6,8 @@ namespace TreeGrid
         where TTreeItem : ITreeItem
         where TColumnManager: IColumnManager
     {
-        public IColumnManager ColumnManager { get => columnManagerImpl; }
-        protected TColumnManager columnManagerImpl;
+        public IColumnManager ColumnManager { get => ColumnManagerImpl; }
+        protected abstract TColumnManager ColumnManagerImpl { get; set; }
         public IEnumerable<ITreeItem> Items { get; private set; }
         public ITreeItem SelectedTreeViewItem { set => SelectedTreeItem = (TTreeItem)value; }
         protected virtual TTreeItem SelectedTreeItem { get; set; }

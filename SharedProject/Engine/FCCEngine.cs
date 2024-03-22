@@ -180,59 +180,11 @@ namespace FineCodeCoverage.Engine
 
         private void RaiseNewReport(SummaryResult summaryResult) => this.eventAggregator.SendMessage(new NewReportMessage(summaryResult));
 
-        private void LogSummaryResult(SummaryResult summaryResult)
-        {
-            var sb = new System.Text.StringBuilder();
-            int depth;
-            void AppendLine(string line) => sb.AppendLine(new string(' ', depth * 2) + line);
-            foreach (Assembly assembly in summaryResult.Assemblies)
-            {
-                depth = 0;
-                AppendLine($"Assembly: {assembly.Name}");
-                AppendLine($"Assembly: {assembly.ShortName}");
-                depth = 2;
-                foreach(Palmmedia.ReportGenerator.Core.Parser.Analysis.Class cls in assembly.Classes)
-                {
-                    
-                    AppendLine($"Class: {cls.Name}");
-                    AppendLine($"Class: {cls.DisplayName}");
-                    depth = 4;
-                    foreach(CodeFile codeFile in cls.Files)
-                    {
-                        AppendLine($"CodeFile path - {codeFile.Path}");
-                        // I might need to
-                        //codeFile.LineVisitStatus
-                        // codeFile.LineCoverage
-                        //codeFile.BranchesByLine
-                        //codeFile.CodeElements
-                        depth = 6;
-                        foreach(CodeElement codeElement in codeFile.CodeElements)
-                        {
-                            AppendLine($"CodeElement ${codeElement.CodeElementType} - {codeElement.Name}/{codeElement.FullName}");
-                            AppendLine($"First/Last Line - {codeElement.FirstLine},{codeElement.LastLine}");
-                            AppendLine("");
-                        }
-
-                        AppendLine("");
-                    }
-
-                    AppendLine("");
-                }
-
-                AppendLine("");
-
-            }
-
-            string toLog = sb.ToString();
-            this.logger.Log(toLog);
-        }
-
         private ReportResult RunAndProcessReport(string[] coverOutputFiles, CancellationToken vsShutdownLinkedCancellationToken)
         {
             string reportOutputFolder = this.coverageOutputManager.GetReportOutputFolder();
             vsShutdownLinkedCancellationToken.ThrowIfCancellationRequested();
             ReportGeneratorResult result = this.reportGeneratorUtil.Generate(coverOutputFiles, reportOutputFolder, vsShutdownLinkedCancellationToken);
-            this.LogSummaryResult(result.SummaryResult);
             vsShutdownLinkedCancellationToken.ThrowIfCancellationRequested();
             this.logger.Log("Processing cobertura");
             IFileLineCoverage coverageLines = this.coberturaUtil.ProcessCoberturaXml(result.UnifiedXmlFile);
@@ -315,16 +267,16 @@ namespace FineCodeCoverage.Engine
         }
 
         public void RunAndProcessReport(string[] coberturaFiles, Action cleanUp = null) => this.RunCancellableCoverageTask((vsShutdownLinkedCancellationToken) =>
-                                                                                                    {
-                                                                                                        var reportResult = new ReportResult();
+        {
+            var reportResult = new ReportResult();
 
-                                                                                                        if (coberturaFiles.Any())
-                                                                                                        {
-                                                                                                            reportResult = this.RunAndProcessReport(coberturaFiles, vsShutdownLinkedCancellationToken);
-                                                                                                        }
+            if (coberturaFiles.Any())
+            {
+                reportResult = this.RunAndProcessReport(coberturaFiles, vsShutdownLinkedCancellationToken);
+            }
 
-                                                                                                        return Task.FromResult(reportResult);
-                                                                                                    }, cleanUp);
+            return Task.FromResult(reportResult);
+        }, cleanUp);
 
         private void RunCancellableCoverageTask(
             Func<CancellationToken, Task<ReportResult>> reportResultProvider, Action cleanUp)
@@ -346,24 +298,24 @@ namespace FineCodeCoverage.Engine
         }
 
         public void ReloadCoverage(Func<Task<List<ICoverageProject>>> coverageRequestCallback) => this.RunCancellableCoverageTask(async (vsShutdownLinkedCancellationToken) =>
-                                                                                                           {
-                                                                                                               var reportResult = new ReportResult();
+        {
+            var reportResult = new ReportResult();
 
-                                                                                                               this.LogReloadCoverageStatus(ReloadCoverageStatus.Start);
+            this.LogReloadCoverageStatus(ReloadCoverageStatus.Start);
 
-                                                                                                               List<ICoverageProject> coverageProjects = await coverageRequestCallback();
-                                                                                                               vsShutdownLinkedCancellationToken.ThrowIfCancellationRequested();
+            List<ICoverageProject> coverageProjects = await coverageRequestCallback();
+            vsShutdownLinkedCancellationToken.ThrowIfCancellationRequested();
 
-                                                                                                               this.coverageOutputManager.SetProjectCoverageOutputFolder(coverageProjects);
+            this.coverageOutputManager.SetProjectCoverageOutputFolder(coverageProjects);
 
-                                                                                                               string[] coverOutputFiles = await this.RunCoverageAsync(coverageProjects, vsShutdownLinkedCancellationToken);
-                                                                                                               if (coverOutputFiles.Any())
-                                                                                                               {
-                                                                                                                   reportResult = this.RunAndProcessReport(coverOutputFiles, vsShutdownLinkedCancellationToken);
-                                                                                                               }
+            string[] coverOutputFiles = await this.RunCoverageAsync(coverageProjects, vsShutdownLinkedCancellationToken);
+            if (coverOutputFiles.Any())
+            {
+                reportResult = this.RunAndProcessReport(coverOutputFiles, vsShutdownLinkedCancellationToken);
+            }
 
-                                                                                                               return reportResult;
-                                                                                                           }, null);
+            return reportResult;
+        }, null);
 
         public void Dispose()
         {

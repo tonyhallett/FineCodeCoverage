@@ -82,7 +82,8 @@ namespace TreeGrid
         public void AdjustWidth(double width)
         {
             this._rootWidth = width;
-            this.AdjustedWidth = new GridLength(width - GetAdjustedWidth(Depth));
+            var adjustedWidth = GetAdjustedWidth(Depth);
+            this.AdjustedWidth = new GridLength(width - adjustedWidth);
             foreach (var treeItem in this.Children)
                 treeItem.AdjustWidth(width);
         }

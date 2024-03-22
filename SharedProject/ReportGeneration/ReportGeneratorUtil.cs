@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using Palmmedia.ReportGenerator.Core;
 using Palmmedia.ReportGenerator.Core.Logging;
 
@@ -19,6 +21,7 @@ namespace FineCodeCoverage.ReportGeneration
         private readonly IHotspotsService hotspotsService;
         private readonly List<string> errorMessages = new List<string>();
         private readonly string capturingReportBuilderPluginAssemblyLocation = typeof(CapturingReportBuilder).Assembly.Location;
+        private readonly Regex fileDoesNotExistAnymoreRegex = new Regex(@"File '.*' does not exist \(any more\)\.", RegexOptions.Compiled);
 
         [ImportingConstructor]
         public ReportGeneratorUtil(
@@ -42,7 +45,11 @@ namespace FineCodeCoverage.ReportGeneration
                 }
                 else
                 {
-                    logger.Log(message);
+                    Match matched = this.fileDoesNotExistAnymoreRegex.Match(message);
+                    if(!matched.Success)
+                    {
+                        this.logger.Log(message);
+                    }
                 }
             });
         }

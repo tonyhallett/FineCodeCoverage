@@ -25,9 +25,8 @@
         <tg:TreeGridControl.ItemTemplate>
             <DataTemplate>
                 <StackPanel>
-                    <TextBlock Tag="FirstColumn"  Text="{Binding Name}"/>
-                    <TextBlock Tag="SecondColumn" Text="To"/>
-                    <TextBlock Tag="ThirdColumn" Text="World" />
+                    <TextBlock Tag="Name"  Text="{Binding Name}"/>
+                    <TextBlock Tag="CoverableLines" Text="{Binding CoverableLines}"/>
                 </StackPanel>
             </DataTemplate>
         </tg:TreeGridControl.ItemTemplate>
