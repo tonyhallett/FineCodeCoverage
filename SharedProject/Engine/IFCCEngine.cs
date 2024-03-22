@@ -10,7 +10,7 @@ namespace FineCodeCoverage.Engine
         void Initialize(System.Threading.CancellationToken cancellationToken);
         void StopCoverage();
         void ReloadCoverage(Func<System.Threading.Tasks.Task<List<ICoverageProject>>> coverageRequestCallback);
-        void RunAndProcessReport(string[] coberturaFiles, Action cleanUp = null);
+        void RunAndProcessReport(string[] coberturaFiles,List<ICoverageProject> coverageProjects, Action cleanUp = null);
         void ClearUI();
     }
 }

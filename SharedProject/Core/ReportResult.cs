@@ -1,4 +1,5 @@
-﻿using FineCodeCoverage.Engine.Model;
+﻿using System.Collections.Generic;
+using FineCodeCoverage.Engine.Model;
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 
 namespace FineCodeCoverage.Engine
@@ -9,5 +10,6 @@ namespace FineCodeCoverage.Engine
         public SummaryResult SummaryResult { get; set; }
         public string HotspotsFile { get; set; }
         public string CoberturaFile { get; set; }
+        public List<ICoverageProject> CoverageProjects { get; internal set; }
     }
 }

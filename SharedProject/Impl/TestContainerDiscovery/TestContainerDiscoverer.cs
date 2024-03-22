@@ -122,7 +122,6 @@ namespace FineCodeCoverage.Impl
                     fccEngine.ReloadCoverage(() =>
                     {
                         return testOperationFactory.Create(operation).GetCoverageProjectsAsync();
-
                     });
                 }
                 else
@@ -156,7 +155,7 @@ namespace FineCodeCoverage.Impl
                     break;
             }
 
-            eventAggregator.SendMessage(new CoverageEndedMessage(coverageEndedStatus));
+            eventAggregator.SendMessage(new CoverageEndedMessage(coverageEndedStatus,null));
         }
 
         private async Task TestExecutionFinishedAsync(IOperation operation)

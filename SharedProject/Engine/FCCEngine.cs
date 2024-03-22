@@ -180,7 +180,7 @@ namespace FineCodeCoverage.Engine
 
         private void RaiseNewReport(SummaryResult summaryResult) => this.eventAggregator.SendMessage(new NewReportMessage(summaryResult));
 
-        private ReportResult RunAndProcessReport(string[] coverOutputFiles, CancellationToken vsShutdownLinkedCancellationToken)
+        private ReportResult RunAndProcessReport(string[] coverOutputFiles,CancellationToken vsShutdownLinkedCancellationToken)
         {
             string reportOutputFolder = this.coverageOutputManager.GetReportOutputFolder();
             vsShutdownLinkedCancellationToken.ThrowIfCancellationRequested();
@@ -228,14 +228,13 @@ namespace FineCodeCoverage.Engine
         private void DisplayCoverageResult(Task<ReportResult> t, object state)
         {
             var displayCoverageResultState = (CoverageTaskState)state;
-            CoverageEndedStatus coverageEndedStatus = CoverageEndedStatus.Success;
             if (!this.IsVsShutdown)
             {
                 switch (t.Status)
                 {
                     case TaskStatus.Canceled:
                         this.LogReloadCoverageStatus(ReloadCoverageStatus.Cancelled);
-                        coverageEndedStatus = CoverageEndedStatus.Cancelled;
+                        this.eventAggregator.SendMessage(new CoverageEndedMessage(CoverageEndedStatus.Cancelled, null));
                         break;
                     case TaskStatus.Faulted:
                         Exception innerException = t.Exception.InnerExceptions[0];
@@ -243,12 +242,13 @@ namespace FineCodeCoverage.Engine
                             this.GetLogReloadCoverageStatusMessage(ReloadCoverageStatus.Error),
                             innerException
                         );
-                        coverageEndedStatus = CoverageEndedStatus.Faulted;
+                        this.eventAggregator.SendMessage(new CoverageEndedMessage(CoverageEndedStatus.Faulted, null));
                         break;
                     case TaskStatus.RanToCompletion:
                         this.LogReloadCoverageStatus(ReloadCoverageStatus.Done);
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
+                        this.eventAggregator.SendMessage(new CoverageEndedMessage(CoverageEndedStatus.Success, t.Result.CoverageProjects));
                         this.UpdateUI(t.Result.FileLineCoverage, t.Result.SummaryResult);
                         this.RaiseReportFiles(t.Result);
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
@@ -257,7 +257,6 @@ namespace FineCodeCoverage.Engine
                 }
             }
 
-            this.eventAggregator.SendMessage(new CoverageEndedMessage(coverageEndedStatus));
             displayCoverageResultState.CleanUp?.Invoke();
             displayCoverageResultState.CancellationTokenSource.Dispose();
         }
@@ -270,13 +269,14 @@ namespace FineCodeCoverage.Engine
             }
         }
 
-        public void RunAndProcessReport(string[] coberturaFiles, Action cleanUp = null) => this.RunCancellableCoverageTask((vsShutdownLinkedCancellationToken) =>
+        public void RunAndProcessReport(string[] coberturaFiles, List<ICoverageProject> coverageProjects, Action cleanUp = null) => this.RunCancellableCoverageTask((vsShutdownLinkedCancellationToken) =>
         {
             var reportResult = new ReportResult();
 
             if (coberturaFiles.Any())
             {
                 reportResult = this.RunAndProcessReport(coberturaFiles, vsShutdownLinkedCancellationToken);
+                reportResult.CoverageProjects = coverageProjects;
             }
 
             return Task.FromResult(reportResult);
@@ -316,6 +316,7 @@ namespace FineCodeCoverage.Engine
             if (coverOutputFiles.Any())
             {
                 reportResult = this.RunAndProcessReport(coverOutputFiles, vsShutdownLinkedCancellationToken);
+                reportResult.CoverageProjects = coverageProjects;
             }
 
             return reportResult;

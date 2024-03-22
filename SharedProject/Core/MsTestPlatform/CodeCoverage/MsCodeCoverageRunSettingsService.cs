@@ -332,7 +332,7 @@ namespace FineCodeCoverage.Engine.MsTestPlatform.CodeCoverage
                 logger.Log("No cobertura files for ms code coverage.");
             }
 
-            fccEngine.RunAndProcessReport(coberturaFiles);
+            fccEngine.RunAndProcessReport(coberturaFiles,coverageProjectsByType.All);
         }
 
         private string[] GetCoberturaFiles(IOperation operation)

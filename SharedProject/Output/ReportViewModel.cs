@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Linq;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Engine;
 using FineCodeCoverage.Engine.Messages;
@@ -28,6 +29,7 @@ namespace FineCodeCoverage.Output
         IListener<CoverageStartingMessage>,
         IListener<CoverageEndedMessage>
     {
+        private List<string> testAssemblyNames;
         //ReportColumnManager to be injected by interface
         // Factory for the specific tree items
         [ImportingConstructor]
@@ -67,7 +69,13 @@ namespace FineCodeCoverage.Output
                     this._items.Clear();
                     foreach (Assembly assembly in assemblies)
                     {
-                        var assemblyTreeItem = new AssemblyTreeItem(assembly);
+                        bool isTestAssembly = false;
+                        if(this.testAssemblyNames != null && this.testAssemblyNames.Contains(assembly.Name))
+                        {
+                            isTestAssembly = true;
+                        }
+
+                        var assemblyTreeItem = new AssemblyTreeItem(assembly, isTestAssembly);
                         assemblyTreeItem.AdjustWidth(firstColumnWidth);
                         this._items.Add(assemblyTreeItem);
                     }
@@ -92,6 +100,18 @@ namespace FineCodeCoverage.Output
 
         public static bool IsRelativePath(string path) => Uri.IsWellFormedUriString(path, UriKind.Relative);
         public void Handle(CoverageStartingMessage message) => this.CoverageRunning = true;
-        public void Handle(CoverageEndedMessage message) => this.CoverageRunning = false;
+        public void Handle(CoverageEndedMessage message)
+        {
+            if(message.CoverageProjects != null)
+            {
+                this.testAssemblyNames = message.CoverageProjects.Select(cp => cp.ProjectName).ToList();
+            }
+            else
+            {
+                this.testAssemblyNames = null;
+            }
+            
+            this.CoverageRunning = false;
+        }
     }
 }

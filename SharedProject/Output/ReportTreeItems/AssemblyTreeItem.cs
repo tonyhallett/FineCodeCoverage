@@ -8,9 +8,10 @@ namespace FineCodeCoverage.Output
 {
     public class AssemblyTreeItem : ReportTreeItemBase
     {
-        public AssemblyTreeItem(Assembly assembly)
+        public AssemblyTreeItem(Assembly assembly, bool isTestAssembly)
         {
             this.Name = assembly.ShortName;
+            this.ImageMoniker = isTestAssembly ? KnownMonikers.Test : KnownMonikers.Module;
             IEnumerable<NamespaceTreeItem> namespaceTreeItems = assembly.Classes.GroupBy(clss =>
             {
                 string[] classNameParts = clss.DisplayName.Split('.');
@@ -31,6 +32,6 @@ namespace FineCodeCoverage.Output
             }
         }
 
-        public override ImageMoniker ImageMoniker => KnownMonikers.Module;
+        public override ImageMoniker ImageMoniker { get; }
     }
 }
