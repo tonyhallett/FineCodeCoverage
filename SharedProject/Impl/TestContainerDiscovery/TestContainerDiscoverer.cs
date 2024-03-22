@@ -30,7 +30,6 @@ namespace FineCodeCoverage.Impl
         private readonly ITestOperationFactory testOperationFactory;
         private readonly ILogger logger;
         private readonly IAppOptionsProvider appOptionsProvider;
-        private readonly IReportGeneratorUtil reportGeneratorUtil;
         private readonly IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService;
         internal Dictionary<TestOperationStates, Func<IOperation, Task>> testOperationStateChangeHandlers;
         private bool cancelling;
@@ -58,12 +57,10 @@ namespace FineCodeCoverage.Impl
             ITestOperationFactory testOperationFactory,
             ILogger logger,
             IAppOptionsProvider appOptionsProvider,
-            IReportGeneratorUtil reportGeneratorUtil,
             IMsCodeCoverageRunSettingsService msCodeCoverageRunSettingsService
         )
         {
             this.appOptionsProvider = appOptionsProvider;
-            this.reportGeneratorUtil = reportGeneratorUtil;
             this.msCodeCoverageRunSettingsService = msCodeCoverageRunSettingsService;
             this.fccEngine = fccEngine;
             this.testOperationStateInvocationManager = testOperationStateInvocationManager;
@@ -95,7 +92,7 @@ namespace FineCodeCoverage.Impl
             cancelling = false;
             runningInParallel = false;
             StopCoverage();
-
+            msCodeCoverageCollectionStatus = MsCodeCoverageCollectionStatus.NotCollecting;
             var settings = appOptionsProvider.Get();
             if (CoverageDisabled(settings))
             {
