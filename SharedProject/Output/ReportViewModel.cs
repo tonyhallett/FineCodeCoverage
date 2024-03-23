@@ -12,17 +12,6 @@ using TreeGrid;
 
 namespace FineCodeCoverage.Output
 {
-    class ReportColumnManager : ColumnManagerBase
-    {
-        public ColumnData Name { get; } = new ColumnData("Name", 0, true, 450);
-        public ColumnData CoverableLines { get; } = new ColumnData("Coverable Lines", 1, true, 120.0, 20);
-        public ReportColumnManager() => this.Columns = new ColumnData[] { this.Name, this.CoverableLines };
-        internal void ShowRelevantHotspotColumns(string usedParser)
-        {
-
-        }
-    }
-
     [Export(typeof(ReportViewModel))]
     internal class ReportViewModel : TreeGridViewModelBase<ReportTreeItemBase, ReportColumnManager>, 
         IListener<NewReportMessage>,
@@ -102,15 +91,7 @@ namespace FineCodeCoverage.Output
         public void Handle(CoverageStartingMessage message) => this.CoverageRunning = true;
         public void Handle(CoverageEndedMessage message)
         {
-            if(message.CoverageProjects != null)
-            {
-                this.testAssemblyNames = message.CoverageProjects.Select(cp => cp.ProjectName).ToList();
-            }
-            else
-            {
-                this.testAssemblyNames = null;
-            }
-            
+            this.testAssemblyNames = message.CoverageProjects?.Select(cp => cp.ProjectName).ToList();
             this.CoverageRunning = false;
         }
     }
