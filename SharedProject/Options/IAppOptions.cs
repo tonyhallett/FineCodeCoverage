@@ -96,7 +96,21 @@
         EditorCoverageColouringMode EditorCoverageColouringMode { get; set; }
     }
 
-    internal interface IAppOptions : IMsCodeCoverageOptions, IOpenCoverCoverletExcludeIncludeOptions, IFCCCommonOptions, IOpenCoverOptions, IEditorCoverageColouringOptions
+    internal interface IReportRiskCommonOptions
+    {
+        int ThresholdForCyclomaticComplexity { get; set; }
+
+        int ThresholdForCrapScore { get; set; }
+    }
+
+    internal interface IReportRiskOpenCoverOptions
+    {
+        int ThresholdForNPathComplexity { get; set; }
+    }
+
+    internal interface IReportRiskOptions : IReportRiskCommonOptions, IReportRiskOpenCoverOptions { }
+
+    internal interface IAppOptions : IReportRiskOptions, IMsCodeCoverageOptions, IOpenCoverCoverletExcludeIncludeOptions, IFCCCommonOptions, IOpenCoverOptions, IEditorCoverageColouringOptions
     {
         bool RunInParallel { get; set; }
         int RunWhenTestsExceed { get; set; }
@@ -109,9 +123,7 @@
         string CoverletCollectorDirectoryPath { get; set; }
         
         string FCCSolutionOutputDirectoryName { get; set; }
-        int ThresholdForCyclomaticComplexity { get; set; }
-        int ThresholdForNPathComplexity { get; set; }
-        int ThresholdForCrapScore { get; set; }
+        
         bool StickyCoverageTable { get; set; }
         bool NamespacedClasses { get; set; }
         bool HideFullyCovered { get; set; }

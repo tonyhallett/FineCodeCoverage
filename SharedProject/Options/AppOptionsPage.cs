@@ -408,6 +408,11 @@ namespace FineCodeCoverage.Options
         public int ThresholdForCyclomaticComplexity { get; set; }
 
         [Category(commonReportCategory)]
+        [Description("When crap score exceeds this value for a method then the method will be present in the risk hotspots tab.")]
+        //[DisplayName("Threshold For Crap Score")]
+        public int ThresholdForCrapScore { get; set; }
+
+        [Category(commonReportCategory)]
         [Description("Set to true for coverage table to have a sticky thead.")]
         //[DisplayName("Sticky Coverage Table")]
         public bool StickyCoverageTable { get; set; }
@@ -444,10 +449,7 @@ namespace FineCodeCoverage.Options
         //[DisplayName("Threshold For NPath Complexity")]
         public int ThresholdForNPathComplexity { get; set; }
 
-        [Category(openCoverReportCategory)]
-        [Description("When crap score exceeds this value for a method then the method will be present in the risk hotspots tab. OpenCover only")]
-        //[DisplayName("Threshold For Crap Score")]
-        public int ThresholdForCrapScore { get; set; }
+
         #endregion
 
         #region coverlet tool only
