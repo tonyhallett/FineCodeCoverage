@@ -12,6 +12,8 @@ using FineCodeCoverage.Engine;
 using EnvDTE80;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Initialization;
+using FineCodeCoverage.Impl;
+using FineCodeCoverage.Output.Pane;
 
 namespace FineCodeCoverage.Output
 {
@@ -57,42 +59,40 @@ namespace FineCodeCoverage.Output
 			// initialization is the Initialize method.
 		}
 
-		/*
+        /*
 			Hack necessary for debugging in 2022 !
 			https://developercommunity.visualstudio.com/t/vsix-tool-window-vs2022-different-instantiation-wh/1663280
 		*/
-		internal static OutputToolWindowContext GetOutputToolWindowContext()
-        {
-			return new OutputToolWindowContext
-			{
-				ReportViewModel = componentModel.GetService<ReportViewModel>(),
-				ShowToolbar = componentModel.GetService<IAppOptionsProvider>().Get().ShowToolWindowToolbar
-			};
-		}
+        internal static OutputToolWindowContext GetOutputToolWindowContext() 
+            => new OutputToolWindowContext
+            {
+                ReportViewModel = componentModel.GetService<ReportViewModel>(),
+                ShowToolbar = componentModel.GetService<IAppOptionsProvider>().Get().ShowToolWindowToolbar
+            };
 
-		/// <summary>
-		/// Initialization of the package; this method is called right after the package is sited, so this is the place
-		/// where you can put all the initialization code that rely on services provided by VisualStudio.
-		/// </summary>
-		/// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
-		/// <param name="progress">A provider for progress updates.</param>
-		/// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
-		protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        /// <summary>
+        /// Initialization of the package; this method is called right after the package is sited, so this is the place
+        /// where you can put all the initialization code that rely on services provided by VisualStudio.
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
+        /// <param name="progress">A provider for progress updates.</param>
+        /// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
 		{
 			// When initialized asynchronously, the current thread may be a background thread at this point.
 			// Do any initialization that requires the UI thread after switching to the UI thread.
-			await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+			await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
 			var _dte2 = (DTE2)GetGlobalService(typeof(SDTE));
 			var sp = new ServiceProvider(_dte2 as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
 			// you cannot MEF import in the constructor of the package
 			componentModel = sp.GetService(typeof(Microsoft.VisualStudio.ComponentModelHost.SComponentModel)) as Microsoft.VisualStudio.ComponentModelHost.IComponentModel;
 			Assumes.Present(componentModel);
-			fccEngine = componentModel.GetService<IFCCEngine>();
-			var eventAggregator = componentModel.GetService<IEventAggregator>();
+            this.fccEngine = componentModel.GetService<IFCCEngine>();
+            IEventAggregator eventAggregator = componentModel.GetService<IEventAggregator>();
 			await OpenCoberturaCommand.InitializeAsync(this, eventAggregator);
 			await OpenHotspotsCommand.InitializeAsync(this, eventAggregator);
-			await ClearUICommand.InitializeAsync(this, fccEngine);
+			await ClearUICommand.InitializeAsync(this, this.fccEngine);
             await OpenFCCOutputPaneCommand.InitializeAsync(this, componentModel.GetService<IShowFCCOutputPane>());
             await OpenSettingsCommand.InitializeAsync(this);
             await OpenMarketplaceRateAndReviewCommand.InitializeAsync(this, componentModel.GetService<IOpenFCCVsMarketplace>());
@@ -105,24 +105,12 @@ namespace FineCodeCoverage.Output
 			await componentModel.GetService<IInitializer>().InitializeAsync(cancellationToken);
         }
 
-        protected override Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken)
-        {
-			return Task.FromResult<object>(GetOutputToolWindowContext());
-		}
+        protected override Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken) 
+            => Task.FromResult<object>(GetOutputToolWindowContext());
 
-        public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType)
-		{
-			return (toolWindowType == typeof(OutputToolWindow).GUID) ? this : null;
-		}
+        public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType) => (toolWindowType == typeof(OutputToolWindow).GUID) ? this : null;
 
-		protected override string GetToolWindowTitle(Type toolWindowType, int id)
-		{
-			if (toolWindowType == typeof(OutputToolWindow))
-			{
-				return $"{Vsix.Name} loading";
-			}
-
-			return base.GetToolWindowTitle(toolWindowType, id);
-		}
-	}
+        protected override string GetToolWindowTitle(Type toolWindowType, int id) 
+            => toolWindowType == typeof(OutputToolWindow) ? $"{Vsix.Name} loading" : base.GetToolWindowTitle(toolWindowType, id);
+    }
 }

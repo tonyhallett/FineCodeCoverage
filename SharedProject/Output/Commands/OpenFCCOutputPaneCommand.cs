@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using FineCodeCoverage.Impl;
+using FineCodeCoverage.Output.Pane;
 using Microsoft.VisualStudio.Shell;
 using Task = System.Threading.Tasks.Task;
 
@@ -34,7 +36,6 @@ namespace FineCodeCoverage.Output
             // Switch to the main thread - the call to AddCommand in OutputToolWindowCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             Instance = new OpenFCCOutputPaneCommand(commandService, showFCCOutputPane);
         }

@@ -77,6 +77,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\NewCoverageLinesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\ReportFilesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\ReloadCoverageStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPane.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPaneCreator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IFCCOutputWindowPane.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IFCCOutputWindowPaneCreator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IShowFCCOutputPane.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\FirstTimeToolWindowOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IFirstTimeToolWindowOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IInitializable.cs" />
@@ -364,7 +369,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Editor\Management\TextFormattingRunPropertiesFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Cobertura\CoverageType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ILogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\Logger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\RunSettingsRetriever.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TestContainerDiscovery\ContainerData.cs" />
@@ -436,6 +441,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Editor\DynamicCoverage\Utilities\" />
     <Folder Include="$(MSBuildThisFileDirectory)Editor\DynamicCoverage\Store\" />
     <Folder Include="$(MSBuildThisFileDirectory)Editor\DynamicCoverage\NotIncluded\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Output\Pane\" />
     <Folder Include="$(MSBuildThisFileDirectory)Output\ReportTreeItems\" />
     <Folder Include="$(MSBuildThisFileDirectory)ReportGeneration\ReportGenerator\" />
   </ItemGroup>
