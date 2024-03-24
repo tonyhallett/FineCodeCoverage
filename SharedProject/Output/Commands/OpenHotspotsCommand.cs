@@ -36,16 +36,14 @@ namespace FineCodeCoverage.Output
             private set;
         }
 
-
         public static async Task InitializeAsync(AsyncPackage package, IEventAggregator eventAggregator)
         {
             // Switch to the main thread - the call to AddCommand in OutputToolWindowCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
-            OleMenuCommandService commandService = await package.GetServiceAsync((typeof(IMenuCommandService))) as OleMenuCommandService;
+            var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             var dte = ServiceProvider.GlobalProvider.GetService(typeof(SDTE)) as DTE2;
-            //var dte = package.GetServiceAsync(typeof(SDTE)) as DTE2;
             Instance = new OpenHotspotsCommand(commandService, eventAggregator, dte);
         }
 
@@ -60,20 +58,20 @@ namespace FineCodeCoverage.Output
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            this.command = new MenuCommand(this.Execute, menuCommandID);
-            command.Enabled = false;
-            commandService.AddCommand(command);
-            eventAggregator.AddListener(this);
+            this.command = new MenuCommand(this.Execute, menuCommandID)
+            {
+                Enabled = false
+            };
+            commandService.AddCommand(this.command);
+            _ = eventAggregator.AddListener(this);
             this.dte = dte;
         }
 
         public void Handle(ReportFilesMessage message)
         {
-            hotspotsFile = message.HotspotsFile;
-            command.Enabled = true;
+            this.hotspotsFile = message.HotspotsFile;
+            this.command.Enabled = true;
         }
-
-
 
         /// <summary>
         /// This function is the callback used to execute the command when the menu item is clicked.
@@ -85,15 +83,12 @@ namespace FineCodeCoverage.Output
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if(File.Exists(hotspotsFile))
+            if(File.Exists(this.hotspotsFile))
             {
-                dte.ItemOperations.OpenFile(hotspotsFile, EnvDTE.Constants.vsViewKindCode);
+                _ = this.dte.ItemOperations.OpenFile(this.hotspotsFile, EnvDTE.Constants.vsViewKindCode);
             }
         }
 
-        public void Handle(OutdatedOutputMessage message)
-        {
-            command.Enabled = false;
-        }
+        public void Handle(OutdatedOutputMessage message) => this.command.Enabled = false;
     }
 }

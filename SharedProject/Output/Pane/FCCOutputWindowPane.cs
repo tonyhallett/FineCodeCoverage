@@ -43,5 +43,4 @@ namespace FineCodeCoverage.Output.Pane
             return editPoint.GetText(this.fccPaneTextDocument.EndPoint);
         }
     }
-
 }

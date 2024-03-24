@@ -22,10 +22,10 @@ namespace FineCodeCoverage.Core.Utilities
             {
                 this.ratingAndReviewPath += "2022";
             }
+
             this.ratingAndReviewPath += "&ssr=false#review-details";
             this.process = process;
         }
         public void OpenRatingAndReview() => this.process.Start(this.ratingAndReviewPath);
     }
-
 }

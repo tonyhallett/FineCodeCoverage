@@ -34,5 +34,4 @@ namespace FineCodeCoverage.Output
         // crisp image width and margin
         protected override double AdditionalAdjustment => 26;
     }
-
 }
