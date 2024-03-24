@@ -114,6 +114,17 @@
 		  <CanonicalName>FCC.RateAndReview</CanonicalName>
 		  <LocCanonicalName>FCC.RateAndReview</LocCanonicalName>
 		</Strings>
+	  </Button>
+		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidGithubCommand" priority="0x0100" type="Button">
+			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+			<Icon guid="ImageCatalogGuid" id="3809"/>
+			<CommandFlag>IconIsMoniker</CommandFlag>
+			<Strings>
+				<ButtonText>FCC Repository</ButtonText>
+				<CommandName>FCC Repository</CommandName>
+				<CanonicalName>FCC.Repository</CanonicalName>
+				<LocCanonicalName>FCC.Repository</LocCanonicalName>
+			</Strings>
 		</Button>
     </Buttons>
     
@@ -160,6 +171,7 @@
 	  <IDSymbol value="259" name="cmdidOpenFCCOutputPaneCommand" />
 	  <IDSymbol value="260" name="cmdidOpenSettingsCommand" />
 	  <IDSymbol value="261" name="cmdidMarketplaceRateAndReviewCommand" />
+	  <IDSymbol value="262" name="cmdidGithubCommand" />
 	</GuidSymbol>
 
     <!-- images -->
