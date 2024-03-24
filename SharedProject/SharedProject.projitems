@@ -135,6 +135,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IShellPackageLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\ShellPackageLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFCCOutputPaneCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenSettingsCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportColumnManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportTreeItems\AssemblyTreeItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportTreeItems\ClassTreeItem.cs" />

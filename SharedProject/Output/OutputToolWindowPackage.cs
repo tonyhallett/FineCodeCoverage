@@ -94,6 +94,7 @@ namespace FineCodeCoverage.Output
 			await OpenHotspotsCommand.InitializeAsync(this, eventAggregator);
 			await ClearUICommand.InitializeAsync(this, fccEngine);
             await OpenFCCOutputPaneCommand.InitializeAsync(this, componentModel.GetService<IShowFCCOutputPane>());
+            await OpenSettingsCommand.InitializeAsync(this);
 			await OutputToolWindowCommand.InitializeAsync(
 				this,
 				componentModel.GetService<ILogger>(),

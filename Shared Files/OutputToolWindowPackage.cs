@@ -37,6 +37,7 @@ namespace FineCodeCoverage
         public const int cmdidOpenCoberturaCommand = 0x0101;
         public const int cmdidOpenHotspotsCommand = 0x0102;
         public const int cmdidOpenFCCOutputPaneCommand = 0x0103;
+        public const int cmdidOpenSettingsCommand = 0x0104;
         public const int outputToolWindowCommandImageIndex = 0x0001;
         public const int clearUICommandImageIndex = 0x0001;
     }

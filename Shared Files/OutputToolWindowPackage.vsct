@@ -93,6 +93,17 @@
 		  <LocCanonicalName>FCC.OpenLog</LocCanonicalName>
 		</Strings>
 	  </Button>
+	  <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenSettingsCommand" priority="0x0100" type="Button">
+		<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+		<Icon guid="ImageCatalogGuid" id="Settings"/>
+		<CommandFlag>IconIsMoniker</CommandFlag>
+		<Strings>
+		  <ButtonText>Open Settings</ButtonText>
+		  <CommandName>FCC Open Settings</CommandName>
+		  <CanonicalName>FCC.OpenSettings</CanonicalName>
+		  <LocCanonicalName>FCC.OpenSettings</LocCanonicalName>
+		</Strings>
+		</Button>
     </Buttons>
     
     <Menus>
@@ -136,7 +147,8 @@
       <IDSymbol value="257" name="cmdidOpenCoberturaCommand" />
       <IDSymbol value="258" name="cmdidOpenHotspotsCommand" />
 	  <IDSymbol value="259" name="cmdidOpenFCCOutputPaneCommand" />
-    </GuidSymbol>
+	  <IDSymbol value="260" name="cmdidOpenSettingsCommand" />
+	</GuidSymbol>
 
     <!-- images -->
     <GuidSymbol name="guidOutputToolWindowCommandImage" value="{297e101c-4afa-47b1-b382-087cfb4618b0}">
