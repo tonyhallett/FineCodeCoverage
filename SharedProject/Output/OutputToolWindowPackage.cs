@@ -12,7 +12,6 @@ using FineCodeCoverage.Engine;
 using EnvDTE80;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Initialization;
-using FineCodeCoverage.Impl;
 using FineCodeCoverage.Output.Pane;
 
 namespace FineCodeCoverage.Output
