@@ -95,6 +95,7 @@ namespace FineCodeCoverage.Output
 			await ClearUICommand.InitializeAsync(this, fccEngine);
             await OpenFCCOutputPaneCommand.InitializeAsync(this, componentModel.GetService<IShowFCCOutputPane>());
             await OpenSettingsCommand.InitializeAsync(this);
+            await OpenMarketplaceRateAndReviewCommand.InitializeAsync(this, componentModel.GetService<IOpenFCCVsMarketplace>());
 			await OutputToolWindowCommand.InitializeAsync(
 				this,
 				componentModel.GetService<ILogger>(),

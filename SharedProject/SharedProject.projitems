@@ -62,6 +62,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Coverlet\DataCollector\RunSettingsCoverletConfigurationFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Coverlet\ICoverletUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\EnvironmentVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IOpenFCCVsMarketplace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IVsVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\OpenFCCVsMarketplace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\FCCEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\FileSynchronization\FileSynchronization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IAppDataFolder.cs" />
@@ -134,6 +138,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCGithub.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IShellPackageLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\ShellPackageLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenMarketplaceRateAndReviewCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFCCOutputPaneCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenSettingsCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportColumnManager.cs" />
