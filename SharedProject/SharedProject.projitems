@@ -62,10 +62,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Coverlet\DataCollector\RunSettingsCoverletConfigurationFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Coverlet\ICoverletUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\EnvironmentVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCVersioning\IFCCVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IOpenFCCVsMarketplace.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IVsVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersioning\IVsAppId.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersioning\IVsVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\OpenFCCVsMarketplace.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersioning\SVsAppId.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersioning\VsVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\FCCEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\FileSynchronization\FileSynchronization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\IAppDataFolder.cs" />
