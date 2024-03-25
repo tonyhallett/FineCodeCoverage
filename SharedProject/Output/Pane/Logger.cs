@@ -36,7 +36,7 @@ namespace FineCodeCoverage.Output.Pane
                 {
                     if (this._pane == null)
                     {
-                        this._pane = await this.fccOutputWindowCreator.CreateAsync();
+                        this._pane = await this.fccOutputWindowCreator.GetOrCreateAsync();
                     }
 
                     if (this._pane == null)
@@ -82,7 +82,7 @@ namespace FineCodeCoverage.Output.Pane
         {
             if (this._pane == null)
             {
-                this._pane = await this.fccOutputWindowCreator.CreateAsync();
+                this._pane = await this.fccOutputWindowCreator.GetOrCreateAsync();
             }
 
             if (this._pane != null)

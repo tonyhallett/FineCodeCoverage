@@ -24,7 +24,7 @@ namespace FineCodeCoverage.Output.Pane
             IServiceProvider serviceProvider
         ) => this._serviceProvider = serviceProvider;
 
-        public async System.Threading.Tasks.Task<IFCCOutputWindowPane> CreateAsync()
+        public async System.Threading.Tasks.Task<IFCCOutputWindowPane> GetOrCreateAsync()
         {
             if (this.fccOutputWindowPane != null)
             {
