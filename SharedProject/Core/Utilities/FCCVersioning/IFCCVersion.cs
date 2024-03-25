@@ -24,15 +24,15 @@ namespace FineCodeCoverage.Core.Utilities.FCCVersioning
             {
                 this.SetVsixVersion();
             }
+
             return this.version;
         }
-
 
         private void SetVsixVersion()
         {
             var asm = Assembly.GetExecutingAssembly();
             string asmDir = Path.GetDirectoryName(asm.Location);
-            var manifestPath = Path.Combine(asmDir, "extension.vsixmanifest");
+            string manifestPath = Path.Combine(asmDir, "extension.vsixmanifest");
             if (File.Exists(manifestPath))
             {
                 var doc = new XmlDocument();

@@ -64,6 +64,7 @@ namespace FineCodeCoverage.Core.Utilities
             {
                 this.editionName = this.GetAppIdStringProperty(-8620);
             }
+
             return this.editionName;
         }
 
