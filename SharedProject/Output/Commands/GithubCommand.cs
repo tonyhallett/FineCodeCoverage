@@ -1,52 +1,11 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.ComponentModel.Design;
-using FineCodeCoverage.Core.Utilities;
-using FineCodeCoverage.Core.Utilities.FCCVersioning;
-using FineCodeCoverage.Output.Pane;
+using FineCodeCoverage.Github;
 using Microsoft.VisualStudio.Shell;
 using Task = System.Threading.Tasks.Task;
 
 namespace FineCodeCoverage.Output
 {
-    interface IFCCGithubService
-    {
-        void Execute();
-    }
-
-    [Export(typeof(IFCCGithubService))]
-    class FCCGithubService : IFCCGithubService
-    {
-        private readonly IFCCOutputWindowPaneCreator paneCreator;
-        private readonly IVsVersion vsVersion;
-        private readonly IFCCVersion fccVersion;
-
-        [ImportingConstructor]
-        public FCCGithubService(
-            IFCCOutputWindowPaneCreator paneCreator,
-            IVsVersion vsVersion,
-            IFCCVersion fccVersion
-        )
-        {
-            this.paneCreator = paneCreator;
-            this.vsVersion = vsVersion;
-            this.fccVersion = fccVersion;
-        }
-        public void Execute()
-        {
-            ThreadHelper.JoinableTaskFactory.Run(async () =>
-            {
-                var pane = await paneCreator.GetOrCreateAsync();
-                var text = await pane.GetTextAsync();
-                var semanticVersion = vsVersion.GetSemanticVersion();
-                var releaseVersion = vsVersion.GetReleaseVersion();
-                var displayVersion = vsVersion.GetDisplayVersion();
-                var editionName = vsVersion.GetEditionName();
-                var fccVersion = this.fccVersion.GetVersion();
-                var st = "";
-            });
-        }
-    }
     /// <summary>
     /// Command handler
     /// </summary>

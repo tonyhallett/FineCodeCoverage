@@ -80,6 +80,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\NewCoverageLinesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\ReportFilesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\ReloadCoverageStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Github\FCCGithubService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Github\GithubDialogWindow.xaml.cs">
+      <DependentUpon>GithubDialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Github\IFCCGithubService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\GithubCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPane.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPaneCreator.cs" />
@@ -421,8 +426,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\ProcessWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IShownToolWindowHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ShownToolWindowHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Wpf\Themes.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Github\GithubDialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
