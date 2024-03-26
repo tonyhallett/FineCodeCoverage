@@ -8,6 +8,7 @@ using System.Linq;
 using System.ComponentModel.Composition;
 using System.Collections.Generic;
 using FineCodeCoverage.Output;
+using Markdig;
 
 namespace FineCodeCoverage.Readme
 {
@@ -24,7 +25,7 @@ namespace FineCodeCoverage.Readme
 
         // alternative is html
         // Markdown.ToHtml(markdownDocument);
-        private string Markdown
+        private string MarkdownString
         {
             get
             {
@@ -40,12 +41,13 @@ namespace FineCodeCoverage.Readme
 
                     this.markdown = MardownDocumentToString(markdownDocument);
                 }
+
                 return this.markdown;
             }
         }
 
         public void ShowReadMe() 
-            => _ = new ReadMeDialogWindow(this.markdown, this.LinkClicked, this.ImageClicked).ShowModal();
+            => _ = new ReadMeDialogWindow(this.MarkdownString, this.LinkClicked, this.ImageClicked).ShowModal();
 
         private void LinkClicked(string url)
         {
@@ -114,6 +116,7 @@ namespace FineCodeCoverage.Readme
             {
                 readMe = readMe.Substring(0, supportIndex);
             }
+
             return readMe;
         }
     }
