@@ -306,6 +306,7 @@ If you are using option 1) then project and global options will only be used whe
 |FCC Solution Output Directory Name|To have fcc output visible in a sub folder of your solution provide this name|
 |ToolsDirectory|Folder to which copy tools subfolder. Must alredy exist. Requires restart of VS.|
 |ThresholdForCyclomaticComplexity| When [cyclomatic complexity](https://en.wikipedia.org/wiki/Cyclomatic_complexity) exceeds this value for a method then the method will be present in the risk hotspots tab. |
+|ThresholdForCrapScore|When [crap score](https://testing.googleblog.com/2011/02/this-code-is-crap.html) exceeds this value for a method then the method will be present in the risk hotspots tab.|
 |StickyCoverageTable|Set to true for coverage table to have a sticky thead.|
 |NamespacedClasses|Set to false to show types in report in short form. Affects grouping.|
 |NamespaceQualification|Control qualification of types in report when NamespacedClasses is true.<br>FullyQualified - always fully qualify.<br>AlwaysUnqualified - always unqualified.<br>UnqualifiedByNamespace - unqualified when grouping by namespace.<br>QualifiedByNamespaceLevel - omits the first grouping level identifier parts.  Reduces space whilst maintaining uniqueness.|
@@ -358,8 +359,6 @@ If you are using option 1) then project and global options will only be used whe
 |OpenCoverTargetArgs|If supplying your own target you can also supply additional arguments.  FCC supplies the test dll path.|
 |OpenCoverCustomPath|Specify path to open cover exe if you need functionality that the FCC version does not provide.|
 |ThresholdForNPathComplexity|When [npath complexity](https://en.wikipedia.org/wiki/Cyclomatic_complexity) exceeds this value for a method then the method will be present in the risk hotspots tab.|
-|ThresholdForCrapScore|When [crap score](https://testing.googleblog.com/2011/02/this-code-is-crap.html) exceeds this value for a method then the method will be present in the risk hotspots tab.|
- 
 
 ## Exclusions and inclusions
 You probably want to set IncludeReferencedProjects to true.  This will ensure that you do not get coverage for testing frameworks - only your code.
