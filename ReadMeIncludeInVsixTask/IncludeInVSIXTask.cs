@@ -17,9 +17,8 @@ namespace ReadMeIncludeInVsixTask
             var solutionDirectory = GetSolutionDirectory();
             var readMePath = Path.Combine(solutionDirectory.FullName, "README.md");
             var readMe = File.ReadAllText(readMePath);
-            var markdownDocument = Markdown.Parse(readMe);
+            var markdownDocument = Markdown.Parse(readMe, new MarkdownPipelineBuilder().UseAdvancedExtensions().Build());
             var assets = markdownDocument.Descendants<LinkInline>().Where(linkInline => linkInline.IsImage && linkInline.Url != null && Uri.IsWellFormedUriString(linkInline.Url, UriKind.Relative));
-            
             var readMeTaskItem = CreateTaskItem(readMePath);
             IncludesInVsix = assets.Select(asset => CreateTaskItem(GetAssetPath(solutionDirectory.FullName, asset.Url),asset.Url))
                 .Append(readMeTaskItem).ToArray();

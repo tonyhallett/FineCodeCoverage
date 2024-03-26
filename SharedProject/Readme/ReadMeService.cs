@@ -2,7 +2,6 @@
 using System.IO;
 using Markdig.Renderers.Normalize;
 using Markdig.Syntax.Inlines;
-using Markdig;
 using System.Reflection;
 using Markdig.Syntax;
 using System.Linq;
@@ -16,24 +15,37 @@ namespace FineCodeCoverage.Readme
     internal class ReadMeService : IReadMeService
     {
         private readonly IProcess process;
+        private string markdown;
 
         [ImportingConstructor]
         public ReadMeService(
             IProcess process
         ) => this.process = process;
 
-        public void ShowReadMe()
+        // alternative is html
+        // Markdown.ToHtml(markdownDocument);
+        private string Markdown
         {
-            FileInfo readmeFile = GetReadMeFile();
-            MarkdownDocument markdownDocument = GetMarkdownDocument(readmeFile);
-            FixPaths(markdownDocument, readmeFile.Directory);
+            get
+            {
+                if(this.markdown == null)
+                {
+                    FileInfo readmeFile = GetReadMeFile();
+                    MarkdownDocument markdownDocument = GetMarkdownDocument(readmeFile);
+                    FixPaths(markdownDocument, readmeFile.Directory);
 
-            string markdown = MardownDocumentToString(markdownDocument);
-            _ = new ReadMeDialogWindow(markdown,this.LinkClicked, this.ImageClicked).ShowModal();
+                    // the alternative to this is to not use the MarkdownViewer control
+                    // and instead construct the FlowDocument manually
+                    // https://github.com/Kryptos-FR/markdig.wpf/blob/3dced7721c9245b618ce62732d4e078b38d22a89/src/Markdig.Wpf/MarkdownViewer.cs#L84
 
-            // alternative is html
-            //Markdown.ToHtml(markdownDocument);
+                    this.markdown = MardownDocumentToString(markdownDocument);
+                }
+                return this.markdown;
+            }
         }
+
+        public void ShowReadMe() 
+            => _ = new ReadMeDialogWindow(this.markdown, this.LinkClicked, this.ImageClicked).ShowModal();
 
         private void LinkClicked(string url)
         {
@@ -41,20 +53,27 @@ namespace FineCodeCoverage.Readme
             {
                 url = "https://github.com/FortuneN/FineCodeCoverage/blob/master/" + url;
             }
+
             this.process.Start(url);
         }
 
         private static bool IsRelativePath(string url) => Uri.IsWellFormedUriString(url, UriKind.Relative);
 
+        private static bool IsYoutubeImage(string url) => url.StartsWith("https://img.youtube.com");
+
         private void ImageClicked(string url)
         {
-            if (url.StartsWith("https://img.youtube.com"))
+            if (IsYoutubeImage(url))
             {
-                string[] segments = url.Split('/');
-                string videoId = segments[segments.Length - 2];
-                url = $"https://youtu.be/{videoId}";
-                this.process.Start(url);
+                this.process.Start(YoutubeImageToYoutubeVideo(url));
             }
+        }
+
+        private static string YoutubeImageToYoutubeVideo(string url)
+        {
+            string[] segments = url.Split('/');
+            string videoId = segments[segments.Length - 2];
+            return $"https://youtu.be/{videoId}";
         }
 
         private static string MardownDocumentToString(MarkdownDocument markdownDocument)
@@ -84,7 +103,18 @@ namespace FineCodeCoverage.Readme
         private static MarkdownDocument GetMarkdownDocument(FileInfo readmeFile)
         {
             string readMe = File.ReadAllText(readmeFile.FullName);
+            readMe = RemoveAfterSupport(readMe);
             return Markdown.Parse(readMe);
+        }
+
+        private static string RemoveAfterSupport(string readMe)
+        {
+            int supportIndex = readMe.IndexOf("## Please support the project");
+            if (supportIndex != -1)
+            {
+                readMe = readMe.Substring(0, supportIndex);
+            }
+            return readMe;
         }
     }
 }

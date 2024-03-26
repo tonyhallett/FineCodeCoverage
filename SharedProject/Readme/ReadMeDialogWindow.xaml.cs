@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Windows.Documents;
 using Markdig;
+using Markdig.Renderers;
+using Markdig.Syntax;
 using Microsoft.VisualStudio.PlatformUI;
 
 namespace FineCodeCoverage.Readme
