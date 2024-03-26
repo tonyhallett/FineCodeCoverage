@@ -14,6 +14,7 @@ using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Initialization;
 using FineCodeCoverage.Output.Pane;
 using FineCodeCoverage.Github;
+using FineCodeCoverage.Readme;
 
 namespace FineCodeCoverage.Output
 {
@@ -98,6 +99,7 @@ namespace FineCodeCoverage.Output
             await OpenMarketplaceRateAndReviewCommand.InitializeAsync(this, componentModel.GetService<IOpenFCCVsMarketplace>());
             await OpenFCCGithubCommand.InitializeAsync(this, componentModel.GetService<IFCCGithubService>());
             await NewIssueCommand.InitializeAsync(this, componentModel.GetService<IFCCGithubService>());
+            await OpenReadMeCommand.InitializeAsync(this, componentModel.GetService<IReadMeService>());
             await OutputToolWindowCommand.InitializeAsync(
 				this,
 				componentModel.GetService<ILogger>(),

@@ -87,6 +87,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Github\IFCCGithubService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\NewIssueCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFCCGithubCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenReadMeCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPane.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPaneCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IFCCOutputWindowPane.cs" />
@@ -165,6 +166,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ThemedTreeGridColours.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportTreeItems\VisualStudioTreeItemBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Readme\IReadMeService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Readme\ReadMeDialogWindow.xaml.cs">
+      <DependentUpon>ReadMeDialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Readme\ReadMeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\HotspotsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\HtmlFilesToFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportGeneration\IHotspotsService.cs" />
@@ -435,6 +441,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Readme\ReadMeDialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

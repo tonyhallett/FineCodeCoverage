@@ -137,6 +137,17 @@
 				<LocCanonicalName>FCC.NewIssue</LocCanonicalName>
 			</Strings>
 		</Button>
+		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenReadMeCommand" priority="0x0100" type="Button">
+			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+				<Icon guid="ImageCatalogGuid" id="WelcomeUserGuide"/>
+			<CommandFlag>IconIsMoniker</CommandFlag>
+			<Strings>
+				<ButtonText>Open Readme</ButtonText>
+				<CommandName>FCC Readme</CommandName>
+				<CanonicalName>FCC.Readme</CanonicalName>
+				<LocCanonicalName>FCC.Readme</LocCanonicalName>
+			</Strings>
+		</Button>
     </Buttons>
     
     <Menus>
@@ -184,6 +195,7 @@
 	  <IDSymbol value="261" name="cmdidMarketplaceRateAndReviewCommand" />
 	  <IDSymbol value="262" name="cmdidOpenFCCGithubCommand" />
 	  <IDSymbol value="263" name="cmdidNewIssueCommand" />
+	  <IDSymbol value="264" name="cmdidOpenReadMeCommand" />
 	</GuidSymbol>
 
     <!-- images -->
