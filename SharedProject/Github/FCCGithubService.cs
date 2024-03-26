@@ -30,7 +30,7 @@ namespace FineCodeCoverage.Github
 
         public void NewIssue()
         {
-            new GithubDialogWindow().ShowDialog();
+            new NewIssueDialogWindow().ShowModal();
             //ThreadHelper.JoinableTaskFactory.Run(async () =>
             //{
             //    var pane = await paneCreator.GetOrCreateAsync();

@@ -81,8 +81,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\ReportFilesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\ReloadCoverageStatus.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github\FCCGithubService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Github\GithubDialogWindow.xaml.cs">
-      <DependentUpon>GithubDialogWindow.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Github\NewIssueDialogWindow.xaml.cs">
+      <DependentUpon>NewIssueDialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Github\IFCCGithubService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\NewIssueCommand.cs" />
@@ -430,7 +430,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Wpf\Themes.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="$(MSBuildThisFileDirectory)Github\GithubDialogWindow.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Github\NewIssueDialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
