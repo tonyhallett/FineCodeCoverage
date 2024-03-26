@@ -2,6 +2,7 @@
 {
     interface IFCCGithubService
     {
-        void Execute();
+        void NewIssue();
+        void Navigate();
     }
 }

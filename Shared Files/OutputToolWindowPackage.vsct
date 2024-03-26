@@ -115,15 +115,26 @@
 		  <LocCanonicalName>FCC.RateAndReview</LocCanonicalName>
 		</Strings>
 	  </Button>
-		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidGithubCommand" priority="0x0100" type="Button">
+		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenFCCGithubCommand" priority="0x0100" type="Button">
 			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
 			<Icon guid="ImageCatalogGuid" id="3809"/>
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
-				<ButtonText>FCC Repository</ButtonText>
-				<CommandName>FCC Repository</CommandName>
-				<CanonicalName>FCC.Repository</CanonicalName>
-				<LocCanonicalName>FCC.Repository</LocCanonicalName>
+				<ButtonText>Open FCC Github</ButtonText>
+				<CommandName>FCC Open Github</CommandName>
+				<CanonicalName>FCC.OpenGithub</CanonicalName>
+				<LocCanonicalName>FCC.OpenGithub</LocCanonicalName>
+			</Strings>
+		</Button>
+		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidNewIssueCommand" priority="0x0100" type="Button">
+			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+				<Icon guid="ImageCatalogGuid" id="NewBug"/>
+			<CommandFlag>IconIsMoniker</CommandFlag>
+			<Strings>
+				<ButtonText>New Issue</ButtonText>
+				<CommandName>FCC New Issue</CommandName>
+				<CanonicalName>FCC.NewIssue</CanonicalName>
+				<LocCanonicalName>FCC.NewIssue</LocCanonicalName>
 			</Strings>
 		</Button>
     </Buttons>
@@ -171,7 +182,8 @@
 	  <IDSymbol value="259" name="cmdidOpenFCCOutputPaneCommand" />
 	  <IDSymbol value="260" name="cmdidOpenSettingsCommand" />
 	  <IDSymbol value="261" name="cmdidMarketplaceRateAndReviewCommand" />
-	  <IDSymbol value="262" name="cmdidGithubCommand" />
+	  <IDSymbol value="262" name="cmdidOpenFCCGithubCommand" />
+	  <IDSymbol value="263" name="cmdidNewIssueCommand" />
 	</GuidSymbol>
 
     <!-- images -->

@@ -2,6 +2,7 @@
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Output.Pane;
 using System.ComponentModel.Composition;
+using FineCodeCoverage.Output;
 
 namespace FineCodeCoverage.Github
 {
@@ -11,20 +12,23 @@ namespace FineCodeCoverage.Github
         private readonly IFCCOutputWindowPaneCreator paneCreator;
         private readonly IVsVersion vsVersion;
         private readonly IFCCVersion fccVersion;
+        private readonly IProcess process;
 
         [ImportingConstructor]
         public FCCGithubService(
             IFCCOutputWindowPaneCreator paneCreator,
             IVsVersion vsVersion,
-            IFCCVersion fccVersion
+            IFCCVersion fccVersion,
+            IProcess process
         )
         {
             this.paneCreator = paneCreator;
             this.vsVersion = vsVersion;
             this.fccVersion = fccVersion;
+            this.process = process;
         }
 
-        public void Execute()
+        public void NewIssue()
         {
             new GithubDialogWindow().ShowDialog();
             //ThreadHelper.JoinableTaskFactory.Run(async () =>
@@ -39,5 +43,7 @@ namespace FineCodeCoverage.Github
             //    var st = "";
             //});
         }
+
+        public void Navigate() => this.process.Start("https://github.com/FortuneN/FineCodeCoverage");
     }
 }

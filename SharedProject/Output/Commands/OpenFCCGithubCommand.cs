@@ -9,12 +9,12 @@ namespace FineCodeCoverage.Output
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class GithubCommand
+    internal sealed class OpenFCCGithubCommand
     {
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = PackageIds.cmdidGithubCommand;
+        public const int CommandId = PackageIds.cmdidOpenFCCGithubCommand;
 
         /// <summary>
         /// Command menu group (command set GUID).
@@ -24,7 +24,7 @@ namespace FineCodeCoverage.Output
         private readonly MenuCommand command;
         private readonly IFCCGithubService fccGithubService;
 
-        public static GithubCommand Instance
+        public static OpenFCCGithubCommand Instance
         {
             get;
             private set;
@@ -37,7 +37,7 @@ namespace FineCodeCoverage.Output
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new GithubCommand(commandService, fccGithubService);
+            Instance = new OpenFCCGithubCommand(commandService, fccGithubService);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace FineCodeCoverage.Output
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private GithubCommand(OleMenuCommandService commandService, IFCCGithubService fccGithubService)
+        private OpenFCCGithubCommand(OleMenuCommandService commandService, IFCCGithubService fccGithubService)
         {
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
@@ -64,7 +64,7 @@ namespace FineCodeCoverage.Output
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
-            => this.fccGithubService.Execute();
+            => this.fccGithubService.Navigate();
     }
 }
 

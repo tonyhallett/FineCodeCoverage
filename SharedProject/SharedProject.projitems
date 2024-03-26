@@ -85,7 +85,8 @@
       <DependentUpon>GithubDialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Github\IFCCGithubService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\GithubCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\NewIssueCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFCCGithubCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPane.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPaneCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IFCCOutputWindowPane.cs" />

@@ -39,7 +39,8 @@ namespace FineCodeCoverage
         public const int cmdidOpenFCCOutputPaneCommand = 0x0103;
         public const int cmdidOpenSettingsCommand = 0x0104;
         public const int cmdidMarketplaceRateAndReviewCommand = 0x0105;
-        public const int cmdidGithubCommand = 0x0106;
+        public const int cmdidOpenFCCGithubCommand = 0x0106;
+        public const int cmdidNewIssueCommand = 0x0107;
         public const int outputToolWindowCommandImageIndex = 0x0001;
         public const int clearUICommandImageIndex = 0x0001;
     }
