@@ -15,7 +15,7 @@ namespace FineCodeCoverage.Output
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = PackageIds.cmdidOutputToolWindowCommand;
+        public const int CommandId = PackageIds.cmdidOpenReportWindowCommand;
 
         /// <summary>
         /// Command menu group (command set GUID).

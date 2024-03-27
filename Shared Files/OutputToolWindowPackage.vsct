@@ -44,9 +44,9 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <Button guid="guidFCCPackageCmdSet" id="cmdidOutputToolWindowCommand" priority="0x0100" type="Button">
+	  <Button guid="guidFCCPackageCmdSet" id="cmdidOpenReportWindowCommand" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
-        <Icon guid="guidOutputToolWindowCommandImage" id="outputToolWindowCommandImageIndex" />
+        <Icon guid="guidOpenReportWindowCommandImage" id="openReportWindowCommandImageIndex" />
         <Strings>
           <ButtonText>Fine Code Coverage</ButtonText>
         </Strings>
@@ -165,7 +165,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used
             inside a button definition. An important aspect of this declaration is that the element id
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidOutputToolWindowCommandImage" href="Resources\OutputToolWindowCommand.png" usedList="outputToolWindowCommandImageIndex" />
+      <Bitmap guid="guidOpenReportWindowCommandImage" href="Resources\OutputToolWindowCommand.png" usedList="openReportWindowCommandImageIndex" />
       <Bitmap guid="guidClearUICommandImage" href="Resources\ClearUICommand.png" usedList="clearUICommandImageIndex" />
     </Bitmaps>
     <Groups>
@@ -186,7 +186,7 @@
       <IDSymbol value="4128" name="MyMenuGroup" />
       <IDSymbol value="4129" name="ToolWindowToolbar" />
       <IDSymbol value="4130" name="ToolWindowToolbarGroup" />
-      <IDSymbol value="255" name="cmdidOutputToolWindowCommand" />
+      <IDSymbol value="255" name="cmdidOpenReportWindowCommand" />
       <IDSymbol value="256" name="cmdidClearUICommand" />
       <IDSymbol value="257" name="cmdidOpenCoberturaCommand" />
       <IDSymbol value="258" name="cmdidOpenHotspotsCommand" />
@@ -200,8 +200,8 @@
     </GuidSymbol>
 
     <!-- images -->
-    <GuidSymbol name="guidOutputToolWindowCommandImage" value="{297e101c-4afa-47b1-b382-087cfb4618b0}">
-      <IDSymbol name="outputToolWindowCommandImageIndex" value="1" />
+    <GuidSymbol name="guidOpenReportWindowCommandImage" value="{297e101c-4afa-47b1-b382-087cfb4618b0}">
+      <IDSymbol name="openReportWindowCommandImageIndex" value="1" />
     </GuidSymbol>
     
     <GuidSymbol name="guidClearUICommandImage" value="{8252a6d7-bcf3-4518-ae22-ad20ef8d4b63}">

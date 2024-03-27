@@ -18,8 +18,8 @@ namespace FineCodeCoverage
         public const string guidFCCPackageCmdSetString = "d58a999f-4a1b-42df-839a-cb31a0a4fed7";
         public static Guid guidFCCPackageCmdSet = new Guid(guidFCCPackageCmdSetString);
 
-        public const string guidOutputToolWindowCommandImageString = "297e101c-4afa-47b1-b382-087cfb4618b0";
-        public static Guid guidOutputToolWindowCommandImage = new Guid(guidOutputToolWindowCommandImageString);
+        public const string guidOpenReportWindowCommandImageString = "297e101c-4afa-47b1-b382-087cfb4618b0";
+        public static Guid guidOpenReportWindowCommandImage = new Guid(guidOpenReportWindowCommandImageString);
 
         public const string guidClearUICommandImageString = "8252a6d7-bcf3-4518-ae22-ad20ef8d4b63";
         public static Guid guidClearUICommandImage = new Guid(guidClearUICommandImageString);
@@ -35,7 +35,7 @@ namespace FineCodeCoverage
         public const int MyMenuGroup = 0x1020;
         public const int ToolWindowToolbar = 0x1021;
         public const int ToolWindowToolbarGroup = 0x1022;
-        public const int cmdidOutputToolWindowCommand = 0x00FF;
+        public const int cmdidOpenReportWindowCommand = 0x00FF;
         public const int cmdidClearUICommand = 0x0100;
         public const int cmdidOpenCoberturaCommand = 0x0101;
         public const int cmdidOpenHotspotsCommand = 0x0102;
@@ -46,7 +46,7 @@ namespace FineCodeCoverage
         public const int cmdidNewIssueCommand = 0x0107;
         public const int cmdidOpenReadMeCommand = 0x0108;
         public const int cmdidToolWindow1Command = 0x1023;
-        public const int outputToolWindowCommandImageIndex = 0x0001;
+        public const int openReportWindowCommandImageIndex = 0x0001;
         public const int clearUICommandImageIndex = 0x0001;
         public const int bmpPic1 = 0x0001;
         public const int bmpPic2 = 0x0002;
