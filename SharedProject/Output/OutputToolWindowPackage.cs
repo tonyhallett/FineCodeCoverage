@@ -9,7 +9,6 @@ using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft;
 using FineCodeCoverage.Engine;
-using EnvDTE80;
 using FineCodeCoverage.Core.Utilities;
 using FineCodeCoverage.Initialization;
 using FineCodeCoverage.Output.Pane;
@@ -17,6 +16,7 @@ using FineCodeCoverage.Github;
 using FineCodeCoverage.Readme;
 using System.Linq;
 using System.Reflection;
+using Microsoft.VisualStudio.ComponentModelHost;
 
 namespace FineCodeCoverage.Output
 {
@@ -49,7 +49,7 @@ namespace FineCodeCoverage.Output
 	[ProvideToolWindow(typeof(ReadmeToolWindow))]
     public sealed class OutputToolWindowPackage : AsyncPackage
 	{
-		private static Microsoft.VisualStudio.ComponentModelHost.IComponentModel componentModel;
+		private static IComponentModel componentModel;
         private IFCCEngine fccEngine;
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace FineCodeCoverage.Output
 			// initialization is the Initialize method.
 		}
 
-        internal static readonly MethodInfo GetServiceMethod = typeof(Microsoft.VisualStudio.ComponentModelHost.IComponentModel).GetMethod("GetService");
+        internal static readonly MethodInfo GetServiceMethod = typeof(IComponentModel).GetMethod("GetService");
         
         internal static object GetToolWindowContext(Type toolWindowType)
         {
@@ -98,17 +98,20 @@ namespace FineCodeCoverage.Output
 			// When initialized asynchronously, the current thread may be a background thread at this point.
 			// Do any initialization that requires the UI thread after switching to the UI thread.
 			await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-			var _dte2 = (DTE2)GetGlobalService(typeof(SDTE));
-			var sp = new ServiceProvider(_dte2 as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
 			// you cannot MEF import in the constructor of the package
-			componentModel = sp.GetService(typeof(Microsoft.VisualStudio.ComponentModelHost.SComponentModel)) as Microsoft.VisualStudio.ComponentModelHost.IComponentModel;
+			componentModel = await this.GetServiceAsync(typeof(Microsoft.VisualStudio.ComponentModelHost.SComponentModel)) as Microsoft.VisualStudio.ComponentModelHost.IComponentModel;
 			Assumes.Present(componentModel);
+            await this.InitializeCommandsAsync(componentModel);
+			await componentModel.GetService<IInitializer>().InitializeAsync(cancellationToken);
+        }
+
+        private async Task InitializeCommandsAsync(IComponentModel componentModel)
+        {
             this.fccEngine = componentModel.GetService<IFCCEngine>();
             IEventAggregator eventAggregator = componentModel.GetService<IEventAggregator>();
-			await OpenCoberturaCommand.InitializeAsync(this, eventAggregator);
-			await OpenHotspotsCommand.InitializeAsync(this, eventAggregator);
-			await ClearUICommand.InitializeAsync(this, this.fccEngine);
+            await OpenCoberturaCommand.InitializeAsync(this, eventAggregator);
+            await OpenHotspotsCommand.InitializeAsync(this, eventAggregator);
+            await ClearUICommand.InitializeAsync(this, this.fccEngine);
             await OpenFCCOutputPaneCommand.InitializeAsync(this, componentModel.GetService<IShowFCCOutputPane>());
             await OpenSettingsCommand.InitializeAsync(this);
             await OpenMarketplaceRateAndReviewCommand.InitializeAsync(this, componentModel.GetService<IOpenFCCVsMarketplace>());
@@ -116,12 +119,10 @@ namespace FineCodeCoverage.Output
             await NewIssueCommand.InitializeAsync(this, componentModel.GetService<IFCCGithubService>());
             await OpenReadMeCommand.InitializeAsync(this, componentModel.GetService<IReadMeService>());
             await OpenReportWindowCommand.InitializeAsync(
-				this,
-				componentModel.GetService<ILogger>(),
-				componentModel.GetService<IShownReportWindowHistory>()
-			);
-			
-			await componentModel.GetService<IInitializer>().InitializeAsync(cancellationToken);
+                this,
+                componentModel.GetService<ILogger>(),
+                componentModel.GetService<IShownReportWindowHistory>()
+            );
         }
 
         protected override Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken) 

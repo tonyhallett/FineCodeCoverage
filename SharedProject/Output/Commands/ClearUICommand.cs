@@ -61,7 +61,7 @@ namespace FineCodeCoverage.Output
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
-            OleMenuCommandService commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
             Instance = new ClearUICommand(commandService, fccEngine);
         }
 
@@ -75,8 +75,7 @@ namespace FineCodeCoverage.Output
         private void Execute(object sender, EventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            fccEngine.ClearUI();
+            this.fccEngine.ClearUI();
         }
-
     }
 }
