@@ -7,9 +7,9 @@ using Markdig.Syntax;
 using System.Linq;
 using System.ComponentModel.Composition;
 using System.Collections.Generic;
-using FineCodeCoverage.Output;
 using Markdig;
 using Microsoft.VisualStudio.Shell;
+using FineCodeCoverage.Core.Utilities;
 
 namespace FineCodeCoverage.Readme
 {

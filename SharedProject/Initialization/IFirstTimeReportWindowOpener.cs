@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace FineCodeCoverage.Initialization
 {
-    internal interface IFirstTimeToolWindowOpener
+    internal interface IFirstTimeReportWindowOpener
     {
         Task OpenIfFirstTimeAsync(CancellationToken cancellationToken);
     }

@@ -93,8 +93,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IFCCOutputWindowPane.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IFCCOutputWindowPaneCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IShowFCCOutputPane.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Initialization\FirstTimeToolWindowOpener.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Initialization\IFirstTimeToolWindowOpener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Initialization\FirstTimeReportWindowOpener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Initialization\IFirstTimeReportWindowOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IInitializable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Initialization\IInitializedFromTestContainerDiscoverer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\ISourceFileOpener.cs" />
@@ -212,7 +212,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcessUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IResourceProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ISolutionEvents.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IToolWindowOpener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IReportWindowOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IZipFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\LinqExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ListExtensions.cs" />
@@ -225,7 +225,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\SolutionEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\SVsColorThemeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ThrowIf.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolWindowOpener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ReportWindowOpener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\IToolFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\IToolUnzipper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ToolZip\IToolZipProvider.cs" />
@@ -425,17 +425,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenHotspotsCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenCoberturaCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\ClearUICommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\IProcess.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OutputToolWindowCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowControl.xaml.cs">
-      <DependentUpon>OutputToolWindowControl.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IProcess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\ReportToolWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenReportWindowCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\ReportToolWindowContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\ReportToolWindowControl.xaml.cs">
+      <DependentUpon>ReportToolWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowPackage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Output\ProcessWrapper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IShownToolWindowHistory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ShownToolWindowHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IShownReportWindowHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ShownReportWindowHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Wpf\Themes.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -443,7 +443,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowControl.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Output\ReportToolWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,13 +5,13 @@ namespace FineCodeCoverage.Output
 	/// <summary>
 	/// Interaction logic for OutputToolWindowControl.
 	/// </summary>
-	internal partial class OutputToolWindowControl : 
+	internal partial class ReportToolWindowControl : 
 		UserControl
 	{
         /// <summary>
-        /// Initializes a new instance of the <see cref="OutputToolWindowControl"/> class.
+        /// Initializes a new instance of the <see cref="ReportToolWindowControl"/> class.
         /// </summary>
-        public OutputToolWindowControl(ReportViewModel reportViewModel)
+        public ReportToolWindowControl(ReportViewModel reportViewModel)
 		{
             this.DataContext = reportViewModel;
             this.InitializeComponent();

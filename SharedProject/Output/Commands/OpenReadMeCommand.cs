@@ -33,7 +33,7 @@ namespace FineCodeCoverage.Output
 
         public static async Task InitializeAsync(AsyncPackage package, IReadMeService readMeService)
         {
-            // Switch to the main thread - the call to AddCommand in OutputToolWindowCommand's constructor requires
+            // Switch to the main thread - the call to AddCommand in OpenReadMeCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
@@ -67,7 +67,7 @@ namespace FineCodeCoverage.Output
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
             //package.ShowToolWindowAsync(typeof(OutputToolWindow), 0, true, package.DisposalToken);
-            => this.readMeService.ShowReadMe(package);
+            => this.readMeService.ShowReadMe(this.package);
     }
 }
 

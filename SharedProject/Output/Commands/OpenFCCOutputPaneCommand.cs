@@ -33,7 +33,7 @@ namespace FineCodeCoverage.Output
 
         public static async Task InitializeAsync(AsyncPackage package, IShowFCCOutputPane showFCCOutputPane)
         {
-            // Switch to the main thread - the call to AddCommand in OutputToolWindowCommand's constructor requires
+            // Switch to the main thread - the call to AddCommand in OpenFCCOutputPaneCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;

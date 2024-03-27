@@ -5,23 +5,23 @@ using FineCodeCoverage.Core.Utilities;
 
 namespace FineCodeCoverage.Initialization
 {
-    [Export(typeof(IFirstTimeToolWindowOpener))]
-    internal class FirstTimeToolWindowOpener : IFirstTimeToolWindowOpener
+    [Export(typeof(IFirstTimeReportWindowOpener))]
+    internal class FirstTimeReportWindowOpener : IFirstTimeReportWindowOpener
     {
         private readonly IInitializedFromTestContainerDiscoverer initializedFromTestContainerDiscoverer;
-        private readonly IShownToolWindowHistory shownToolWindowHistory;
-        private readonly IToolWindowOpener toolWindowOpener;
+        private readonly IShownReportWindowHistory shownReportWindowHistory;
+        private readonly IReportWindowOpener reportWindowOpener;
 
         [ImportingConstructor]
-        public FirstTimeToolWindowOpener(
+        public FirstTimeReportWindowOpener(
             IInitializedFromTestContainerDiscoverer initializedFromTestContainerDiscoverer,
-            IShownToolWindowHistory shownToolWindowHistory,
-            IToolWindowOpener toolWindowOpener
+            IShownReportWindowHistory shownReportWindowHistory,
+            IReportWindowOpener reportWindowOpener
         )
         {
             this.initializedFromTestContainerDiscoverer = initializedFromTestContainerDiscoverer;
-            this.shownToolWindowHistory = shownToolWindowHistory;
-            this.toolWindowOpener = toolWindowOpener;
+            this.shownReportWindowHistory = shownReportWindowHistory;
+            this.reportWindowOpener = reportWindowOpener;
         }
 
         public async Task OpenIfFirstTimeAsync(CancellationToken cancellationToken)
@@ -29,10 +29,10 @@ namespace FineCodeCoverage.Initialization
             cancellationToken.ThrowIfCancellationRequested();
             if (
                 this.initializedFromTestContainerDiscoverer.InitializedFromTestContainerDiscoverer &&
-                !this.shownToolWindowHistory.HasShownToolWindow
+                !this.shownReportWindowHistory.HasShown
             )
             {
-                await this.toolWindowOpener.OpenToolWindowAsync();
+                await this.reportWindowOpener.OpenAsync();
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿<UserControl
 	Name="FCCOutputToolWindow"
-	x:Class="FineCodeCoverage.Output.OutputToolWindowControl"
+	x:Class="FineCodeCoverage.Output.ReportToolWindowControl"
     x:ClassModifier="internal"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

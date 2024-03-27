@@ -14,7 +14,7 @@ namespace FineCodeCoverage.Initialization
         private readonly IFCCEngine fccEngine;
         private readonly ILogger logger;
         private readonly ICoverageProjectFactory coverageProjectFactory;
-        private readonly IFirstTimeToolWindowOpener firstTimeToolWindowOpener;
+        private readonly IFirstTimeReportWindowOpener firstTimeReportWindowOpener;
 
         public InitializeStatus InitializeStatus { get; set; } = InitializeStatus.Initializing;
         public string InitializeExceptionMessage { get; set; }
@@ -24,7 +24,7 @@ namespace FineCodeCoverage.Initialization
             IFCCEngine fccEngine,
             ILogger logger,
             ICoverageProjectFactory coverageProjectFactory,
-            IFirstTimeToolWindowOpener firstTimeToolWindowOpener,
+            IFirstTimeReportWindowOpener firstTimeReportWindowOpener,
             [ImportMany]
             IInitializable[] initializables
         )
@@ -32,7 +32,7 @@ namespace FineCodeCoverage.Initialization
             this.fccEngine = fccEngine;
             this.logger = logger;
             this.coverageProjectFactory = coverageProjectFactory;
-            this.firstTimeToolWindowOpener = firstTimeToolWindowOpener;
+            this.firstTimeReportWindowOpener = firstTimeReportWindowOpener;
         }
         public async Task InitializeAsync(CancellationToken cancellationToken)
         {
@@ -49,7 +49,7 @@ namespace FineCodeCoverage.Initialization
                 cancellationToken.ThrowIfCancellationRequested();
                 this.logger.Log($"Initialized");
 
-                await this.firstTimeToolWindowOpener.OpenIfFirstTimeAsync(cancellationToken);
+                await this.firstTimeReportWindowOpener.OpenIfFirstTimeAsync(cancellationToken);
             }
             catch (Exception exception)
             {

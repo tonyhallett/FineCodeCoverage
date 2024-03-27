@@ -45,7 +45,7 @@ namespace FineCodeCoverage.Output
 	[ProvideOptionPage(typeof(AppOptionsPage), Vsix.Name, "General", 0, 0, true)]
     [ProvideProfile(typeof(AppOptionsPage), Vsix.Name, Vsix.Name, 101, 102, true)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-	[ProvideToolWindow(typeof(OutputToolWindow), Style = VsDockStyle.Tabbed, DockedHeight = 300, Window = EnvDTE.Constants.vsWindowKindOutput)]
+	[ProvideToolWindow(typeof(ReportToolWindow), Style = VsDockStyle.Tabbed, DockedHeight = 300, Window = EnvDTE.Constants.vsWindowKindOutput)]
 	[ProvideToolWindow(typeof(ReadmeToolWindow))]
     public sealed class OutputToolWindowPackage : AsyncPackage
 	{
@@ -115,10 +115,10 @@ namespace FineCodeCoverage.Output
             await OpenFCCGithubCommand.InitializeAsync(this, componentModel.GetService<IFCCGithubService>());
             await NewIssueCommand.InitializeAsync(this, componentModel.GetService<IFCCGithubService>());
             await OpenReadMeCommand.InitializeAsync(this, componentModel.GetService<IReadMeService>());
-            await OutputToolWindowCommand.InitializeAsync(
+            await OpenReportWindowCommand.InitializeAsync(
 				this,
 				componentModel.GetService<ILogger>(),
-				componentModel.GetService<IShownToolWindowHistory>()
+				componentModel.GetService<IShownReportWindowHistory>()
 			);
 			
 			await componentModel.GetService<IInitializer>().InitializeAsync(cancellationToken);
@@ -127,9 +127,9 @@ namespace FineCodeCoverage.Output
         protected override Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken) 
             => Task.FromResult<object>(GetToolWindowContext(toolWindowType));
 
-        public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType) => (toolWindowType == typeof(OutputToolWindow).GUID) ? this : null;
+        public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType) => (toolWindowType == typeof(ReportToolWindow).GUID) ? this : null;
 
         protected override string GetToolWindowTitle(Type toolWindowType, int id) 
-            => toolWindowType == typeof(OutputToolWindow) ? $"{Vsix.Name} loading" : base.GetToolWindowTitle(toolWindowType, id);
+            => toolWindowType == typeof(ReportToolWindow) ? $"{Vsix.Name} loading" : base.GetToolWindowTitle(toolWindowType, id);
     }
 }

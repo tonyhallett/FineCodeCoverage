@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace FineCodeCoverageTests.Initialization
 {
-    internal class FirstTimeToolWindowOpener_Tests
+    internal class FirstTimeReportWindowOpener_Tests
     {
         private AutoMoqer mocker;
-        private FirstTimeToolWindowOpener firstTimeToolWindowOpener;
+        private FirstTimeReportWindowOpener firstTimeReportlWindowOpener;
 
         [SetUp]
-        public void   SetUp()  {
+        public void SetUp()  {
             mocker = new AutoMoqer();
-            firstTimeToolWindowOpener = mocker.Create<FirstTimeToolWindowOpener>();
+            firstTimeReportlWindowOpener = mocker.Create<FirstTimeReportWindowOpener>();
         }
 
         [TestCase(true,false,true)]
@@ -25,17 +25,17 @@ namespace FineCodeCoverageTests.Initialization
         [TestCase(false, true, false)]
         public async Task It_Should_Open_If_Have_Never_Shown_The_ToolWindow_And_InitializedFromTestContainerDiscoverer_Async(
             bool initializedFromTestContainerDiscoverer,
-            bool hasShownToolWindow,
+            bool hasShownReportWindow,
             bool expectedShown
             )
         {
             mocker.GetMock<IInitializedFromTestContainerDiscoverer>().Setup(x => x.InitializedFromTestContainerDiscoverer).Returns(initializedFromTestContainerDiscoverer);
-            mocker.GetMock<IShownToolWindowHistory>().Setup(x => x.HasShownToolWindow).Returns(hasShownToolWindow);
+            mocker.GetMock<IShownReportWindowHistory>().Setup(x => x.HasShown).Returns(hasShownReportWindow);
 
-            await firstTimeToolWindowOpener.OpenIfFirstTimeAsync(CancellationToken.None);
+            await firstTimeReportlWindowOpener.OpenIfFirstTimeAsync(CancellationToken.None);
 
             var expectedTimes = expectedShown ? Times.Once() : Times.Never();
-            mocker.Verify<IToolWindowOpener>(toolWindowOpener => toolWindowOpener.OpenToolWindowAsync(), expectedTimes);
+            mocker.Verify<IReportWindowOpener>(reportWindowOpener => reportWindowOpener.OpenAsync(), expectedTimes);
 
         }
     }

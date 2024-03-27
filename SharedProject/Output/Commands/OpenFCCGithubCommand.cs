@@ -32,7 +32,7 @@ namespace FineCodeCoverage.Output
 
         public static async Task InitializeAsync(AsyncPackage package, IFCCGithubService fccGithubService)
         {
-            // Switch to the main thread - the call to AddCommand in OutputToolWindowCommand's constructor requires
+            // Switch to the main thread - the call to AddCommand in OpenFCCGithubCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 

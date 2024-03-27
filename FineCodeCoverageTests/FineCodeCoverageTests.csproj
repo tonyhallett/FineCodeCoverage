@@ -128,7 +128,7 @@
     <Compile Include="Editor\DynamicCoverage\TrackingSpanRange_Tests.cs" />
     <Compile Include="FileLineCoverage_Tests.cs" />
     <Compile Include="IncludeInVSIXTask_Tests.cs" />
-    <Compile Include="Initialization\FirstTimeToolWindowOpener_Tests.cs" />
+    <Compile Include="Initialization\FirstTimeReportWindowOpener_Tests.cs" />
     <Compile Include="MsCodeCoverage\ShimCopier_Tests.cs" />
     <Compile Include="MsCodeCoverage\TemplatedRunSettingsService_Tests.cs" />
     <Compile Include="MsCodeCoverage\CustomRunSettingsTemplateProvider_Tests.cs" />
@@ -148,7 +148,7 @@
     <Compile Include="OpenCoverUtil_Tests.cs" />
     <Compile Include="Initialization\PackageLoader_Tests.cs" />
     <Compile Include="ReportGeneration\ReportGeneratorUtil_Tests.cs" />
-    <Compile Include="ShownToolWindowHistory_Tests.cs" />
+    <Compile Include="ShownReportWindowHistory_Tests.cs" />
     <Compile Include="TestHelpers\ExportsInitializable.cs" />
     <Compile Include="TestHelpers\MefOrderAssertions.cs" />
     <Compile Include="TestHelpers\MoqAssertionsHelper.cs" />

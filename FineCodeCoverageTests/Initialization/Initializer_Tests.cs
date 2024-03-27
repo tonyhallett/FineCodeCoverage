@@ -106,7 +106,7 @@ namespace FineCodeCoverageTests.Initialization
 				callOrder.Add(2);
 			});
 
-			mocker.GetMock<IFirstTimeToolWindowOpener>().Setup(firstTimeToolWindowOpener => firstTimeToolWindowOpener.OpenIfFirstTimeAsync(disposalToken)).Callback(() =>
+			mocker.GetMock<IFirstTimeReportWindowOpener>().Setup(firstTimeReportlWindowOpener => firstTimeReportlWindowOpener.OpenIfFirstTimeAsync(disposalToken)).Callback(() =>
 			{
 				callOrder.Add(3);
 			});

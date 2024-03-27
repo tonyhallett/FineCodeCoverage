@@ -7,17 +7,17 @@ using System.IO;
 
 namespace FineCodeCoverageTests
 {
-    internal class ShownToolWindowHistory_Tests
+    internal class ShownReportWindowHistory_Tests
     {
         private AutoMoqer mocker;
-        private ShownToolWindowHistory shownToolWindowHistory;
+        private ShownReportWindowHistory shownReportWindowHistory;
         private string markerFilePath;
 
         [SetUp]
         public void SetUp()
         {
             mocker = new AutoMoqer();
-            shownToolWindowHistory = mocker.Create<ShownToolWindowHistory>();
+            shownReportWindowHistory = mocker.Create<ShownReportWindowHistory>();
             mocker.GetMock<IFCCEngine>().Setup(fccEngine => fccEngine.AppDataFolderPath).Returns("AppDataFolderPath");
             markerFilePath = Path.Combine("AppDataFolderPath", "outputWindowInitialized");
         }
@@ -25,33 +25,33 @@ namespace FineCodeCoverageTests
         [Test]
         public void It_Should_Write_Marker_File_When_ShowedToolWindow_First_Time()
         {
-            shownToolWindowHistory.ShowedToolWindow();
+            shownReportWindowHistory.Showed();
             mocker.Verify<IFileUtil>(f => f.WriteAllText(markerFilePath, string.Empty));
-            shownToolWindowHistory.ShowedToolWindow();
+            shownReportWindowHistory.Showed();
             mocker.Verify<IFileUtil>(f => f.WriteAllText(markerFilePath, string.Empty),Times.Once());
         }
 
         [Test]
-        public void It_Should_HasShownToolWindow_Without_Searching_For_Marker_File_When_ShowedToolWindow_Is_Invoked()
+        public void It_Should_HasShown_Without_Searching_For_Marker_File_When_Showed_Is_Invoked()
         {
-            shownToolWindowHistory.ShowedToolWindow();
+            shownReportWindowHistory.Showed();
             mocker.Verify<IFileUtil>(f => f.Exists(It.IsAny<string>()), Times.Never());
-            Assert.That(shownToolWindowHistory.HasShownToolWindow, Is.True);
+            Assert.That(shownReportWindowHistory.HasShown, Is.True);
         }
 
         [TestCase(true)]
         [TestCase(false)]
-        public void When_ShowedToolWindow_Has_Not_Been_Invoked_Should_Search_For_Marker_File_Once_When_HasShownToolWindow(bool fileExists)
+        public void When_Showed_Has_Not_Been_Invoked_Should_Search_For_Marker_File_Once_When_HasShown(bool fileExists)
         {
             mocker.GetMock<IFileUtil>().Setup(f => f.Exists(markerFilePath)).Returns(fileExists);
 
-            void HasShownToolWindow()
+            void HasShownReportWindow()
             {
-                var hasShownToolWindow = shownToolWindowHistory.HasShownToolWindow;
-                Assert.That(hasShownToolWindow, Is.EqualTo(fileExists));
+                var hasShown = shownReportWindowHistory.HasShown;
+                Assert.That(hasShown, Is.EqualTo(fileExists));
             }
-            HasShownToolWindow();
-            HasShownToolWindow();
+            HasShownReportWindow();
+            HasShownReportWindow();
 
             mocker.Verify<IFileUtil>(f => f.Exists(markerFilePath), Times.Once());
         }
