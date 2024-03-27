@@ -15,6 +15,8 @@ using FineCodeCoverage.Initialization;
 using FineCodeCoverage.Output.Pane;
 using FineCodeCoverage.Github;
 using FineCodeCoverage.Readme;
+using System.Linq;
+using System.Reflection;
 
 namespace FineCodeCoverage.Output
 {
@@ -44,6 +46,7 @@ namespace FineCodeCoverage.Output
     [ProvideProfile(typeof(AppOptionsPage), Vsix.Name, Vsix.Name, 101, 102, true)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[ProvideToolWindow(typeof(OutputToolWindow), Style = VsDockStyle.Tabbed, DockedHeight = 300, Window = EnvDTE.Constants.vsWindowKindOutput)]
+	[ProvideToolWindow(typeof(ReadmeToolWindow))]
     public sealed class OutputToolWindowPackage : AsyncPackage
 	{
 		private static Microsoft.VisualStudio.ComponentModelHost.IComponentModel componentModel;
@@ -64,12 +67,29 @@ namespace FineCodeCoverage.Output
 			Hack necessary for debugging in 2022 !
 			https://developercommunity.visualstudio.com/t/vsix-tool-window-vs2022-different-instantiation-wh/1663280
 		*/
-        internal static OutputToolWindowContext GetOutputToolWindowContext() 
-            => new OutputToolWindowContext
+        //internal static OutputToolWindowContext GetOutputToolWindowContext() 
+        //    => new OutputToolWindowContext
+        //    {
+        //        ReportViewModel = componentModel.GetService<ReportViewModel>(),
+        //        ShowToolbar = componentModel.GetService<IAppOptionsProvider>().Get().ShowToolWindowToolbar
+        //    };
+
+        internal static MethodInfo GetServiceMethod = typeof(Microsoft.VisualStudio.ComponentModelHost.IComponentModel).GetMethod("GetService");
+        internal static object GetToolWindowContext(Type toolWindowType)
+        {
+            ConstructorInfo contextConstructor = toolWindowType.GetConstructors().Where(c => c.GetParameters().Length == 1).First();
+            Type contextType = contextConstructor.GetParameters().First().ParameterType;
+            object context = Activator.CreateInstance(contextType);
+            foreach (PropertyInfo contextProperty in contextType.GetProperties())
             {
-                ReportViewModel = componentModel.GetService<ReportViewModel>(),
-                ShowToolbar = componentModel.GetService<IAppOptionsProvider>().Get().ShowToolWindowToolbar
-            };
+                Type propertyType = contextProperty.PropertyType;
+                MethodInfo getService = GetServiceMethod.MakeGenericMethod(propertyType);
+                contextProperty.SetValue(context, getService.Invoke(componentModel, new object[] { }));
+            }
+            return context;
+        }
+
+        internal static TContext GetToolWindowContext<TToolWindowType,TContext>() => (TContext)GetToolWindowContext(typeof(TToolWindowType));
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -110,7 +130,7 @@ namespace FineCodeCoverage.Output
         }
 
         protected override Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken cancellationToken) 
-            => Task.FromResult<object>(GetOutputToolWindowContext());
+            => Task.FromResult<object>(GetToolWindowContext(toolWindowType));
 
         public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType) => (toolWindowType == typeof(OutputToolWindow).GUID) ? this : null;
 

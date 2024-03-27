@@ -23,6 +23,7 @@ namespace FineCodeCoverage.Output
 
         private readonly MenuCommand command;
         private readonly IReadMeService readMeService;
+        private readonly AsyncPackage package;
 
         public static OpenReadMeCommand Instance
         {
@@ -37,7 +38,7 @@ namespace FineCodeCoverage.Output
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new OpenReadMeCommand(commandService, readMeService);
+            Instance = new OpenReadMeCommand(commandService, readMeService,package);
         }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace FineCodeCoverage.Output
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private OpenReadMeCommand(OleMenuCommandService commandService, IReadMeService readMeService)
+        private OpenReadMeCommand(OleMenuCommandService commandService, IReadMeService readMeService, AsyncPackage package)
         {
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
@@ -54,6 +55,7 @@ namespace FineCodeCoverage.Output
             this.command = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(this.command);
             this.readMeService = readMeService;
+            this.package = package;
         }
 
         /// <summary>
@@ -64,7 +66,8 @@ namespace FineCodeCoverage.Output
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
-            => this.readMeService.ShowReadMe();
+            //package.ShowToolWindowAsync(typeof(OutputToolWindow), 0, true, package.DisposalToken);
+            => this.readMeService.ShowReadMe(package);
     }
 }
 

@@ -20,7 +20,7 @@
   <!--This header contains the command ids for the menus provided by the shell. -->
   <Extern href="vsshlids.h" />
 
-  <Include href="KnownImageIds.vsct"/>
+  <Include href="KnownImageIds.vsct" />
 
   <!--The Commands section is where commands, menus, and menu groups are defined.
       This section uses a Guid to identify the package that provides the command defined inside it. -->
@@ -62,7 +62,7 @@
       </Button>
       <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenCoberturaCommand" priority="0x0100" type="Button">
         <Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-        <Icon guid="ImageCatalogGuid" id="CodeCoverage"/>
+        <Icon guid="ImageCatalogGuid" id="CodeCoverage" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
           <ButtonText>Open Cobertura</ButtonText>
@@ -73,7 +73,7 @@
       </Button>
       <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenHotspotsCommand" priority="0x0100" type="Button">
         <Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-        <Icon guid="ImageCatalogGuid" id="HotSpot"/>
+        <Icon guid="ImageCatalogGuid" id="HotSpot" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
           <ButtonText>Open Hotspots</ButtonText>
@@ -84,7 +84,7 @@
       </Button>
 	  <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenFCCOutputPaneCommand" priority="0x0100" type="Button">
 		<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-		<Icon guid="ImageCatalogGuid" id="Output"/>
+		<Icon guid="ImageCatalogGuid" id="Output" />
 		<CommandFlag>IconIsMoniker</CommandFlag>
 		<Strings>
 		  <ButtonText>Open Log</ButtonText>
@@ -95,7 +95,7 @@
 	  </Button>
 	  <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenSettingsCommand" priority="0x0100" type="Button">
 		<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-		<Icon guid="ImageCatalogGuid" id="Settings"/>
+		<Icon guid="ImageCatalogGuid" id="Settings" />
 		<CommandFlag>IconIsMoniker</CommandFlag>
 		<Strings>
 		  <ButtonText>Open Settings</ButtonText>
@@ -106,7 +106,7 @@
 	  </Button>
 	  <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidMarketplaceRateAndReviewCommand" priority="0x0100" type="Button">
 		<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-		<Icon guid="ImageCatalogGuid" id="VisualStudioFeedback"/>
+		<Icon guid="ImageCatalogGuid" id="VisualStudioFeedback" />
 		<CommandFlag>IconIsMoniker</CommandFlag>
 		<Strings>
 		  <ButtonText>Rate and Review</ButtonText>
@@ -117,7 +117,7 @@
 	  </Button>
 		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenFCCGithubCommand" priority="0x0100" type="Button">
 			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-			<Icon guid="ImageCatalogGuid" id="3809"/>
+			<Icon guid="ImageCatalogGuid" id="3809" />
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
 				<ButtonText>Open FCC Github</ButtonText>
@@ -128,7 +128,7 @@
 		</Button>
 		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidNewIssueCommand" priority="0x0100" type="Button">
 			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-				<Icon guid="ImageCatalogGuid" id="NewBug"/>
+				<Icon guid="ImageCatalogGuid" id="NewBug" />
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
 				<ButtonText>New Issue</ButtonText>
@@ -139,7 +139,7 @@
 		</Button>
 		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenReadMeCommand" priority="0x0100" type="Button">
 			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
-				<Icon guid="ImageCatalogGuid" id="WelcomeUserGuide"/>
+				<Icon guid="ImageCatalogGuid" id="WelcomeUserGuide" />
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
 				<ButtonText>Open Readme</ButtonText>
@@ -173,7 +173,7 @@
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
       </Group>
       <Group guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" priority="0x0000">
-        <Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbar"/>
+        <Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbar" />
       </Group>
     </Groups>
   </Commands>
@@ -184,8 +184,8 @@
 
     <GuidSymbol value="{d58a999f-4a1b-42df-839a-cb31a0a4fed7}" name="guidOutputToolWindowPackageCmdSet">
       <IDSymbol value="4128" name="MyMenuGroup" />
-      <IDSymbol value ="4129" name="ToolWindowToolbar"/>
-      <IDSymbol value ="4130" name="ToolWindowToolbarGroup"/>
+      <IDSymbol value="4129" name="ToolWindowToolbar" />
+      <IDSymbol value="4130" name="ToolWindowToolbarGroup" />
       <IDSymbol value="255" name="cmdidOutputToolWindowCommand" />
       <IDSymbol value="256" name="cmdidClearUICommand" />
       <IDSymbol value="257" name="cmdidOpenCoberturaCommand" />
@@ -196,7 +196,8 @@
 	  <IDSymbol value="262" name="cmdidOpenFCCGithubCommand" />
 	  <IDSymbol value="263" name="cmdidNewIssueCommand" />
 	  <IDSymbol value="264" name="cmdidOpenReadMeCommand" />
-	</GuidSymbol>
+	  <IDSymbol value="4131" name="cmdidToolWindow1Command" />
+    </GuidSymbol>
 
     <!-- images -->
     <GuidSymbol name="guidOutputToolWindowCommandImage" value="{297e101c-4afa-47b1-b382-087cfb4618b0}">
@@ -205,6 +206,15 @@
     
     <GuidSymbol name="guidClearUICommandImage" value="{8252a6d7-bcf3-4518-ae22-ad20ef8d4b63}">
       <IDSymbol name="clearUICommandImageIndex" value="1" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{0da4da8c-d4ce-4134-8d56-a33195833c0b}" name="guidImages">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

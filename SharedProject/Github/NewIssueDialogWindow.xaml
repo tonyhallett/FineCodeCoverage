@@ -11,6 +11,7 @@
                         d:DesignHeight="600"
                         d:DesignWidth="400"
 						fccwpf:Themes.UseVsTheme="True"
+                        Title="New Issue"
 						>
     <Grid>
 		<Button>Hello</Button>

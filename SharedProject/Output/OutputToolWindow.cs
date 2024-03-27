@@ -35,16 +35,15 @@ namespace FineCodeCoverage.Output
 
 		public OutputToolWindow()
         {
-			Initialize(OutputToolWindowPackage.GetOutputToolWindowContext());
+			Initialize(OutputToolWindowPackage.GetToolWindowContext<OutputToolWindow,OutputToolWindowContext>());
 		}
 
 		private void Initialize(OutputToolWindowContext context)
         {
-			if (context.ShowToolbar)
+			if (context.ShowToolWindowToolbar())
 			{
 				this.ToolBar = new CommandID(PackageGuids.guidOutputToolWindowPackageCmdSet, PackageIds.ToolWindowToolbar);
 			}
-            //to see if OutputToolWindow can be internal ( and thus IScriptManager )
             Caption = Vsix.Name;
 
 			// This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,

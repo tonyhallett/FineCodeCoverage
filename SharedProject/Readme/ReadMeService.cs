@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.Collections.Generic;
 using FineCodeCoverage.Output;
 using Markdig;
+using Microsoft.VisualStudio.Shell;
 
 namespace FineCodeCoverage.Readme
 {
@@ -25,7 +26,7 @@ namespace FineCodeCoverage.Readme
 
         // alternative is html
         // Markdown.ToHtml(markdownDocument);
-        private string MarkdownString
+        public string MarkdownString
         {
             get
             {
@@ -41,15 +42,17 @@ namespace FineCodeCoverage.Readme
 
                     this.markdown = MardownDocumentToString(markdownDocument);
                 }
-
                 return this.markdown;
             }
         }
 
-        public void ShowReadMe() 
-            => _ = new ReadMeDialogWindow(this.MarkdownString, this.LinkClicked, this.ImageClicked).ShowModal();
+        public MarkdownPipeline MarkdownPipeline { get; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
-        private void LinkClicked(string url)
+        public void ShowReadMe(AsyncPackage package)
+            //=> _ = new ReadMeDialogWindow(this.MarkdownString, this.LinkClicked, this.ImageClicked).ShowModal();
+            //await package.ShowToolWindowAsync(typeof(OutputToolWindow), 0, true, package.DisposalToken);
+            => _ = package.ShowToolWindowAsync(typeof(ReadmeToolWindow),0, true, package.DisposalToken);
+        public void LinkClicked(string url)
         {
             if (IsRelativePath(url))
             {
@@ -63,7 +66,7 @@ namespace FineCodeCoverage.Readme
 
         private static bool IsYoutubeImage(string url) => url.StartsWith("https://img.youtube.com");
 
-        private void ImageClicked(string url)
+        public void ImageClicked(string url)
         {
             if (IsYoutubeImage(url))
             {
