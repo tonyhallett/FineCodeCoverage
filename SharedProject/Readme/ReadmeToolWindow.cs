@@ -26,7 +26,7 @@ namespace FineCodeCoverage
         /// </summary>
         public ReadmeToolWindow() : base(null) 
             => this.Initialize(
-                OutputToolWindowPackage.GetToolWindowContext<ReadmeToolWindow, ReadmeToolWindowContext>()
+                FCCPackage.GetToolWindowContext<ReadmeToolWindow, ReadmeToolWindowContext>()
             );
 
         public ReadmeToolWindow(ReadmeToolWindowContext context) : base(null) 

@@ -12,8 +12,8 @@ namespace FineCodeCoverage
     /// </summary>
     internal sealed partial class PackageGuids
     {
-        public const string guidOutputToolWindowPackageString = "4e91ba47-cd42-42bc-b92e-3c4355d2eb5f";
-        public static Guid guidOutputToolWindowPackage = new Guid(guidOutputToolWindowPackageString);
+        public const string guidFCCPackageString = "4e91ba47-cd42-42bc-b92e-3c4355d2eb5f";
+        public static Guid guidFCCPackage = new Guid(guidFCCPackageString);
 
         public const string guidOutputToolWindowPackageCmdSetString = "d58a999f-4a1b-42df-839a-cb31a0a4fed7";
         public static Guid guidOutputToolWindowPackageCmdSet = new Guid(guidOutputToolWindowPackageCmdSetString);

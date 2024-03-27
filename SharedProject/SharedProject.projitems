@@ -432,7 +432,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportToolWindowControl.xaml.cs">
       <DependentUpon>ReportToolWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Output\OutputToolWindowPackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\FCCPackage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IShownReportWindowHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ShownReportWindowHistory.cs" />

@@ -37,7 +37,7 @@ namespace FineCodeCoverage.Output
     /// </para>
     /// </remarks>
     [ProvideBindingPath]
-	[Guid(PackageGuids.guidOutputToolWindowPackageString)]
+	[Guid(PackageGuids.guidFCCPackageString)]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
 	[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Id)]
 	[ProvideOptionPage(typeof(AppOptionsPage), Vsix.Name, "General", 0, 0, true)]
@@ -45,7 +45,8 @@ namespace FineCodeCoverage.Output
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[ProvideToolWindow(typeof(ReportToolWindow), Style = VsDockStyle.Tabbed, DockedHeight = 300, Window = EnvDTE.Constants.vsWindowKindOutput)]
 	[ProvideToolWindow(typeof(ReadmeToolWindow))]
-    public sealed class OutputToolWindowPackage : AsyncPackage
+    public sealed class FCCPackage
+        : AsyncPackage
 	{
 		private static IComponentModel componentModel;
         private IFCCEngine fccEngine;
@@ -53,7 +54,7 @@ namespace FineCodeCoverage.Output
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OutputToolWindowPackage"/> class.
 		/// </summary>
-		public OutputToolWindowPackage()
+		public FCCPackage()
 		{
 			// Inside this method you can place any initialization code that does not require
 			// any Visual Studio service because at this point the package object is created but

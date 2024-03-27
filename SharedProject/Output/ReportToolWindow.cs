@@ -31,7 +31,7 @@ namespace FineCodeCoverage.Output
         public ReportToolWindow(ReportToolWindowContext context) : base(null) => this.Initialize(context);
 
         public ReportToolWindow() 
-            => this.Initialize(OutputToolWindowPackage.GetToolWindowContext<ReportToolWindow, ReportToolWindowContext>());
+            => this.Initialize(FCCPackage.GetToolWindowContext<ReportToolWindow, ReportToolWindowContext>());
 
         private void Initialize(ReportToolWindowContext context)
         {
