@@ -44,15 +44,15 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOutputToolWindowCommand" priority="0x0100" type="Button">
+      <Button guid="guidFCCPackageCmdSet" id="cmdidOutputToolWindowCommand" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
         <Icon guid="guidOutputToolWindowCommandImage" id="outputToolWindowCommandImageIndex" />
         <Strings>
           <ButtonText>Fine Code Coverage</ButtonText>
         </Strings>
       </Button>
-      <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidClearUICommand" priority="0x0100" type="Button">
-        <Parent guid="guidOutputToolWindowPackageCmdSet" id="MyMenuGroup" />
+      <Button guid="guidFCCPackageCmdSet" id="cmdidClearUICommand" priority="0x0100" type="Button">
+        <Parent guid="guidFCCPackageCmdSet" id="MyMenuGroup" />
         <Icon guid="guidClearUICommandImage" id="clearUICommandImageIndex" />
         <Strings>
           <ButtonText>FCC Clear UI</ButtonText>
@@ -60,8 +60,8 @@
           <LocCanonicalName>FCC.ClearUI</LocCanonicalName>
         </Strings>
       </Button>
-      <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenCoberturaCommand" priority="0x0100" type="Button">
-        <Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+      <Button guid="guidFCCPackageCmdSet" id="cmdidOpenCoberturaCommand" priority="0x0100" type="Button">
+        <Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
         <Icon guid="ImageCatalogGuid" id="CodeCoverage" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
@@ -71,8 +71,8 @@
           <LocCanonicalName>FCC.OpenCobertura</LocCanonicalName>
         </Strings>
       </Button>
-      <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenHotspotsCommand" priority="0x0100" type="Button">
-        <Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+      <Button guid="guidFCCPackageCmdSet" id="cmdidOpenHotspotsCommand" priority="0x0100" type="Button">
+        <Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
         <Icon guid="ImageCatalogGuid" id="HotSpot" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
@@ -82,8 +82,8 @@
           <LocCanonicalName>FCC.OpenHotspots</LocCanonicalName>
         </Strings>
       </Button>
-	  <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenFCCOutputPaneCommand" priority="0x0100" type="Button">
-		<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+	  <Button guid="guidFCCPackageCmdSet" id="cmdidOpenFCCOutputPaneCommand" priority="0x0100" type="Button">
+		<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
 		<Icon guid="ImageCatalogGuid" id="Output" />
 		<CommandFlag>IconIsMoniker</CommandFlag>
 		<Strings>
@@ -93,8 +93,8 @@
 		  <LocCanonicalName>FCC.OpenLog</LocCanonicalName>
 		</Strings>
 	  </Button>
-	  <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenSettingsCommand" priority="0x0100" type="Button">
-		<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+	  <Button guid="guidFCCPackageCmdSet" id="cmdidOpenSettingsCommand" priority="0x0100" type="Button">
+		<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
 		<Icon guid="ImageCatalogGuid" id="Settings" />
 		<CommandFlag>IconIsMoniker</CommandFlag>
 		<Strings>
@@ -104,8 +104,8 @@
 		  <LocCanonicalName>FCC.OpenSettings</LocCanonicalName>
 		</Strings>
 	  </Button>
-	  <Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidMarketplaceRateAndReviewCommand" priority="0x0100" type="Button">
-		<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+	  <Button guid="guidFCCPackageCmdSet" id="cmdidMarketplaceRateAndReviewCommand" priority="0x0100" type="Button">
+		<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
 		<Icon guid="ImageCatalogGuid" id="VisualStudioFeedback" />
 		<CommandFlag>IconIsMoniker</CommandFlag>
 		<Strings>
@@ -115,8 +115,8 @@
 		  <LocCanonicalName>FCC.RateAndReview</LocCanonicalName>
 		</Strings>
 	  </Button>
-		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenFCCGithubCommand" priority="0x0100" type="Button">
-			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+		<Button guid="guidFCCPackageCmdSet" id="cmdidOpenFCCGithubCommand" priority="0x0100" type="Button">
+			<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
 			<Icon guid="ImageCatalogGuid" id="3809" />
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
@@ -126,8 +126,8 @@
 				<LocCanonicalName>FCC.OpenGithub</LocCanonicalName>
 			</Strings>
 		</Button>
-		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidNewIssueCommand" priority="0x0100" type="Button">
-			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+		<Button guid="guidFCCPackageCmdSet" id="cmdidNewIssueCommand" priority="0x0100" type="Button">
+			<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
 				<Icon guid="ImageCatalogGuid" id="NewBug" />
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
@@ -137,8 +137,8 @@
 				<LocCanonicalName>FCC.NewIssue</LocCanonicalName>
 			</Strings>
 		</Button>
-		<Button guid="guidOutputToolWindowPackageCmdSet" id="cmdidOpenReadMeCommand" priority="0x0100" type="Button">
-			<Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" />
+		<Button guid="guidFCCPackageCmdSet" id="cmdidOpenReadMeCommand" priority="0x0100" type="Button">
+			<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
 				<Icon guid="ImageCatalogGuid" id="WelcomeUserGuide" />
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
@@ -151,7 +151,7 @@
     </Buttons>
     
     <Menus>
-      <Menu guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbar" type="ToolWindowToolbar">
+      <Menu guid="guidFCCPackageCmdSet" id="ToolWindowToolbar" type="ToolWindowToolbar">
         <Strings>
           <ButtonText>Open FCC Files</ButtonText>
         </Strings>
@@ -169,11 +169,11 @@
       <Bitmap guid="guidClearUICommandImage" href="Resources\ClearUICommand.png" usedList="clearUICommandImageIndex" />
     </Bitmaps>
     <Groups>
-      <Group guid="guidOutputToolWindowPackageCmdSet" id="MyMenuGroup" priority="0x0600">
+      <Group guid="guidFCCPackageCmdSet" id="MyMenuGroup" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
       </Group>
-      <Group guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbarGroup" priority="0x0000">
-        <Parent guid="guidOutputToolWindowPackageCmdSet" id="ToolWindowToolbar" />
+      <Group guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" priority="0x0000">
+        <Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbar" />
       </Group>
     </Groups>
   </Commands>
@@ -182,7 +182,7 @@
     <!-- This is the package guid. -->
     <GuidSymbol name="guidFCCPackage" value="{4e91ba47-cd42-42bc-b92e-3c4355d2eb5f}" />
 
-    <GuidSymbol value="{d58a999f-4a1b-42df-839a-cb31a0a4fed7}" name="guidOutputToolWindowPackageCmdSet">
+    <GuidSymbol value="{d58a999f-4a1b-42df-839a-cb31a0a4fed7}" name="guidFCCPackageCmdSet">
       <IDSymbol value="4128" name="MyMenuGroup" />
       <IDSymbol value="4129" name="ToolWindowToolbar" />
       <IDSymbol value="4130" name="ToolWindowToolbarGroup" />

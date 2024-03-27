@@ -20,7 +20,7 @@ namespace FineCodeCoverage.Output
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = PackageGuids.guidOutputToolWindowPackageCmdSet;
+        public static readonly Guid CommandSet = PackageGuids.guidFCCPackageCmdSet;
 
         /// <summary>
         /// VS Package that provides this command, not null.

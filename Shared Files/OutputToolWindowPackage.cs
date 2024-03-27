@@ -15,8 +15,8 @@ namespace FineCodeCoverage
         public const string guidFCCPackageString = "4e91ba47-cd42-42bc-b92e-3c4355d2eb5f";
         public static Guid guidFCCPackage = new Guid(guidFCCPackageString);
 
-        public const string guidOutputToolWindowPackageCmdSetString = "d58a999f-4a1b-42df-839a-cb31a0a4fed7";
-        public static Guid guidOutputToolWindowPackageCmdSet = new Guid(guidOutputToolWindowPackageCmdSetString);
+        public const string guidFCCPackageCmdSetString = "d58a999f-4a1b-42df-839a-cb31a0a4fed7";
+        public static Guid guidFCCPackageCmdSet = new Guid(guidFCCPackageCmdSetString);
 
         public const string guidOutputToolWindowCommandImageString = "297e101c-4afa-47b1-b382-087cfb4618b0";
         public static Guid guidOutputToolWindowCommandImage = new Guid(guidOutputToolWindowCommandImageString);

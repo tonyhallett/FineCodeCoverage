@@ -37,7 +37,7 @@ namespace FineCodeCoverage.Output
         {
             if (context.ShowToolWindowToolbar())
             {
-                this.ToolBar = new CommandID(PackageGuids.guidOutputToolWindowPackageCmdSet, PackageIds.ToolWindowToolbar);
+                this.ToolBar = new CommandID(PackageGuids.guidFCCPackageCmdSet, PackageIds.ToolWindowToolbar);
             }
 
             this.Caption = Vsix.Name;
