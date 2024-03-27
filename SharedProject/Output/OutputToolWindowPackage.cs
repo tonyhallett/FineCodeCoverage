@@ -63,18 +63,8 @@ namespace FineCodeCoverage.Output
 			// initialization is the Initialize method.
 		}
 
-        /*
-			Hack necessary for debugging in 2022 !
-			https://developercommunity.visualstudio.com/t/vsix-tool-window-vs2022-different-instantiation-wh/1663280
-		*/
-        //internal static OutputToolWindowContext GetOutputToolWindowContext() 
-        //    => new OutputToolWindowContext
-        //    {
-        //        ReportViewModel = componentModel.GetService<ReportViewModel>(),
-        //        ShowToolbar = componentModel.GetService<IAppOptionsProvider>().Get().ShowToolWindowToolbar
-        //    };
-
-        internal static MethodInfo GetServiceMethod = typeof(Microsoft.VisualStudio.ComponentModelHost.IComponentModel).GetMethod("GetService");
+        internal static readonly MethodInfo GetServiceMethod = typeof(Microsoft.VisualStudio.ComponentModelHost.IComponentModel).GetMethod("GetService");
+        
         internal static object GetToolWindowContext(Type toolWindowType)
         {
             ConstructorInfo contextConstructor = toolWindowType.GetConstructors().Where(c => c.GetParameters().Length == 1).First();
@@ -86,9 +76,14 @@ namespace FineCodeCoverage.Output
                 MethodInfo getService = GetServiceMethod.MakeGenericMethod(propertyType);
                 contextProperty.SetValue(context, getService.Invoke(componentModel, new object[] { }));
             }
+
             return context;
         }
-
+        
+        /*
+            Hack necessary for debugging in 2022 !
+            https://developercommunity.visualstudio.com/t/vsix-tool-window-vs2022-different-instantiation-wh/1663280
+        */
         internal static TContext GetToolWindowContext<TToolWindowType,TContext>() => (TContext)GetToolWindowContext(typeof(TToolWindowType));
 
         /// <summary>

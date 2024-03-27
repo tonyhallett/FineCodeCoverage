@@ -14,7 +14,8 @@ using Microsoft.VisualStudio.Shell;
 namespace FineCodeCoverage.Readme
 {
     [Export(typeof(IReadMeService))]
-    internal class ReadMeService : IReadMeService
+    [Export(typeof(IReadMeMarkdownViewModel))]
+    internal class ReadMeService : IReadMeService, IReadMeMarkdownViewModel
     {
         private readonly IProcess process;
         private string markdown;
@@ -42,6 +43,7 @@ namespace FineCodeCoverage.Readme
 
                     this.markdown = MardownDocumentToString(markdownDocument);
                 }
+
                 return this.markdown;
             }
         }
@@ -49,9 +51,8 @@ namespace FineCodeCoverage.Readme
         public MarkdownPipeline MarkdownPipeline { get; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
         public void ShowReadMe(AsyncPackage package)
-            //=> _ = new ReadMeDialogWindow(this.MarkdownString, this.LinkClicked, this.ImageClicked).ShowModal();
-            //await package.ShowToolWindowAsync(typeof(OutputToolWindow), 0, true, package.DisposalToken);
             => _ = package.ShowToolWindowAsync(typeof(ReadmeToolWindow),0, true, package.DisposalToken);
+
         public void LinkClicked(string url)
         {
             if (IsRelativePath(url))

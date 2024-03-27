@@ -4,22 +4,22 @@ namespace FineCodeCoverage.Readme
 {
     public partial class ReadmeControl : UserControl
     {
-        private readonly IReadMeService readMeService;
+        private readonly IReadMeMarkdownViewModel readMeMarkdownViewModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadmeControl"/> class.
         /// </summary>
-        public ReadmeControl(IReadMeService readMeService)
+        public ReadmeControl(IReadMeMarkdownViewModel readMeMarkdownViewModel)
         {
             this.InitializeComponent();
-            this.Viewer.Pipeline = readMeService.MarkdownPipeline;
-            this.Viewer.Markdown = readMeService.MarkdownString;
-            this.readMeService = readMeService;
+            this.Viewer.Pipeline = readMeMarkdownViewModel.MarkdownPipeline;
+            this.Viewer.Markdown = readMeMarkdownViewModel.MarkdownString;
+            this.readMeMarkdownViewModel = readMeMarkdownViewModel;
         }
         private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
-            => this.readMeService.LinkClicked(e.Parameter.ToString());
+            => this.readMeMarkdownViewModel.LinkClicked(e.Parameter.ToString());
 
         private void ClickOnImage(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
-            => this.readMeService.ImageClicked(e.Parameter.ToString());
+            => this.readMeMarkdownViewModel.ImageClicked(e.Parameter.ToString());
     }
 }
