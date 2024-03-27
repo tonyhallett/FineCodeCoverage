@@ -3,7 +3,6 @@ using System.Threading;
 using FineCodeCoverage.Options;
 using Microsoft.VisualStudio.Shell;
 using System.Runtime.InteropServices;
-using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -40,7 +39,6 @@ namespace FineCodeCoverage.Output
     [ProvideBindingPath]
 	[Guid(PackageGuids.guidOutputToolWindowPackageString)]
 	[ProvideMenuResource("Menus.ctmenu", 1)]
-	[Export(typeof(OutputToolWindowPackage))]
 	[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Id)]
 	[ProvideOptionPage(typeof(AppOptionsPage), Vsix.Name, "General", 0, 0, true)]
     [ProvideProfile(typeof(AppOptionsPage), Vsix.Name, Vsix.Name, 101, 102, true)]

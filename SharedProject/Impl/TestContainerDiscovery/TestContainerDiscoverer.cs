@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using FineCodeCoverage.Engine;
-using FineCodeCoverage.ReportGeneration;
 using FineCodeCoverage.Options;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
@@ -19,8 +18,6 @@ using FineCodeCoverage.Engine.Messages;
 namespace FineCodeCoverage.Impl
 {
     [Name(Vsix.TestContainerDiscovererName)]
-    // Both exports necessary !
-    [Export(typeof(TestContainerDiscoverer))]
     [Export(typeof(ITestContainerDiscoverer))]
     internal class TestContainerDiscoverer : ITestContainerDiscoverer
     {
