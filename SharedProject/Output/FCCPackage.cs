@@ -44,7 +44,7 @@ namespace FineCodeCoverage.Output
     [ProvideProfile(typeof(AppOptionsPage), Vsix.Name, Vsix.Name, 101, 102, true)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 	[ProvideToolWindow(typeof(ReportToolWindow), Style = VsDockStyle.Tabbed, DockedHeight = 300, Window = EnvDTE.Constants.vsWindowKindOutput)]
-	[ProvideToolWindow(typeof(ReadmeToolWindow))]
+	[ProvideToolWindow(typeof(ReadmeToolWindow),Orientation =ToolWindowOrientation.Right, Style = VsDockStyle.Tabbed, Width = 600, Height = 700)]
     public sealed class FCCPackage
         : AsyncPackage
 	{

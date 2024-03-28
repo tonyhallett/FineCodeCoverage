@@ -5,9 +5,8 @@ using System.Reflection;
 using FineCodeCoverage.Engine;
 using Microsoft.VisualStudio.Shell;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell.Interop;
-using FineCodeCoverage.Core.Utilities;
 using System.ComponentModel.Design;
+using Microsoft.VisualStudio.Imaging.Interop;
 
 namespace FineCodeCoverage.Output
 {
@@ -41,6 +40,7 @@ namespace FineCodeCoverage.Output
             }
 
             this.Caption = Vsix.Name;
+            this.BitmapImageMoniker = Microsoft.VisualStudio.Imaging.KnownMonikers.CodeCoverage;
 
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on

@@ -17,11 +17,11 @@
     </FrameworkElement.CommandBindings>
     <FrameworkElement.Resources>
         <Style x:Key="{x:Static markdig:Styles.HyperlinkStyleKey}" TargetType="{x:Type Hyperlink}">
-            <Setter Property="Inline.TextDecorations">
+            <!--<Setter Property="Inline.TextDecorations">
                 <Setter.Value>
                     <TextDecorationCollection></TextDecorationCollection>
                 </Setter.Value>
-            </Setter>
+            </Setter>-->
             <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static platformui:EnvironmentColors.PanelHyperlinkBrushKey}}"/>
             <Style.Triggers>
                 <MultiDataTrigger>
@@ -37,7 +37,7 @@
             <Setter Property="FlowDocument.FontFamily" Value="Segoe UI"/>
             <Setter Property="FlowDocument.FontSize" Value="12"/>
             <Setter Property="FlowDocument.TextAlignment" Value="Left"/>
-            <Setter Property="FlowDocument.PagePadding" Value="5"/>
+            <Setter Property="FlowDocument.PagePadding" Value="10"/>
         </Style>
         <Style TargetType="{x:Type List}">
             <Setter Property="Block.Margin" Value="0"/>
