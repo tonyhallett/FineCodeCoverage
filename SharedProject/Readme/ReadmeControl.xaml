@@ -47,7 +47,7 @@
             <Setter Property="Shape.Stretch" Value="Fill"/>
             <Setter Property="Shape.Stroke" Value="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"/>
         </Style>
-
+        <Style x:Key="{x:Static markdig:Styles.ParagraphStyleKey}" TargetType="{x:Type Paragraph}"/>
         <Style x:Key="{x:Static markdig:Styles.Heading1StyleKey}" TargetType="{x:Type Paragraph}">
             <Setter Property="TextElement.FontSize" Value="19"/>
             <Setter Property="TextElement.Foreground"
