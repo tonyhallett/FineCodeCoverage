@@ -89,10 +89,9 @@
       <Link>Resources\ClearUICommand.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\Shared Files\Resources\OpenReportWindow.png">
-      <Link>Resources\OpenReportWindow.png</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Resource Include="..\Shared Files\Resources\ReportWindow.png">
+      <Link>Resources\ReportWindow.png</Link>
+    </Resource>
     <Content Include="..\Shared Files\ZippedTools\microsoft.testplatform.16.9.1.zip">
       <Link>ZippedTools\microsoft.testplatform.16.9.1.zip</Link>
       <IncludeInVSIX>true</IncludeInVSIX>

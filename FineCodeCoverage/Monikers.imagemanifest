@@ -6,7 +6,7 @@
   </Symbols>
 	<Images>
 		<Image Guid="$(MonikersGuid)" ID="$(ReportWindowId)">
-			<Source Uri="/FineCodeCoverage;Component/Resources/OpenReportWindow.png">
+			<Source Uri="/FineCodeCoverage;Component/Resources/ReportWindow.png">
 				<Size Value="16" />
 			</Source>
 		</Image>
