@@ -59,12 +59,23 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FCCPackage.vsct</DependentUpon>
     </Compile>
+    <VSCTCompile Include="..\Shared Files\FCCPackage.vsct">
+      <Link>FCCPackage.vsct</Link>
+      <ResourceName>Menus.ctmenu</ResourceName>
+      <Generator>VsctGenerator</Generator>
+      <LastGenOutput>FCCPackage.cs</LastGenOutput>
+    </VSCTCompile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="source.extension.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+      <Generator>VsixManifestGenerator</Generator>
+      <LastGenOutput>source.extension.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\Art\logo.png">
@@ -75,12 +86,7 @@
       <Link>Resources\LICENSE</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <VSCTCompile Include="..\Shared Files\FCCPackage.vsct">
-      <Link>FCCPackage.vsct</Link>
-      <ResourceName>Menus.ctmenu</ResourceName>
-      <Generator>VsctGenerator</Generator>
-      <LastGenOutput>FCCPackage.cs</LastGenOutput>
-    </VSCTCompile>
+
     <Content Include="..\Shared Files\Resources\ClearUICommand.png">
       <Link>Resources\ClearUICommand.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -114,11 +120,7 @@
     <!--
     <None Include="Key.snk" />
 	-->
-    <None Include="source.extension.vsixmanifest">
-      <SubType>Designer</SubType>
-      <Generator>VsixManifestGenerator</Generator>
-      <LastGenOutput>source.extension.cs</LastGenOutput>
-    </None>
+
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CliWrap">
