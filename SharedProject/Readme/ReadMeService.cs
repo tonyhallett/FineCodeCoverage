@@ -115,6 +115,14 @@ namespace FineCodeCoverage.Readme
 
         private static string RemoveAfterSupport(string readMe)
         {
+            /*
+                Note that all information and links should be pertaining to the version of the extension that is being used.
+                In particular, whenver a new youtube video is created the old one should remain.
+
+                todo
+                consider marking the readme with comments for sections that should not be removed
+                https://stackoverflow.com/questions/4823468/comments-in-markdown
+            */
             int supportIndex = readMe.IndexOf("## Please support the project");
             if (supportIndex != -1)
             {
