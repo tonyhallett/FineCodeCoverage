@@ -70,10 +70,6 @@
       <Generator>VsctGenerator</Generator>
       <LastGenOutput>FCCPackage.cs</LastGenOutput>
     </VSCTCompile>
-    <Content Include="..\Art\preview-coverage.png">
-      <Link>Resources\preview-coverage.png</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Resource Include="..\Shared Files\Resources\ReportWindow.png">
       <Link>Resources\ReportWindow.png</Link>
     </Resource>
