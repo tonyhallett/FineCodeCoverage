@@ -62,6 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Coverlet\DataCollector\RunSettingsCoverletConfigurationFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Coverlet\ICoverletUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\EnvironmentVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCVersioning\FCCVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCVersioning\IFCCVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IOpenFCCVsMarketplace.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersioning\IVsAppId.cs" />
