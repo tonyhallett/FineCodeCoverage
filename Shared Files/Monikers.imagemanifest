@@ -18,9 +18,6 @@
 			<Source Uri="/FineCodeCoverage;Component/Resources/buymeacoffee.png">
 				<Size Value="64" />
 			</Source>
-			<Source Uri="/FineCodeCoverage;Component/Resources/buymeacoffee.png">
-				<Size Value="16" />
-			</Source>
 		</Image>
 		<Image Guid="$(MonikersGuid)" ID="$(KofiId)">
 			<Source Uri="/FineCodeCoverage;Component/Resources/kofi.png">
