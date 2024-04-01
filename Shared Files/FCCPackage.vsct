@@ -139,13 +139,24 @@
 		</Button>
 		<Button guid="guidFCCPackageCmdSet" id="cmdidOpenReadMeCommand" priority="0x0100" type="Button">
 			<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
-				<Icon guid="ImageCatalogGuid" id="WelcomeUserGuide" />
+			<Icon guid="ImageCatalogGuid" id="WelcomeUserGuide" />
 			<CommandFlag>IconIsMoniker</CommandFlag>
 			<Strings>
 				<ButtonText>Open Readme</ButtonText>
 				<CommandName>FCC Readme</CommandName>
 				<CanonicalName>FCC.Readme</CanonicalName>
 				<LocCanonicalName>FCC.Readme</LocCanonicalName>
+			</Strings>
+		</Button>
+		<Button guid="guidFCCPackageCmdSet" id="cmdidOpenFundingCommand" priority="0x0100" type="Button">
+			<Parent guid="guidFCCPackageCmdSet" id="ToolWindowToolbarGroup" />
+			<Icon guid="ImageCatalogGuid" id="3994" />
+			<CommandFlag>IconIsMoniker</CommandFlag>
+			<Strings>
+				<ButtonText>Open Funding</ButtonText>
+				<CommandName>FCC Funding</CommandName>
+				<CanonicalName>FCC.Funding</CanonicalName>
+				<LocCanonicalName>FCC.Funding</LocCanonicalName>
 			</Strings>
 		</Button>
     </Buttons>
@@ -196,14 +207,13 @@
 	  <IDSymbol value="262" name="cmdidOpenFCCGithubCommand" />
 	  <IDSymbol value="263" name="cmdidNewIssueCommand" />
 	  <IDSymbol value="264" name="cmdidOpenReadMeCommand" />
-	  <IDSymbol value="4131" name="cmdidToolWindow1Command" />
+	  <IDSymbol value="265" name="cmdidOpenFundingCommand" />
     </GuidSymbol>
 
     <!-- images -->
     <GuidSymbol name="guidOpenReportWindowCommandImage" value="{297e101c-4afa-47b1-b382-087cfb4618b0}">
       <IDSymbol name="openReportWindowCommandImageIndex" value="1" />
     </GuidSymbol>
-    
     <GuidSymbol name="guidClearUICommandImage" value="{8252a6d7-bcf3-4518-ae22-ad20ef8d4b63}">
       <IDSymbol name="clearUICommandImageIndex" value="1" />
     </GuidSymbol>

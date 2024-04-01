@@ -80,6 +80,18 @@
       <Generator>VsixManifestGenerator</Generator>
       <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
+    <Resource Include="..\Shared Files\Resources\kofi.png">
+      <Link>Resources\kofi.png</Link>
+    </Resource>
+    <Resource Include="..\Shared Files\Resources\liberapay.png">
+      <Link>Resources\liberapay.png</Link>
+    </Resource>
+    <Resource Include="..\Shared Files\Resources\paypal.png">
+      <Link>Resources\paypal.png</Link>
+    </Resource>
+    <Resource Include="..\Shared Files\Resources\buymeacoffee.png">
+      <Link>Resources\buymeacoffee.png</Link>
+    </Resource>
     <Content Include="..\Art\logo.png">
       <Link>Resources\logo.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>

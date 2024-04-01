@@ -42,7 +42,7 @@ namespace FineCodeCoverage
         public const int cmdidOpenFCCGithubCommand = 0x0106;
         public const int cmdidNewIssueCommand = 0x0107;
         public const int cmdidOpenReadMeCommand = 0x0108;
-        public const int cmdidToolWindow1Command = 0x1023;
+        public const int cmdidOpenFundingCommand = 0x0109;
         public const int openReportWindowCommandImageIndex = 0x0001;
         public const int clearUICommandImageIndex = 0x0001;
     }

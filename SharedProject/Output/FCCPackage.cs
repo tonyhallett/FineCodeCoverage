@@ -16,6 +16,7 @@ using FineCodeCoverage.Readme;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.ComponentModelHost;
+using FineCodeCoverage.Funding;
 
 namespace FineCodeCoverage.Output
 {
@@ -117,6 +118,7 @@ namespace FineCodeCoverage.Output
             await OpenFCCGithubCommand.InitializeAsync(this, componentModel.GetService<IFCCGithubService>());
             await NewIssueCommand.InitializeAsync(this, componentModel.GetService<IFCCGithubService>());
             await OpenReadMeCommand.InitializeAsync(this, componentModel.GetService<IReadMeService>());
+            await OpenFundingCommand.InitializeAsync(this, componentModel.GetService<IFundingService>());
             await OpenReportWindowCommand.InitializeAsync(
                 this,
                 componentModel.GetService<ILogger>(),

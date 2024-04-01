@@ -81,12 +81,21 @@
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\NewCoverageLinesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\Messages\ReportFilesMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Engine\ReloadCoverageStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Funding\FundingMonikers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Funding\FundingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Funding\IFundingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Funding\FundingDialogWindow.xaml.cs">
+      <DependentUpon>FundingDialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Funding\IFundingViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Funding\ProcessStartCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github\FCCGithubService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github\NewIssueDialogWindow.xaml.cs">
       <DependentUpon>NewIssueDialogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Github\IFCCGithubService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\NewIssueCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFundingCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFCCGithubCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenReadMeCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPane.cs" />
@@ -440,6 +449,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Wpf\Themes.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Funding\FundingDialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Github\NewIssueDialogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -483,7 +496,7 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="$(MSBuildThisFileDirectory)..\Art\*.png">
-      <Link>ReadMeAndAssets\Art</Link>
+      <Link>ReadMeAndAssets\Art\%(FileName)%(Extension)</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>

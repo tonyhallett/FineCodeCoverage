@@ -52,6 +52,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FCCPackage.vsct</DependentUpon>
     </Compile>
+    <Resource Include="..\Shared Files\Resources\kofi.png">
+      <Link>Resources\kofi.png</Link>
+    </Resource>
+    <Resource Include="..\Shared Files\Resources\liberapay.png">
+      <Link>Resources\liberapay.png</Link>
+    </Resource>
+    <Resource Include="..\Shared Files\Resources\paypal.png">
+      <Link>Resources\paypal.png</Link>
+    </Resource>
+    <Resource Include="..\Shared Files\Resources\buymeacoffee.png">
+      <Link>Resources\buymeacoffee.png</Link>
+    </Resource>
     <VSCTCompile Include="..\Shared Files\FCCPackage.vsct">
       <Link>FCCPackage.vsct</Link>
       <ResourceName>Menus.ctmenu</ResourceName>
