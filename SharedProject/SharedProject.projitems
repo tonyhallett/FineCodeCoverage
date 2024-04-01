@@ -478,5 +478,13 @@
     <Content Include="$(MSBuildThisFileDirectory)ZippedTools\*">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="$(MSBuildThisFileDirectory)..\README.md">
+      <Link>ReadMeAndAssets\README.md</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)..\Art\*.png">
+      <Link>ReadMeAndAssets\Art</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
 </Project>

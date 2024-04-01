@@ -127,7 +127,6 @@
     <Compile Include="Editor\DynamicCoverage\TrackedLines_Test.cs" />
     <Compile Include="Editor\DynamicCoverage\TrackingSpanRange_Tests.cs" />
     <Compile Include="FileLineCoverage_Tests.cs" />
-    <Compile Include="IncludeInVSIXTask_Tests.cs" />
     <Compile Include="Initialization\FirstTimeReportWindowOpener_Tests.cs" />
     <Compile Include="MsCodeCoverage\ShimCopier_Tests.cs" />
     <Compile Include="MsCodeCoverage\TemplatedRunSettingsService_Tests.cs" />
@@ -184,10 +183,6 @@
     <ProjectReference Include="..\FineCodeCoverage2022\FineCodeCoverage2022.csproj">
       <Project>{59a22196-a750-4ba4-b30e-be1422e68b8e}</Project>
       <Name>FineCodeCoverage2022</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ReadMeIncludeInVsixTask\ReadMeIncludeInVsixTask.csproj">
-      <Project>{6691807e-36d7-4024-9d8d-46ea26ccccff}</Project>
-      <Name>ReadMeIncludeInVsixTask</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
