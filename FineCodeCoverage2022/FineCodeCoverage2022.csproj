@@ -14,7 +14,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FineCodeCoverage</RootNamespace>
-    <AssemblyName>FineCodeCoverage2022</AssemblyName>
+    <AssemblyName>FineCodeCoverage</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <UseCodebase>true</UseCodebase>
@@ -63,6 +63,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
+    <Content Include="..\Shared Files\Monikers.imagemanifest">
+      <Link>Monikers.imagemanifest</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
@@ -83,9 +87,6 @@
       <Link>Resources\LICENSE</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Monikers.imagemanifest">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>  
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -189,8 +190,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-   <Target Name="AfterBuild">
-       <Message Importance="High" Text="After build *******************"/>
-       <Message Importance="High" Text="@(Content ->Metadata('Link'))"/>
+  <Target Name="AfterBuild">
+    <Message Importance="High" Text="After build *******************" />
+    <Message Importance="High" Text="@(Content -&gt;Metadata('Link'))" />
   </Target>
 </Project>

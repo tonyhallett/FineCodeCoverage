@@ -71,12 +71,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
+    <Content Include="..\Shared Files\Monikers.imagemanifest">
+      <Link>Monikers.imagemanifest</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
       <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
-        <Content Include="..\Art\logo.png">
+    <Content Include="..\Art\logo.png">
       <Link>Resources\logo.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -91,9 +95,6 @@
     <Resource Include="..\Shared Files\Resources\ReportWindow.png">
       <Link>Resources\ReportWindow.png</Link>
     </Resource>
-    <Content Include="Monikers.imagemanifest">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <!--
     <None Include="Key.snk" />
 	-->
