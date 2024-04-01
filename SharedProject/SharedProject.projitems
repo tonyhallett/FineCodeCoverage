@@ -474,4 +474,9 @@
     <Folder Include="$(MSBuildThisFileDirectory)Output\ReportTreeItems\" />
     <Folder Include="$(MSBuildThisFileDirectory)ReportGeneration\ReportGenerator\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)ZippedTools\*">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
 </Project>

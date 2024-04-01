@@ -53,6 +53,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Shared Files\FCCPackage.cs">
       <Link>FCCPackage.cs</Link>
       <AutoGen>True</AutoGen>
@@ -65,7 +66,6 @@
       <Generator>VsctGenerator</Generator>
       <LastGenOutput>FCCPackage.cs</LastGenOutput>
     </VSCTCompile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="source.extension.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -76,9 +76,7 @@
       <Generator>VsixManifestGenerator</Generator>
       <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\Art\logo.png">
+        <Content Include="..\Art\logo.png">
       <Link>Resources\logo.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -86,7 +84,6 @@
       <Link>Resources\LICENSE</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-
     <Content Include="..\Shared Files\Resources\ClearUICommand.png">
       <Link>Resources\ClearUICommand.png</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -94,33 +91,12 @@
     <Resource Include="..\Shared Files\Resources\ReportWindow.png">
       <Link>Resources\ReportWindow.png</Link>
     </Resource>
-    <Content Include="..\Shared Files\ZippedTools\microsoft.testplatform.16.9.1.zip">
-      <Link>ZippedTools\microsoft.testplatform.16.9.1.zip</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\Shared Files\ZippedTools\openCover.4.7.922.zip">
-      <Link>ZippedTools\openCover.4.7.922.zip</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\Shared Files\ZippedTools\coverlet.collector.3.2.0.zip">
-      <Link>ZippedTools\coverlet.collector.3.2.0.zip</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\Shared Files\ZippedTools\coverlet.console.3.2.0.zip">
-      <Link>ZippedTools\coverlet.console.3.2.0.zip</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\Shared Files\ZippedTools\microsoft.codecoverage.17.9.0.zip">
-      <Link>ZippedTools\microsoft.codecoverage.17.9.0.zip</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Monikers.imagemanifest">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <!--
     <None Include="Key.snk" />
 	-->
-
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CliWrap">
