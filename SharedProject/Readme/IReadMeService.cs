@@ -2,6 +2,8 @@
 {
     public interface IReadMeService
     {
-        void ShowReadMe(Microsoft.VisualStudio.Shell.AsyncPackage package);
+        void ShowReadMe();
+        bool HasShownReadMe { get; }
+        event System.EventHandler ReadMeShown;
     }
 }

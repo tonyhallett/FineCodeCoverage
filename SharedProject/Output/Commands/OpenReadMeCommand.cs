@@ -23,7 +23,6 @@ namespace FineCodeCoverage.Output
 
         private readonly MenuCommand command;
         private readonly IReadMeService readMeService;
-        private readonly AsyncPackage package;
 
         public static OpenReadMeCommand Instance
         {
@@ -49,7 +48,6 @@ namespace FineCodeCoverage.Output
             this.command = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(this.command);
             this.readMeService = readMeService;
-            this.package = package;
         }
 
         /// <summary>
@@ -60,8 +58,7 @@ namespace FineCodeCoverage.Output
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event args.</param>
         private void Execute(object sender, EventArgs e)
-            //package.ShowToolWindowAsync(typeof(OutputToolWindow), 0, true, package.DisposalToken);
-            => this.readMeService.ShowReadMe(this.package);
+            => this.readMeService.ShowReadMe();
     }
 }
 

@@ -4,6 +4,10 @@ namespace FineCodeCoverage.Github
 {
     public partial class NewIssueDialogWindow : DialogWindow
     {
-        public NewIssueDialogWindow() => this.InitializeComponent();
+        public NewIssueDialogWindow(INewIssueViewModel newIssueViewModel)
+        {
+            this.DataContext = newIssueViewModel;
+            this.InitializeComponent();
+        }
     }
 }

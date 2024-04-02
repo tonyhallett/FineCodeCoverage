@@ -8,8 +8,10 @@ using System.Linq;
 using System.ComponentModel.Composition;
 using System.Collections.Generic;
 using Markdig;
-using Microsoft.VisualStudio.Shell;
 using FineCodeCoverage.Core.Utilities;
+using FineCodeCoverage.Output;
+using FineCodeCoverage.Options;
+using Microsoft.VisualStudio.Settings;
 
 namespace FineCodeCoverage.Readme
 {
@@ -17,13 +19,27 @@ namespace FineCodeCoverage.Readme
     [Export(typeof(IReadMeMarkdownViewModel))]
     internal class ReadMeService : IReadMeService, IReadMeMarkdownViewModel
     {
+        private readonly WritableSettingsStore writableUserSettingsStore;
         private readonly IProcess process;
+        private readonly IToolWindowService toolWindowService;
         private string markdown;
+        private const string readMeShowCollection = "FCCReadmeShowCollection";
+        private const string readMeShownProperty = "FCCReadmeShown";
+
+        public event EventHandler ReadMeShown;
 
         [ImportingConstructor]
         public ReadMeService(
-            IProcess process
-        ) => this.process = process;
+            IProcess process,
+            IToolWindowService toolWindowService,
+            IWritableUserSettingsStoreProvider writableUserSettingsStoreProvider
+        )
+        {
+            this.writableUserSettingsStore = writableUserSettingsStoreProvider.Provide();
+            this.HasShownReadMe = this.writableUserSettingsStore.GetBoolean(readMeShowCollection, readMeShownProperty, false);
+            this.process = process;
+            this.toolWindowService = toolWindowService;
+        }
 
         // alternative is html
         // Markdown.ToHtml(markdownDocument);
@@ -49,9 +65,23 @@ namespace FineCodeCoverage.Readme
         }
 
         public MarkdownPipeline MarkdownPipeline { get; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        public bool HasShownReadMe { get; private set; }
 
-        public void ShowReadMe(AsyncPackage package)
-            => _ = package.ShowToolWindowAsync(typeof(ReadmeToolWindow),0, true, package.DisposalToken);
+        public void ShowReadMe()
+        {
+            if (!this.HasShownReadMe)
+            {
+                if(!this.writableUserSettingsStore.CollectionExists(readMeShowCollection))
+                {
+                    this.writableUserSettingsStore.CreateCollection(readMeShowCollection);
+                }
+                this.writableUserSettingsStore.SetBoolean(readMeShowCollection, readMeShownProperty, true);
+            }
+            this.HasShownReadMe = true;
+            ReadMeShown?.Invoke(this, EventArgs.Empty);
+            
+            _ = this.toolWindowService.ShowToolWindowAsync(typeof(ReadmeToolWindow), 0, true);
+        }
 
         public void LinkClicked(string url)
         {

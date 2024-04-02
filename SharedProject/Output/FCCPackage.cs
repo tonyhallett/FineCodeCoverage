@@ -48,7 +48,7 @@ namespace FineCodeCoverage.Output
 	[ProvideToolWindow(typeof(ReadmeToolWindow),Orientation =ToolWindowOrientation.Right, Style = VsDockStyle.Tabbed, Width = 600, Height = 700)]
     public sealed class FCCPackage
         : AsyncPackage
-	{
+    {
 		private static IComponentModel componentModel;
         private IFCCEngine fccEngine;
 
@@ -107,6 +107,9 @@ namespace FineCodeCoverage.Output
 
         private async Task InitializeCommandsAsync(IComponentModel componentModel)
         {
+            // note that exporting the package does not work
+            componentModel.GetService<IToolWindowServiceInit>().Package = this;
+
             this.fccEngine = componentModel.GetService<IFCCEngine>();
             IEventAggregator eventAggregator = componentModel.GetService<IEventAggregator>();
             await OpenCoberturaCommand.InitializeAsync(this, eventAggregator);

@@ -65,6 +65,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCVersioning\FCCVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\FCCVersioning\IFCCVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IOpenFCCVsMarketplace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IUrlEncoder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\UrlEncoder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersioning\IVsAppId.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\VsVersioning\IVsVersion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\OpenFCCVsMarketplace.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Funding\IFundingViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Funding\ProcessStartCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github\FCCGithubService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Github\INewIssueViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github\NewIssueDialogWindow.xaml.cs">
       <DependentUpon>NewIssueDialogWindow.xaml</DependentUpon>
     </Compile>
@@ -98,6 +101,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFundingCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenFCCGithubCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Commands\OpenReadMeCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\IToolWindowService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\IToolWindowServiceInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPane.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\FCCOutputWindowPaneCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\Pane\IFCCOutputWindowPane.cs" />
@@ -176,6 +181,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ThemedTreeGridColours.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Output\ReportTreeItems\VisualStudioTreeItemBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Output\ToolWindowService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Readme\IReadMeMarkdownViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Readme\IReadMeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Readme\ReadMeService.cs" />
@@ -446,6 +452,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ProcessWrapper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\IShownReportWindowHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Core\Utilities\ShownReportWindowHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Wpf\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Wpf\Themes.cs" />
   </ItemGroup>
   <ItemGroup>
