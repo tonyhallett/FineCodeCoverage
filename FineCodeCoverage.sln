@@ -12,10 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{20
 		.github\workflows\addVsixLinkToIssues.yaml = .github\workflows\addVsixLinkToIssues.yaml
 		CHANGELOG.md = CHANGELOG.md
 		CONTRIBUTING.md = CONTRIBUTING.md
-		ISSUE_TEMPLATE.md = ISSUE_TEMPLATE.md
+		.github\ISSUE_TEMPLATE\Feature-form.yml = .github\ISSUE_TEMPLATE\Feature-form.yml
+		.github\FUNDING.yml = .github\FUNDING.yml
+		.github\ISSUE_TEMPLATE\Issue-form.yaml = .github\ISSUE_TEMPLATE\Issue-form.yaml
 		LICENSE = LICENSE
 		.github\workflows\push_pull.yaml = .github\workflows\push_pull.yaml
-		.github\FUNDING.yml = .github\FUNDING.yml
 		README.md = README.md
 	EndProjectSection
 EndProject

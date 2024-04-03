@@ -1,0 +1,62 @@
+name: Bug Report🪲
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        #### Thanks for taking the time to fill out this bug report ! Create within VS for a better experience.
+        Please ensure you have checked [existing issues](https://github.com/FortuneN/FineCodeCoverage/issues) before creating a new one.
+  - type: input
+    id: vsversion
+    attributes:
+      label: Visual Studio Version
+      placeholder: Community 17.9.5
+    validations:
+      required: true
+  - type: input
+    id: fccversion
+    attributes:
+      label: Fine Code Coverage Version
+      placeholder: 1.1.214
+    validations:
+      required: true
+  - type: textarea
+    id: currentbehaviour
+    attributes:
+      label: Current behaviour
+      description: Explain what it's doing and why it's wrong
+      placeholder: Given, when, then...
+    validations:
+      required: true
+  - type: textarea
+    id: expectedbehaviour
+    attributes:
+      label: Expected behaviour
+      description: Explain what it should be doing after it's fixed.
+      placeholder: It should...
+    validations:
+      required: true
+
+  - type: textarea
+    id: fcclogs
+    attributes:
+      label: FCC Output Pane Logs
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+       You can also email privately to fortunengwenya@gmail.com
+      render: shell
+      
+  - type: markdown
+    attributes:
+      value: |
+        #### For a faster resolution
+        - Attach a solution exhibiting this issue, zip file or preferably a link to a github repo.
+        - It helps to attach a screen recording video of steps to recreate (sometimes a video is worth a thousand words) - [screentogif](https://www.screentogif.com/)
+        
+        #### Support this project
+        - Please consider giving this project a star and become one of the [stargazers](https://github.com/FortuneN/FineCodeCoverage/stargazers)
+        - Please consider buying me a coffee [paypal (once)](https://paypal.me/FortuneNgwenya) OR [liberapay  (Recurring)](https://liberapay.com/FortuneN/donate)
+        - Please consider rating and/or reviewing [VS2019](https://marketplace.visualstudio.com/items?itemName=FortuneNgwenya.FineCodeCoverage&ssr=false#review-details) [VS2022](https://marketplace.visualstudio.com/items?itemName=FortuneNgwenya.FineCodeCoverage2022&ssr=false#review-details)
+        
+ 

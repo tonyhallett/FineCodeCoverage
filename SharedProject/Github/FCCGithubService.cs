@@ -23,7 +23,6 @@ namespace FineCodeCoverage.Github
         private readonly IFCCVersion fccVersion;
         private readonly IProcess process;
         private const string fccRepo = "https://github.com/FortuneN/FineCodeCoverage";
-        private const string issueFormUrl = "https://github.com/tonyhallett/DemoIssueTemplates/issues/new?template=Issue-form.yaml";
         private readonly RelayCommand submitCommand;
         private readonly RelayCommand mailToCommand;
         private readonly RelayCommand searchIssuesCommand;
@@ -105,7 +104,8 @@ namespace FineCodeCoverage.Github
                     { "fccversion", this.FccVersionString },
                     { "title", this.Title }
                 };
-                var sb = new StringBuilder(issueFormUrl);
+
+                var sb = new StringBuilder($"{fccRepo}/issues/new?template=Issue-form.yaml");
                 _ = encodings.Aggregate(sb, (acc, kv) => acc.Append($"&{kv.Key}={urlEncoder.Encode(kv.Value)}"));
 
                 Clipboard.SetDataObject(this.FccOutput);
